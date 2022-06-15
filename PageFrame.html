@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+    <?!= include('Styles') ?>
+  </head>
+
+  <body>
+
+    <div class="grid">
+    
+        <div class="header"><h2>Tilikirja</h2></div>
+
+        <div class="nav-container">
+          <span class="nav-item" id="page0">Etusivu</span>
+          <span class="nav-item" id="page1">Tapahtumat</span>
+          <span class="nav-item" id="page2">Veden kulutus</span>
+          <span class="nav-item" id="page3">Tuloslaskelmat</span>
+          <span class="nav-item" id="page4">Neljännesveloitus</span>
+        </div>
+
+        <div class="controls"> </div>
+
+        <div class="content"> </div>
+
+        <div class="footer">
+          <span class="footer-left"><?= profile ?></span>
+
+          <span class="footer-right">versio <?= version ?></span>
+        </div>              
+    
+    </div>
+    
+    <div class="modal popup">
+      <div class="popup-content"></div>
+    </div>
+    
+    <div class="modal spinner">
+      <div class="spinner-roller"></div>
+    </div>
+
+    <script> const profile = <?= profile ?> </script>
+
+    <?!= include('PageFrameJS') ?>
+    <?!= include('FrontPageJS')?>
+    <?!= include('EventsJS') ?>
+    <?!= include('EventPopupJS') ?>
+    <?!= include('WaterReadingsJS') ?>
+    <?!= include('WaterReadingPopupJS') ?>
+    <?!= include('AnnualReportsJS') ?>
+    <?!= include('ChargingSummaryJS') ?>
+
+  </body>
+</html>

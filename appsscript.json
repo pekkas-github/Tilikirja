@@ -1,0 +1,23 @@
+{
+  "timeZone": "Europe/Helsinki",
+  "exceptionLogging": "STACKDRIVER",
+  "runtimeVersion": "V8",
+  "dependencies": {
+    "libraries": [
+      {
+        "userSymbol": "DbLib2",
+        "libraryId": "1tLekUn3aO2KDlv8GLsoHK4gXLKnuUpqReCu98iRY_Fwntbgu-hZv6XIa",
+        "version": "5"
+      },
+      {
+        "userSymbol": "t",
+        "libraryId": "11l_SrvKPA_rofg5jyxFRny19812HA6VutAEAciI6blNAxr0BgcuVYFfv",
+        "version": "3"
+      }
+    ]
+  },
+  "webapp": {
+    "executeAs": "USER_DEPLOYING",
+    "access": "MYSELF"
+  }
+}

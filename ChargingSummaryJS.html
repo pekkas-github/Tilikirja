@@ -1,0 +1,103 @@
+<script>
+
+/* MODULE */
+
+const chargingPage = ( () => {
+
+  /* HELPER FUNCTIONS */
+
+  function getEventsToBeCharged() {
+
+    return app.events.filter( (event) => {
+      if (event.charging === 'x' && event.cleared === '') {
+        return event
+      }
+    })
+  }
+
+  /* EVENT HANDLERS */
+
+  function clearCharges() {
+
+    const date = $('#txt-day').val()
+
+    if (date === '') {alert('Tarkista päiväys')}
+
+    const eventsToBeCharged = getEventsToBeCharged()
+    eventsToBeCharged.forEach( (event) => {
+      const tableIndex = getTableIndex(app.events, event.id)
+      app.events[tableIndex].cleared = date
+    })
+
+    render()
+
+    google.script.run
+    .apiCall('ackCharges', eventsToBeCharged, date)
+  }
+
+
+  /* RENDER PAGE */
+
+  function render() {
+
+    /* CONTROLS */
+
+    const controls = `
+        <input id="txt-day" type="date" hidden>
+        <button class="btn" id="btn-submit" hidden>Kuittaa maksetuksi</button>`
+
+    $('.controls').html(controls)
+
+    /* CONTENT */
+
+    let content = `
+      <table id="tbl-charges">
+        <tr>
+          <th>Päiväys</th>
+          <th>Tapahtuma</th>
+          <th>Koko summa</th>
+          <th>A-asunto</th>
+          <th>Tili</th>
+        </tr>`
+
+    let a_Total = 0
+
+    getEventsToBeCharged().forEach( (event) => {
+      a_Total += event.a_share
+      content += `
+        <tr>
+          <td>${event.date}</td>
+          <td>${event.event}</td>
+          <td class="number">${event.total.toFixed(2)}</td>
+          <td class="number">${event.a_share.toFixed(2)}</td>
+          <td>${event.account}</td>
+        </tr>`
+    })
+
+    content += `
+        <tr>
+          <td class="empty"></td>
+          <td class="empty"></td>
+          <td class="total">Yhteensä</td>
+          <td class="total">${a_Total.toFixed(2)}</td>
+          <td class="empty"></td>
+        </tr>
+      </table>`
+
+    $('.content').html(content)
+
+    /* EVENT LISTENERS */
+  
+    if (profile === 'admin') {
+      $('#txt-day').show()
+      $('#btn-submit').on('click', clearCharges)
+      $('#btn-submit').show()
+    }
+  }
+
+  /* API */
+
+  return {render: render}
+  
+})()
+</script>

@@ -1,0 +1,92 @@
+<script>
+
+/* MODULE */
+
+const readingsPage = ( () => {
+
+  /* EVENT HANDLERS */
+
+  function addWaterReading() {
+
+    readingForm.render()
+  }
+
+
+  /* RENDER PAGE */
+
+  function render() {
+
+    /* CONTROLS */
+
+    const buttonAdd = '<button class="btn" id="btn-add" hidden>Lisää...</button>'
+
+    $('.controls').html(buttonAdd)
+
+    /* CONTENT */
+
+    let content = `
+      <table id="tbl-readings">
+
+      <tr>
+        <th></th>
+        <th colspan="2">Talon mittari</th>
+        <th colspan="2">Asunto A</th>
+        <th colspan="2">Asunto B</th>
+        <th></th>
+      </tr>
+
+      <tr>
+        <th>Lukemispäivä</th>
+        <th>Lukema</th>
+        <th>Erotus</th>
+        <th>Lukema</th>
+        <th>Erotus</th>
+        <th>Lukema</th>
+        <th>Erotus</th>
+        <th>Kommentti</th>
+      </tr>
+    `
+
+    const len = app.water.length
+
+    for (let i = len - 10; i < len; i++) {
+
+      const rec = app.water[i]
+      const prev = app.water[i-1]
+
+      let dTot = rec.master_reading - prev.master_reading
+      dTot = (dTot < 0) ? app.water[i].master_reading : dTot
+      let dA = rec.a_reading - prev.a_reading
+      let dB = rec.b_reading - prev.b_reading 
+
+      content += `
+      <tr>
+        <td> ${rec.date} </td>
+        <td> ${rec.master_reading} </td>
+        <td> ${dTot} </td>
+        <td> ${rec.a_reading} </td>
+        <td> ${dA} </td>
+        <td> ${rec.b_reading} </td>
+        <td> ${dB} </td>
+        <td> ${rec.comment} </td>
+      </tr>`
+    }
+
+    content += '</table>'
+
+
+    $('.content').html(content)
+
+    /* EVENT LISTENERS */
+
+    if (profile === 'admin') {
+      $('#btn-add').show()
+      $('#btn-add').on('click', addWaterReading)
+    }
+  }
+
+  /* API */
+  return {render: render}
+
+})()
+</script>

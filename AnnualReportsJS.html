@@ -1,0 +1,105 @@
+<script>
+
+/* MODULE */
+
+const reportsPage = ( () => {
+
+  /* EVENT HANDLERS */
+
+  function changeReportYear() {
+    
+    app.currentYear = $('#cbo-years').val()
+    render()
+  }
+
+  /* RENDER PAGE */
+
+  function render() {
+  
+    /* CONTROLS */ 
+
+    let controls = '<select class="cbo" id="cbo-years" name="years">'
+
+    app.years.forEach( (year) => {
+      controls += `<option>${year.Years}</option>`
+    })
+
+    controls += '</select>'
+
+    $('.controls').html(controls)
+    $('#cbo-years').val(app.currentYear)
+
+    /* CONTENT */
+
+    const summaryByAccount = {}
+    const year = parseInt(app.currentYear)
+
+    const eventsByYear = app.events.filter( (event) => {
+      if (event.fiscal_year === year) {
+        return event
+      }
+    })
+
+    eventsByYear.forEach( (event) => {
+      if (summaryByAccount[event.account]) {
+        summaryByAccount[event.account].tot += event.total
+        summaryByAccount[event.account].a += event.a_share
+        summaryByAccount[event.account].b += event.total - event.a_share
+      }else{
+        summaryByAccount[event.account] = {tot:event.total, a:event.a_share, b:(event.total - event.a_share)}
+      }
+    })
+
+
+    const sums = {tot:0, a:0, b:0}
+    for (const account in summaryByAccount) {
+      sums.tot += summaryByAccount[account].tot
+      sums.a += summaryByAccount[account].a
+      sums.b += summaryByAccount[account].b
+    }
+
+    summaryByAccount.Totals = sums
+
+    let content = `
+      <table id="tbl-reports">
+      <tr>
+        <th>Tili</th>
+        <th>Summa</th>
+        <th>A-osuus</th>
+        <th>B-osuus</th>
+      </tr>`
+
+    app.accounts.forEach( (account) => {
+      if (summaryByAccount[account.Accounts]) {
+      content += `
+      <tr id="${account.Accounts}">
+        <td>${account.Accounts}</td>
+        <td class="number"> ${summaryByAccount[account.Accounts].tot.toFixed(2)}</td>
+        <td class="number"> ${summaryByAccount[account.Accounts].a.toFixed(2)}</td>
+        <td class="number"> ${summaryByAccount[account.Accounts].b.toFixed(2)}</td>
+      </tr>`
+      }
+    })
+
+    content += `
+    <tr>
+      <th class="total"> Yhteensä </th>
+      <th class="total"> ${summaryByAccount.Totals.tot.toFixed(2) } </th>
+      <th class="total"> ${ summaryByAccount.Totals.a.toFixed(2) } </th>
+      <th class="total"> ${ summaryByAccount.Totals.b.toFixed(2) } </th>
+    </tr>
+    </table>`
+
+    $('.content').html(content)
+
+    /* EVENT LISTENERS */
+
+    $('#cbo-years').on('change', changeReportYear)
+
+  }
+
+  /* API */
+  return {render: render}
+
+})()
+</script>

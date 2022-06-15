@@ -1,0 +1,148 @@
+<script>
+
+/* MODULE */
+
+const eventsPage = ( () => {
+
+  /* EVENT HANDLERS */ 
+
+  function addEvent() {
+    const rec = {}
+    rec.id = 0
+    rec.number = ''
+    rec.date = ''
+    rec.event= ''
+    rec.total = ''
+    rec.a_share = ''
+    rec.account = ''
+    rec.comment = ''
+    rec.fiscal_year = ''
+    rec.charging = ''
+    rec.cleared = ''
+
+    eventForm.render(rec, -1)
+  }
+
+  
+  function changeEventYear() {
+
+    app.currentYear = $('#cbo-years').val()
+    render()
+
+  }
+
+  function changeEventStatus() {
+
+    //selvitä events-taulun indeksi
+    const id = parseInt($(this).parent().attr('id'))
+    const index = getTableIndex(app.events, id)
+    const event = app.events[index]
+
+    //selvitä, onko muutos sallittu
+    if (event.cleared === '') {
+
+      //aseta status -> päälle/pois
+      const status = (event.charging === 'x') ? '' : 'x'
+      app.events[index].charging = status
+      //päivitä näyttö
+      render()
+
+      //lähetä tieto serverille
+      google.script.run
+      .apiCall('setChargingStatus', id, status)
+    }
+  }
+
+  function modifyEvent() {
+    
+    const id = parseInt($(this).parent().attr('id'))
+    const index = getTableIndex(app.events, id)
+    const record = app.events[index]
+
+    eventForm.render(record, index)
+
+  }
+
+
+  /* RENDER PAGE */
+
+  function render () {
+
+    /* CONTROLS */
+
+    // Year selection list
+
+    let controls = '<select id="cbo-years" name="years" class="cbo">'
+
+    app.years.forEach( (year) => {
+      controls += `<option>${year.Years}</option>`
+    })
+
+    controls += '</select>'
+
+    // Add button
+
+    controls += '<button class="btn" id="btn-add" hidden>Lisää...</button>'
+
+    $('.controls').html(controls)
+    $('#cbo-years').val(app.currentYear)
+
+    /* CONTENT */
+
+    let content = `
+    <table id="tbl-events">
+      <tr>
+        <th>Tosite</th>
+        <th>Päiväys</th>
+        <th>Tapahtuma</th>
+        <th>Summa</th>
+        <th>A-asunto</th>
+        <th>Tili</th>
+        <th>Kommentti</th>
+        <th>Tilivuosi</th>
+        <th class="charge-status" hidden>Veloitus</th>
+        <th class="is-payed" hidden>Ok</th>
+      </tr>
+    `
+    app.events.forEach( (event) => {
+      if (event.date.substring(0, 4) === app.currentYear) {
+        content += `
+        <tr id="${event.id}">
+          <td> ${event.number}</td>
+          <td> ${event.date}</td>
+          <td> ${event.event}</td>
+          <td class="number"> ${event.total.toFixed(2)}</td>
+          <td class="number"> ${event.a_share.toFixed(2)}</td>
+          <td> ${event.account}</td>
+          <td> ${event.comment}</td>
+          <td> ${event.fiscal_year}</td>
+          <td class="charge-status" hidden>${event.charging}</td>
+          <td class="is-payed" hidden>${event.cleared}</td>
+        </tr>`
+      }
+    })
+    
+    content += '</table>'
+    
+    $('.content').html(content)
+
+    /* EVENT LISTENERS */
+
+    $('#cbo-years').on('change', changeEventYear)
+
+    if (profile === 'admin') {
+      $('td').on('dblclick', modifyEvent)
+      $('#btn-add').show()
+      $('#btn-add').on('click', addEvent)
+      $('.charge-status').show()
+      $('.charge-status').on('click', changeEventStatus)
+      $('.is-payed').show()
+    }
+  }
+
+  /* API */
+  
+  return {render: render}
+
+})()
+</script>
