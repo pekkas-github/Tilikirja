@@ -12,11 +12,11 @@ const eventsPage = ( () => {
     rec.number = ''
     rec.date = ''
     rec.event= ''
-    rec.total = ''
-    rec.a_share = ''
-    rec.account = ''
+    rec.total = 0
+    rec.a_share = 0
+    rec.account_id = 1
     rec.comment = ''
-    rec.fiscal_year = ''
+    rec.fiscal_year = app.currentYear
     rec.charging = ''
     rec.cleared = ''
 
@@ -75,7 +75,7 @@ const eventsPage = ( () => {
     let controls = '<select id="cbo-years" name="years" class="cbo">'
 
     app.years.forEach( (year) => {
-      controls += `<option>${year.Years}</option>`
+      controls += `<option>${year.year}</option>`
     })
 
     controls += '</select>'
@@ -113,7 +113,7 @@ const eventsPage = ( () => {
           <td> ${event.event}</td>
           <td class="number"> ${event.total.toFixed(2)}</td>
           <td class="number"> ${event.a_share.toFixed(2)}</td>
-          <td> ${event.account}</td>
+          <td> ${event.account_name}</td>
           <td> ${event.comment}</td>
           <td> ${event.fiscal_year}</td>
           <td class="charge-status" hidden>${event.charging}</td>

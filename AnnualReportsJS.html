@@ -21,7 +21,7 @@ const reportsPage = ( () => {
     let controls = '<select class="cbo" id="cbo-years" name="years">'
 
     app.years.forEach( (year) => {
-      controls += `<option>${year.Years}</option>`
+      controls += `<option>${year.year}</option>`
     })
 
     controls += '</select>'
@@ -41,21 +41,21 @@ const reportsPage = ( () => {
     })
 
     eventsByYear.forEach( (event) => {
-      if (summaryByAccount[event.account]) {
-        summaryByAccount[event.account].tot += event.total
-        summaryByAccount[event.account].a += event.a_share
-        summaryByAccount[event.account].b += event.total - event.a_share
+      if (summaryByAccount[event.account_id]) {
+        summaryByAccount[event.account_id].tot += event.total
+        summaryByAccount[event.account_id].a += event.a_share
+        summaryByAccount[event.account_id].b += event.total - event.a_share
       }else{
-        summaryByAccount[event.account] = {tot:event.total, a:event.a_share, b:(event.total - event.a_share)}
+        summaryByAccount[event.account_id] = {tot:event.total, a:event.a_share, b:(event.total - event.a_share)}
       }
     })
 
 
     const sums = {tot:0, a:0, b:0}
-    for (const account in summaryByAccount) {
-      sums.tot += summaryByAccount[account].tot
-      sums.a += summaryByAccount[account].a
-      sums.b += summaryByAccount[account].b
+    for (const key in summaryByAccount) {
+      sums.tot += summaryByAccount[key].tot
+      sums.a += summaryByAccount[key].a
+      sums.b += summaryByAccount[key].b
     }
 
     summaryByAccount.Totals = sums
@@ -70,13 +70,13 @@ const reportsPage = ( () => {
       </tr>`
 
     app.accounts.forEach( (account) => {
-      if (summaryByAccount[account.Accounts]) {
+      if (summaryByAccount[account.id]) {
       content += `
-      <tr id="${account.Accounts}">
-        <td>${account.Accounts}</td>
-        <td class="number"> ${summaryByAccount[account.Accounts].tot.toFixed(2)}</td>
-        <td class="number"> ${summaryByAccount[account.Accounts].a.toFixed(2)}</td>
-        <td class="number"> ${summaryByAccount[account.Accounts].b.toFixed(2)}</td>
+      <tr id="${account.id}">
+        <td>${account.name}</td>
+        <td class="number"> ${summaryByAccount[account.id].tot.toFixed(2)}</td>
+        <td class="number"> ${summaryByAccount[account.id].a.toFixed(2)}</td>
+        <td class="number"> ${summaryByAccount[account.id].b.toFixed(2)}</td>
       </tr>`
       }
     })

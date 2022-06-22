@@ -22,17 +22,29 @@ class Controller {
     html.profile = profile
     html.version = app.version
 
-    return html.evaluate()
+    return html.evaluate().setTitle('Tilikirja')
   }
 
   getData () {
 
     let response = []
 
-    response.push(this.model.getEvents())
+    const events = this.model.getEvents()
+    const accounts = this.model.getAccounts()
+    events.forEach( (event) => {
+      for(const account of accounts) {
+        if (event.account_id === account.id) {
+          event.account_name = account.name
+          return
+        }
+      }
+    })
+
+
+    response.push(events)
     response.push(this.model.getWaterReadings())
     response.push(this.model.getYears())
-    response.push(this.model.getAccounts())
+    response.push(accounts)
     response.push(this.model.getCurrentYear())
 
     return response
@@ -74,4 +86,9 @@ class Controller {
     return this.model.updateEvent(eventRecord)
 
   }
+}
+
+function testEventsNew() {
+  const c = new Controller()
+  c.getData()
 }

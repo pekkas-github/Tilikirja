@@ -38,6 +38,8 @@ const readingForm = ( () => {
 
   function insertReading(records) {
 
+    records[0].account_name = app.accounts[5].name
+
     app.events.push(records[0])
     app.water.push(records[1])
 
@@ -78,7 +80,7 @@ const readingForm = ( () => {
             <select class="cbo" id="cbo-year">`
 
       app.years.forEach( (year) => {
-      popupContent += `<option>${year.Years}</option>`
+      popupContent += `<option>${year.year}</option>`
 
       })
 

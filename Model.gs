@@ -31,29 +31,30 @@ class Model {
 
   getYears () {
 
-    const table = this.db.getTable('List_years')
+    const table = this.db.getTable('Years')
     return table.getRecords()
   }
 
 
   getAccounts () {
 
-    const table = this.db.getTable('List_accounts')
+//    const table = this.db.getTable('List_accounts')
+    const table = this.db.getTable('Accounts')
     return table.getRecords()
   }
 
 
   getCurrentYear () {
     
-    const table = this.db.getTable('List_years')
-    const years = table.getRecords().filterAnd('DefaultYear', 'x')
+    const table = this.db.getTable('Years')
+    const years = table.getRecords().filterAnd('current', 'x')
 
-    return years[0].Years
+    return years[0].year
   }
 
   getWaterConsumptionAndPrice () {
 
-    // Last reading first and previous ones in order after it
+    // Sort last reading first and previous one in order after it
     const readings = this.db.getTable('Water_readings')
       .getRecords()
       .sortDesc('id')
@@ -67,8 +68,9 @@ class Model {
     // Calculate consumption (last value - previous value)
     const consumption = readings[0].a_reading - readings[1].a_reading
 
-    // Calculate charge
-    const charge = consumption * price
+    // Calculate charge in two decimals
+    const charge = Math.floor(((consumption * price)*100+0.5))/100
+    
 
     return {amount:consumption, charge:charge}
   }
@@ -119,8 +121,8 @@ class Model {
     event.date = date
     event.event = `Vesimaksu (lukeman mukaan ${consumption} m2)`
     event.total = 0
-    event.a_share = charge
-    event.account = 'Vesi'
+    event.a_share = Number(charge.toFixed(2))
+    event.account_id = 6
     event.fiscal_year = fiscalYear
 
     //insert event record and return filled event record
@@ -141,16 +143,19 @@ class Model {
 
 updateChargingSheet () {
 
-  const table = this.db.getTable('GL_events')
+  const table1 = this.db.getTable('GL_events')
+  const table2 = this.db.getTable('Accounts')
   const sheet = SpreadsheetApp.openByUrl(app.printingSheet).getSheetByName('Summary')
 
-  const events = table.getRecords()
+  const events = table1.getRecords()
+  const accounts = table2.getRecords()
   const values = []
 
   sheet.getRange(5, 2, 14, 5).clearContent();
 
 
   events.forEach( (event) => {
+
     
     if (event.charging === 'x' && event.cleared === '') {
       const newLine = []
@@ -158,7 +163,13 @@ updateChargingSheet () {
       newLine.push(event.event)
       newLine.push(event.total)
       newLine.push(event.a_share)
-      newLine.push(event.account)
+
+      for (const account of accounts) {
+        if(account.id === event.account_id) {
+          newLine.push(account.name)
+          break
+        }
+      }
 
       values.push(newLine)
     }
