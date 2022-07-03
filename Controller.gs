@@ -22,7 +22,7 @@ class Controller {
     html.profile = profile
     html.version = app.version
 
-    return html.evaluate().setTitle('Tilikirja')
+    return html.evaluate().setTitle('Tilikirja').setFaviconUrl('https://cdn.icon-icons.com/icons2/1994/PNG/512/bank_bill_finance_invoice_money_payment_receipt_icon_123239.png')
   }
 
   getData () {
