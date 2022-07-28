@@ -1,0 +1,22 @@
+<script>
+  
+  const app = {}
+
+  const spinner = {
+    on: () => {$('.spinner').show()},
+    off: () => {$('.spinner').hide()}
+  }
+
+  const popup = {
+    on: () => {$('.popup').show()},
+    off: () => {$('.popup').hide()}
+  }
+
+  function getTableIndex(table, id) {
+
+    return table.findIndex( (rec) => {
+      return rec.id === id
+    })
+  }
+
+</script>

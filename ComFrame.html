@@ -4,7 +4,7 @@
     <base target="_top">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
-    <?!= include('Styles') ?>
+    <?!= include('ComStyles') ?>
   </head>
 
   <body>
@@ -41,16 +41,27 @@
       <div class="spinner-roller"></div>
     </div>
 
-    <script> const profile = <?= profile ?> </script>
+    <script> 
+      const profile = <?= profile ?> 
+    </script>
 
-    <?!= include('PageFrameJS') ?>
-    <?!= include('FrontPageJS')?>
-    <?!= include('EventsJS') ?>
-    <?!= include('EventPopupJS') ?>
-    <?!= include('WaterReadingsJS') ?>
-    <?!= include('WaterReadingPopupJS') ?>
-    <?!= include('AnnualReportsJS') ?>
-    <?!= include('ChargingSummaryJS') ?>
+    <?!= include('ComGlobals') ?>
+    <?!= include('ComStart')?>
+    <?!= include('ViewInfo') ?>
+    <?!= include('ViewEvents') ?>
+    <?!= include('ViewEventForm') ?>
+    <?!= include('ControllerEvents') ?>
+    <?!= include('ModelEvents') ?>
+    <?!= include('ViewReadings') ?>
+    <?!= include('ViewReadingForm') ?>
+    <?!= include('ControllerReadings') ?>
+    <?!= include('ModelReadings') ?>
+    <?!= include('ViewReports') ?>
+    <?!= include('ControllerReports') ?>
+    <?!= include('ModelReports') ?>
+    <?!= include('ViewCharges') ?>
+    <?!= include('ControllerCharges') ?>
+    <?!= include('ModelCharges') ?>
 
   </body>
 </html>

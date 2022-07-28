@@ -1,0 +1,34 @@
+<script>
+
+const chargesModel = (function() {
+
+  function clearCharges(date) {
+
+    const eventsToBeCharged = getEventsToBeCharged()
+    eventsToBeCharged.forEach( (event) => {
+      const tableIndex = getTableIndex(app.events, event.id)
+      app.events[tableIndex].cleared = date
+    })
+
+    google.script.run
+    .apiCall('ackCharges', eventsToBeCharged, date)
+  }
+
+
+  function getEventsToBeCharged() {
+
+    return app.events.filter( (event) => {
+      if (event.charging === 'x' && event.cleared === '') {
+        return event
+      }
+    })
+  }
+
+  return {
+    clearCharges: clearCharges,
+    getEventsToBeCharged: getEventsToBeCharged
+  }
+
+})()
+
+</script>

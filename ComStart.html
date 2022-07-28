@@ -1,0 +1,45 @@
+<script>
+
+/* KICK START */
+
+  $('document').ready (() => {
+
+    spinner.on()
+
+    infoView.render()
+
+    /* Event Listeners */
+    $('#page0').on('click',infoView.render)
+    $('#page1').on('click',eventsController.openEventsPage)
+    $('#page2').on('click',readingsController.openReadingsPage)
+    $('#page3').on('click',reportsController.openReportsPage)
+    $('#page4').on('click',chargesController.openChargesPage)
+
+    $('.nav-item').on('click', function() {
+        $('.nav-item').css('background', '')
+        $('.nav-item').css('font-weight', '')
+        $(this).css('background', '#333385')
+        $(this).css('font-weight', 'bold')
+      })
+
+    /* Data request */
+    google.script.run
+    .withFailureHandler((error)=>{alert(error)})
+    .withSuccessHandler(storeData)
+    .apiCall('getData')
+
+  })
+
+  /* CALLBACK FUNCTIONS */
+  function storeData(response) {
+
+    app.events = response[0]
+    app.water = response[1]
+    app.years = response[2]
+    app.accounts = response[3]
+    app.currentYear = response[4]
+
+    spinner.off()
+  }
+
+</script>

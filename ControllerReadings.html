@@ -1,0 +1,30 @@
+<script>
+
+  const readingsController = (function() {
+
+    function addReading(reading) {
+      readingsModel.addReading(reading, readingsView.render)
+    }
+
+    function openReadingsPage() {
+      readingsView.render()
+    }
+
+    function openReadingForm() {
+      readingFormView.render()
+    }
+
+    function openWaterPriceForm() {
+      alert('Hintanäkymä aukeaa tästä...')
+    }
+
+    return {
+      addReading: addReading,
+      openReadingsPage: openReadingsPage,
+      openReadingForm: openReadingForm,
+      openWaterPriceForm: openWaterPriceForm
+
+    }
+  })()
+
+</script>

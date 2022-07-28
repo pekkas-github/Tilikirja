@@ -1,0 +1,95 @@
+<script>
+
+const readingFormView = (function() {
+
+  function render() {
+
+    let popupContent = `
+      <span id="btn-popup-close">&times;</span>
+
+      <table class="empty">
+        <tr>
+          <td class="label">Lukemispäivä:</td>
+          <td class="empty"><input id="txt-date" type="date"></td>
+        </tr>
+        <tr>
+          <td class="label">Talon mittari:</td>
+          <td class="empty"><input id="txt-total" type="text" size="4"></td>
+        </tr>
+        <tr>
+          <td class="label">Asunto A:</td>
+          <td class="empty"><input id="txt-a" type="text" size="4"></td>
+        </tr>
+        <tr>
+          <td class="label">Asunto B:</td>
+          <td class="empty"><input id="txt-b" type="text" size="4"></td>
+        </tr>
+        <tr>
+          <td class="label">Tilivuosi:</td>
+          <td class="empty">
+            <select class="cbo" id="cbo-year">`
+
+      app.years.forEach( (year) => {
+      popupContent += `<option>${year.year}</option>`
+      })
+
+    popupContent += `
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">Kommentti:</td>
+          <td class="empty"><input id="txt-comment" type="text" size="50"></td>
+        </tr>
+      </table>
+
+      <button class="btn" id="btn-popup-save">Talleta</button>
+    `
+
+    $('.popup-content').html(popupContent)
+
+    /* EVENT LISTENERS */
+
+    $('#btn-popup-save').on('click', validateInput)
+    $('#btn-popup-close').on('click', popup.off)
+
+    popup.on()
+
+  }
+
+  function validateInput() {
+
+    const readingRecord = {}
+
+    // Read data
+    readingRecord.id = 0
+    readingRecord.date = $('#txt-date').val()
+    readingRecord.master_reading = parseInt($('#txt-total').val())
+    readingRecord.a_reading = parseInt($('#txt-a').val())
+    readingRecord.b_reading = parseInt($('#txt-b').val())
+    readingRecord.fiscal_year = parseInt($('#cbo-year').val())
+    readingRecord.comment = $('#txt-comment').val()
+
+    // Validate data
+    try {
+      if (readingRecord.date === '') {throw('Päiväys puuttuu')}      
+      if (readingRecord.master_reading === '' || isNaN(readingRecord.master_reading)) {throw('Tarkista kokonaismäärä')}    
+      if (readingRecord.a_reading === '' || isNaN(readingRecord.a_reading)) { throw('Tarkista A-osuus')}
+      if (readingRecord.b_reading === '' || isNaN(readingRecord.b_reading)) { throw('Tarkista B-osuus')}
+    }
+    catch(note) {
+      alert(note)
+      return
+    }
+
+    readingsController.addReading(readingRecord)
+    popup.off()
+  }
+
+  return {
+    render: render
+  }
+
+})()
+
+</script>

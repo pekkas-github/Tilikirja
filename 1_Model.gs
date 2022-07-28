@@ -52,27 +52,25 @@ class Model {
     return years[0].year
   }
 
-  getWaterConsumptionAndPrice () {
+  getWaterConsumption () {
 
     // Sort last reading first and previous one in order after it
     const readings = this.db.getTable('Water_readings')
       .getRecords()
       .sortDesc('id')
 
+    return readings[0].a_reading - readings[1].a_reading
+
+  }
+
+  getWaterPrice () {
     // Get current unit price
     const price = this.db.getTable('Water_prices')
       .getRecords()
       .filterAnd('current_price', 'x')[0]
       .Laskennallinen_hinta
 
-    // Calculate consumption (last value - previous value)
-    const consumption = readings[0].a_reading - readings[1].a_reading
-
-    // Calculate charge in two decimals
-    const charge = Math.floor(((consumption * price)*100+0.5))/100
-    
-
-    return {amount:consumption, charge:charge}
+    return price
   }
 
 
@@ -106,28 +104,31 @@ class Model {
 
   insertReading (readingRecord) {
 
+    // Save water reading record
     const tableWater = this.db.getTable('Water_readings')
     readingRecord.id = tableWater.insertRecord(readingRecord)
 
-    return readingRecord
-  }
-
-  insertWaterReadingEvent (date, consumption, charge, fiscalYear) {
-
+    const consumption = this.getWaterConsumption()
+    const price = this.getWaterPrice()
+    const a_share = Math.floor(((consumption * price)*100+0.5))/100
+    // Create event record
     const tableEvent = this.db.getTable('GL_events')
 
-    //create event record
     let event = tableEvent.newRecord()
-    event.date = date
+    event.date = readingRecord.date
     event.event = `Vesimaksu (lukeman mukaan ${consumption} m2)`
     event.total = 0
-    event.a_share = Number(charge.toFixed(2))
+    event.a_share = a_share
     event.account_id = 6
-    event.fiscal_year = fiscalYear
+    event.fiscal_year = readingRecord.fiscal_year
 
-    //insert event record and return filled event record
-    return this.insertEvent(event)
-
+    // Insert event record and return filled event record
+    const newEvent = this.insertEvent(event)
+    newEvent.account_name = 'Vesi' 
+    return {
+      newId: readingRecord.id,
+      newEvent: newEvent
+    }
   }
 
 

@@ -18,7 +18,7 @@ class Controller {
 
   loadPageFrame (profile) {
 
-    const html = HtmlService.createTemplateFromFile('PageFrame')
+    const html = HtmlService.createTemplateFromFile('ComFrame')
     html.profile = profile
     html.version = app.version
 
@@ -61,7 +61,7 @@ class Controller {
 
     let reading = params[0]
 
-    reading = this.model.insertReading(reading)
+    return this.model.insertReading(reading)
 
     const consumption = this.model.getWaterConsumptionAndPrice()
 

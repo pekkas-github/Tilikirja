@@ -1,44 +1,8 @@
 <script>
 
-/* MODULE */
+const chargesView = (function() {
 
-const chargingPage = ( () => {
-
-  /* HELPER FUNCTIONS */
-
-  function getEventsToBeCharged() {
-
-    return app.events.filter( (event) => {
-      if (event.charging === 'x' && event.cleared === '') {
-        return event
-      }
-    })
-  }
-
-  /* EVENT HANDLERS */
-
-  function clearCharges() {
-
-    const date = $('#txt-day').val()
-
-    if (date === '') {alert('Tarkista päiväys')}
-
-    const eventsToBeCharged = getEventsToBeCharged()
-    eventsToBeCharged.forEach( (event) => {
-      const tableIndex = getTableIndex(app.events, event.id)
-      app.events[tableIndex].cleared = date
-    })
-
-    render()
-
-    google.script.run
-    .apiCall('ackCharges', eventsToBeCharged, date)
-  }
-
-
-  /* RENDER PAGE */
-
-  function render() {
+  function render(eventsToBeCharged) {
 
     /* CONTROLS */
 
@@ -62,7 +26,7 @@ const chargingPage = ( () => {
 
     let a_Total = 0
 
-    getEventsToBeCharged().forEach( (event) => {
+    eventsToBeCharged.forEach( (event) => {
       a_Total += event.a_share
       content += `
         <tr>
@@ -90,12 +54,18 @@ const chargingPage = ( () => {
   
     if (profile === 'admin') {
       $('#txt-day').show()
-      $('#btn-submit').on('click', clearCharges)
       $('#btn-submit').show()
+      $('#btn-submit').on('click', function() {
+        const date = $('#txt-day').val()
+        if ( date === '') {
+          alert('Tarkista päiväys')
+          return
+        }
+        chargesController.clearCharges(date)
+      })
+
     }
   }
-
-  /* API */
 
   return {render: render}
   

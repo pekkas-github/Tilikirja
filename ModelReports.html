@@ -1,0 +1,46 @@
+<script>
+
+const reportsModel = (function() {
+
+  function getReport() {
+
+    const summaryByAccount = {}
+    const year = parseInt(app.currentYear)
+
+    //Get events per current year 
+    const eventsByYear = app.events.filter( (event) => {
+      if (event.fiscal_year === year) {
+        return event
+      }
+    })
+
+    //Calculate summation per account
+    eventsByYear.forEach( (event) => {
+      if (summaryByAccount[event.account_id]) {
+        summaryByAccount[event.account_id].tot += event.total
+        summaryByAccount[event.account_id].a += event.a_share
+        summaryByAccount[event.account_id].b += event.total - event.a_share
+      }else{
+        summaryByAccount[event.account_id] = {tot:event.total, a:event.a_share, b:(event.total - event.a_share)}
+      }
+    })
+
+    //Calculate summation per party
+    const sums = {tot:0, a:0, b:0}
+    for (const key in summaryByAccount) {
+      sums.tot += summaryByAccount[key].tot
+      sums.a += summaryByAccount[key].a
+      sums.b += summaryByAccount[key].b
+    }
+
+    summaryByAccount.Totals = sums
+
+    return summaryByAccount
+  }
+
+  return {
+    getReport: getReport
+  }
+
+})()
+</script>

@@ -140,38 +140,53 @@ function test_Water() {
 
   t.beforeEach( () => {
 
-    const sheetReplica = ss.getSheetByName('Water_readings_repl')
-    const sheetOrig = ss.getSheetByName('Water_readings')
+    replace('Water_readings')
+    replace('GL_events')
     
-    if (sheetOrig) {
-      ss.deleteSheet(sheetOrig)
+    function replace(sheetName) {
+      let sheetOrig = ss.getSheetByName(sheetName)
+      let sheetReplica = ss.getSheetByName(sheetName + '_repl')
+
+      if (sheetOrig) {
+        ss.deleteSheet(sheetOrig)
+      }
+      sheetReplica.copyTo(ss).setName(sheetName)
     }
-    
-    sheetReplica.copyTo(ss).setName('Water_readings')
 
   })
 
   t.run('Water.insertReading - uusi lukema', () => {
     
     /* SETUP */
-    const record = {id:0, date:'2022-01-01', master_reading:2000, a_reading:4900, b_reading:3000, comment:'Huihai'}
+    const record = {id:0, date:'2022-01-01', master_reading:2000, a_reading:4900, b_reading:3000, comment:'Huihai', fiscal_year: 2022}
 
     /* EXECUTE */
-    const reading = model.insertReading(record)
+    const res = model.insertReading(record)
 
     /* ASSERT */
-    t.isEqual(reading.id, 43, 'Tietueen ensimmäisen kentän arvo')
-    t.isEqual(reading.comment, 'Huihai', 'Tietueen viimeisen kentän arvo')
+    t.isEqual(res.newId, 43, 'Lukematietueen id')
+    t.isEqual(res.newEvent.id, 335, 'Tapahtumatietueen id')
+    t.isEqual(res.newEvent.account_id, 6, 'Tilin nimi')
+    t.isEqual(res.newEvent.a_share-352, 0, 'A-asunnon osuus')
+    t.isEqual(res.newEvent.fiscal_year, 2022, 'Tilivuosi')
   })
 
-  t.run('Water.getConsumptionAndPrice', () => {
+  t.run('Water.getWaterConsumption', () => {
 
     /* EXECUTE */
-    const consumption = model.getWaterConsumptionAndPrice()
+    const consumption = model.getWaterConsumption()
 
     /* ASSERT */
-    t.isEqual(consumption.amount, 63, 'Kulutuslukema')
-    t.isEqual(consumption.charge, 252, 'Veloitus')
+    t.isEqual(consumption, 63, 'Kulutuslukema')
+  })
+
+  t.run('Water.getWaterPrice', () => {
+
+    /* EXECUTE */
+    const price = model.getWaterPrice()
+
+    /* ASSERT */
+    t.isEqual(price, 4, 'Veloitus')
   })
 
 }

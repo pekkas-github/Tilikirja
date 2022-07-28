@@ -1,72 +1,8 @@
 <script>
 
-/* MODULE */
+const eventsView = (function() { 
 
-const eventsPage = ( () => {
-
-  /* EVENT HANDLERS */ 
-
-  function addEvent() {
-    const rec = {}
-    rec.id = 0
-    rec.number = ''
-    rec.date = ''
-    rec.event= ''
-    rec.total = 0
-    rec.a_share = 0
-    rec.account_id = 1
-    rec.comment = ''
-    rec.fiscal_year = app.currentYear
-    rec.charging = ''
-    rec.cleared = ''
-
-    eventForm.render(rec, -1)
-  }
-
-  
-  function changeEventYear() {
-
-    app.currentYear = $('#cbo-years').val()
-    render()
-
-  }
-
-  function changeEventStatus() {
-
-    //selvitä events-taulun indeksi
-    const id = parseInt($(this).parent().attr('id'))
-    const index = getTableIndex(app.events, id)
-    const event = app.events[index]
-
-    //selvitä, onko muutos sallittu
-    if (event.cleared === '') {
-
-      //aseta status -> päälle/pois
-      const status = (event.charging === 'x') ? '' : 'x'
-      app.events[index].charging = status
-      //päivitä näyttö
-      render()
-
-      //lähetä tieto serverille
-      google.script.run
-      .apiCall('setChargingStatus', id, status)
-    }
-  }
-
-  function modifyEvent() {
-    
-    const id = parseInt($(this).parent().attr('id'))
-    const index = getTableIndex(app.events, id)
-    const record = app.events[index]
-
-    eventForm.render(record, index)
-
-  }
-
-
-  /* RENDER PAGE */
-
-  function render () {
+  function render() {
 
     /* CONTROLS */
 
@@ -128,21 +64,29 @@ const eventsPage = ( () => {
 
     /* EVENT LISTENERS */
 
-    $('#cbo-years').on('change', changeEventYear)
+    $('#cbo-years').on('change', function() {
+      eventsController.changeEventsYear($('#cbo-years').val())
+    })
 
     if (profile === 'admin') {
-      $('td').on('dblclick', modifyEvent)
+      $('td').on('dblclick', function() {
+        eventsController.modifyEvent(parseInt($(this).parent().attr('id')))})
+
       $('#btn-add').show()
-      $('#btn-add').on('click', addEvent)
+      $('#btn-add').on('click', function() {
+        eventsController.addNewEvent()})
+
       $('.charge-status').show()
-      $('.charge-status').on('click', changeEventStatus)
+      $('.charge-status').on('click', function() {
+        eventsController.changeEventStatus(parseInt($(this).parent().attr('id')))})
+
       $('.is-payed').show()
     }
   }
-
-  /* API */
   
-  return {render: render}
-
+  return {
+    render: render
+  }
 })()
+
 </script>

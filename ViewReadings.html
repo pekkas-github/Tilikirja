@@ -1,26 +1,25 @@
 <script>
 
-/* MODULE */
-
-const readingsPage = ( () => {
-
-  /* EVENT HANDLERS */
-
-  function addWaterReading() {
-
-    readingForm.render()
-  }
-
-
-  /* RENDER PAGE */
+const readingsView = (function() { 
 
   function render() {
 
     /* CONTROLS */
 
-    const buttonAdd = '<button class="btn" id="btn-add" hidden>Lisää...</button>'
+    const controls = `
+      <button class="btn" id="btn-add" hidden>Lisää...</button>
+      <span id="lnk-price"> Veden hinta</span>`
 
-    $('.controls').html(buttonAdd)
+    $('.controls').html(controls)
+
+    /* CONTROLS - EVENT HANDLERS */
+
+    $('#lnk-price').on('click', readingsController.openWaterPriceForm)
+    $('#btn-add').on('click', readingsController.openReadingForm)
+
+    if (profile === 'admin') {
+      $('#btn-add').show()
+    }
 
     /* CONTENT */
 
@@ -74,19 +73,13 @@ const readingsPage = ( () => {
 
     content += '</table>'
 
-
     $('.content').html(content)
-
-    /* EVENT LISTENERS */
-
-    if (profile === 'admin') {
-      $('#btn-add').show()
-      $('#btn-add').on('click', addWaterReading)
-    }
   }
 
-  /* API */
-  return {render: render}
+    return {
+      render: render
+    }
 
+  
 })()
 </script>

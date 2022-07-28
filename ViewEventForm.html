@@ -1,78 +1,5 @@
 <script>
-
-/* MODULE */
-
-const eventForm = ( () => {
-
-  let eventRecord = {}
-  let recordIndex = -1
-
-
-  /* EVENT HANDLERS */
-
-  function calculateShare() {
-
-    const total = $('#txt-total').val()
-    const per = $('#cbo-percent').val()
-
-    if (per > 0) {
-      $('#txt-share').val((total * per).toFixed(2))
-    }
-  }
-
-
-  function saveEvent() {
-    
-    // Read input
-    eventRecord.number = parseInt($('#txt-nbr').val())
-    eventRecord.date = $('#txt-day').val()
-    eventRecord.event = $('#txt-event').val()
-    eventRecord.total = Number($('#txt-total').val())
-    eventRecord.a_share = Number($('#txt-share').val())
-    eventRecord.account_id = parseInt($('#cbo-account').val())
-    eventRecord.comment = $('#txt-comment').val()
-    eventRecord.fiscal_year = parseInt($('#cbo-year').val())
-
-    // Validate input
-    if (eventRecord.date === '') {alert('Päiväys puuttuu'); return}
-    if (eventRecord.event === '') {alert('Kuvaus puuttuu'); return}
-    if (eventRecord.total === '' || isNaN(eventRecord.total)) {alert('Tarkista kokonaissumma'); return}
-    if (eventRecord.a_share === '' || isNaN(eventRecord.a_share)) {alert('Tarkista A-osuus'); return}
-    if (isNaN(eventRecord.account_id)) {alert('Tili puuttuu'); return}
-    if (isNaN(eventRecord.fiscal_year)) {alert('Tilivuosi puuttuu'); return}
-
-    eventRecord.account_name = $('#cbo-account option:selected').text()
-
-    // Check if new or update
-    if (eventRecord.id === 0) {
-      google.script.run
-      .withSuccessHandler(insertEvent)
-      .apiCall('insertEvent', eventRecord)
-      spinner.on()
-    } else {
-      google.script.run
-      .apiCall('updateEvent', eventRecord)
-
-      app.events[recordIndex] = eventRecord
-      eventsPage.render()
-     popup.off()
-    }
-  }
-
-
-  /* CALLBACK FUNCTIONS */
-
-  function insertEvent (newRecord) {
-
-    app.events.push(newRecord)
-    eventsPage.render()
-
-    spinner.off()
-    popup.off()
-  }
-
-
-  /* RENDER POPUP */
+const eventFormView = (function() {
 
   function render (record, index) {
 
@@ -154,17 +81,51 @@ const eventForm = ( () => {
 
     /* EVENT LISTENERS */
 
-    $('#btn-popup-save').on('click', saveEvent)
-    $('#btn-popup-close').on('click', popup.off)
-    $('#cbo-percent').on('change', calculateShare)
+    $('#btn-popup-save').on('click', validateInput)
 
+    $('#btn-popup-close').on('click', popup.off)
+
+    $('#cbo-percent').on('change', function() {
+      const total = $('#txt-total').val()
+      const per = $('#cbo-percent').val()
+
+      if (per > 0) {
+        $('#txt-share').val((total * per).toFixed(2))
+      }
+    })
     popup.on()
   }
 
+  function validateInput() {
+    eventRecord.number = parseInt($('#txt-nbr').val())
+    eventRecord.date = $('#txt-day').val()
+    eventRecord.event = $('#txt-event').val()
+    eventRecord.total = Number($('#txt-total').val())
+    eventRecord.a_share = Number($('#txt-share').val())
+    eventRecord.account_id = parseInt($('#cbo-account').val())
+    eventRecord.comment = $('#txt-comment').val()
+    eventRecord.fiscal_year = parseInt($('#cbo-year').val())
 
-  /* API */
+    // Validate input
+    try {
+      if (eventRecord.date === '') {throw('Päiväys puuttuu')}
+      if (eventRecord.event === '') {throw('Kuvaus puuttuu')}
+      if (eventRecord.total === '' || isNaN(eventRecord.total)) {throw('Tarkista kokonaissumma')}
+      if (eventRecord.a_share === '' || isNaN(eventRecord.a_share)) {throw('Tarkista A-osuus')}
+      if (isNaN(eventRecord.account_id)) {throw('Tili puuttuu')}
+      if (isNaN(eventRecord.fiscal_year)) {throw('Tilivuosi puuttuu')}
+    }
+    catch(note) {
+      alert(note)
+      return
+    }
+
+    eventRecord.account_name = $('#cbo-account option:selected').text()
+    eventsController.saveEvent(eventRecord, recordIndex)
+
+  }
 
   return {render: render}
-  
+
 })()
 </script>

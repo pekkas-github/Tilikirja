@@ -1,0 +1,64 @@
+<script>
+
+  const eventsController = (function() {
+
+    function addNewEvent() {
+      const rec = {}
+      rec.id = 0
+      rec.number = ''
+      rec.date = ''
+      rec.event= ''
+      rec.total = 0
+      rec.a_share = 0
+      rec.account_id = 1
+      rec.comment = ''
+      rec.fiscal_year = app.currentYear
+      rec.charging = ''
+      rec.cleared = ''
+
+      eventFormView.render(rec, -1)
+    }
+
+    function changeEventStatus(id) {
+      eventsModel.changeEventStatus(id)
+      eventsView.render()
+    }
+
+    function changeEventsYear(year) {
+      eventsModel.changeCurrentYear(year)
+      eventsView.render()
+    }
+
+    function modifyEvent(id) {
+      const params = eventsModel.getEvent(id)
+      eventFormView.render(params.record, params.index)
+    }
+
+    function openEventsPage() {
+      eventsView.render()
+    }
+
+    function saveEvent(event, index) {
+      if (event.id === 0) {
+        eventsModel.addEvent(event, function() {
+          eventsView.render()
+        })
+      } else {
+        eventsModel.updateEvent(event, index)
+        eventsView.render()
+      }
+      popup.off()
+    }
+
+
+    return {
+      addNewEvent: addNewEvent,
+      changeEventStatus: changeEventStatus,
+      changeEventsYear: changeEventsYear,
+      modifyEvent: modifyEvent,
+      openEventsPage: openEventsPage,
+      saveEvent: saveEvent
+    }
+  })()
+
+</script>

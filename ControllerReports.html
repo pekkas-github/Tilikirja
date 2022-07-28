@@ -1,0 +1,19 @@
+<script>
+
+  const reportsController = (function() {
+
+    function changeYear(year) {
+      eventsModel.changeCurrentYear(year)
+      reportsView.render(reportsModel.getReport())
+    }
+
+    function openReportsPage() {
+      reportsView.render(reportsModel.getReport())
+    }
+
+    return {
+      changeYear: changeYear,
+      openReportsPage: openReportsPage
+    }
+  })()
+</script>

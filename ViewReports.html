@@ -2,19 +2,9 @@
 
 /* MODULE */
 
-const reportsPage = ( () => {
+const reportsView = ( () => {
 
-  /* EVENT HANDLERS */
-
-  function changeReportYear() {
-    
-    app.currentYear = $('#cbo-years').val()
-    render()
-  }
-
-  /* RENDER PAGE */
-
-  function render() {
+  function render(summaryByAccount) {
   
     /* CONTROLS */ 
 
@@ -30,36 +20,7 @@ const reportsPage = ( () => {
     $('#cbo-years').val(app.currentYear)
 
     /* CONTENT */
-
-    const summaryByAccount = {}
-    const year = parseInt(app.currentYear)
-
-    const eventsByYear = app.events.filter( (event) => {
-      if (event.fiscal_year === year) {
-        return event
-      }
-    })
-
-    eventsByYear.forEach( (event) => {
-      if (summaryByAccount[event.account_id]) {
-        summaryByAccount[event.account_id].tot += event.total
-        summaryByAccount[event.account_id].a += event.a_share
-        summaryByAccount[event.account_id].b += event.total - event.a_share
-      }else{
-        summaryByAccount[event.account_id] = {tot:event.total, a:event.a_share, b:(event.total - event.a_share)}
-      }
-    })
-
-
-    const sums = {tot:0, a:0, b:0}
-    for (const key in summaryByAccount) {
-      sums.tot += summaryByAccount[key].tot
-      sums.a += summaryByAccount[key].a
-      sums.b += summaryByAccount[key].b
-    }
-
-    summaryByAccount.Totals = sums
-
+    
     let content = `
       <table id="tbl-reports">
       <tr>
@@ -94,7 +55,8 @@ const reportsPage = ( () => {
 
     /* EVENT LISTENERS */
 
-    $('#cbo-years').on('change', changeReportYear)
+    $('#cbo-years').on('change', function() {
+      reportsController.changeYear($('#cbo-years').val())})
 
   }
 
