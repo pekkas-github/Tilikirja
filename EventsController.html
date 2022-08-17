@@ -16,45 +16,71 @@
       rec.charging = ''
       rec.cleared = ''
 
-      eventFormView.render(rec, -1)
+      eventFormView.render(rec)
     }
 
+
     function changeEventStatus(id) {
-      eventsModel.changeEventStatus(id)
+      eventsModel.changeEventStatus(id)      
+      .catch( error => {
+        alert(`Server: ${error.message}`)
+        reloadEvents()
+      })
       eventsView.render()
     }
+
 
     function changeEventsYear(year) {
       eventsModel.changeCurrentYear(year)
       eventsView.render()
     }
 
+    async function reloadEvents() {
+      spinner.on()
+      try {
+        await eventsModel.getEvents()
+        eventsView.render()
+        spinner.off()
+      }
+      catch(error) {alert(error)}
+    }
+    
+
+
     function modifyEvent(id) {
-      const params = eventsModel.getEvent(id)
-      eventFormView.render(params.record, params.index)
+      eventFormView.render(eventsModel.getEvent(id))
     }
 
     function openEventsPage() {
       eventsView.render()
     }
 
-    function saveEvent(event, index) {
+    function saveEvent(event) {
       if (event.id === 0) {
-        eventsModel.addEvent(event, function() {
+        //insertEvent(event)
+        spinner.on()
+        eventsModel.addEvent(event)
+        .then(() => {
           eventsView.render()
+          spinner.off()
         })
       } else {
-        eventsModel.updateEvent(event, index)
+        //updateEvent(event)
+        eventsModel.updateEvent(event)
+        .catch( error => {
+          alert(error.message)
+          reloadEvents()
+        })
         eventsView.render()
       }
       popup.off()
     }
 
-
     return {
       addNewEvent: addNewEvent,
       changeEventStatus: changeEventStatus,
       changeEventsYear: changeEventsYear,
+      reloadEvents: reloadEvents,
       modifyEvent: modifyEvent,
       openEventsPage: openEventsPage,
       saveEvent: saveEvent

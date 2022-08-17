@@ -21,23 +21,22 @@
         $(this).css('background', '#333385')
         $(this).css('font-weight', 'bold')
       })
-
     /* Data request */
     google.script.run
     .withFailureHandler((error)=>{alert(error)})
     .withSuccessHandler(storeData)
-    .apiCall('getData')
+    .apiCall('getAllData')
 
   })
 
   /* CALLBACK FUNCTIONS */
   function storeData(response) {
-
     app.events = response[0]
     app.water = response[1]
     app.years = response[2]
     app.accounts = response[3]
     app.currentYear = response[4]
+    app.currentWaterPrice = response[5]
 
     spinner.off()
   }

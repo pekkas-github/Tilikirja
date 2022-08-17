@@ -1,10 +1,13 @@
 <script>
 const eventFormView = (function() {
 
-  function render (record, index) {
+  let eventRecord = {}  // event record values (new or existing)
+  let dateDisabled      // enable date only if new record
+
+  function render (record) {
 
     eventRecord = record
-    recordIndex = index 
+    dateDisabled = (record.id === 0) ? '' : 'disabled'
 
     let popupContent = `
       <span id="btn-popup-close">&times;</span>
@@ -16,7 +19,7 @@ const eventFormView = (function() {
         </tr>
         <tr>
           <td class="label">Päiväys:</td>
-          <td class="empty"><input id="txt-day" type="date" value="${record.date}"></td>
+          <td class="empty"><input id="txt-day" type="date" value="${record.date}" ${dateDisabled}></td>
         </tr>
         <tr>
           <td class="label">Tapahtuma:</td>
@@ -121,7 +124,7 @@ const eventFormView = (function() {
     }
 
     eventRecord.account_name = $('#cbo-account option:selected').text()
-    eventsController.saveEvent(eventRecord, recordIndex)
+    eventsController.saveEvent(eventRecord)
 
   }
 

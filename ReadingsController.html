@@ -3,7 +3,12 @@
   const readingsController = (function() {
 
     function addReading(reading) {
-      readingsModel.addReading(reading, readingsView.render)
+      readingsModel.addReading(reading)
+      .catch( err => {
+        alert(`Server: ${err.message}`)
+        reloadReadings()
+      })
+      readingsView.render()
     }
 
     function openReadingsPage() {
@@ -15,7 +20,17 @@
     }
 
     function openWaterPriceForm() {
-      alert('Hintanäkymä aukeaa tästä...')
+      waterPriceFormView.render()
+    }
+
+    async function reloadReadings() {
+      try {
+        await readingsModel.getReadings()
+        readingsView.render()
+      }
+      catch(error) {
+        alert(`Server: ${error.message}`)
+      }
     }
 
     return {

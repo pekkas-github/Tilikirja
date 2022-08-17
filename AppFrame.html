@@ -4,7 +4,7 @@
     <base target="_top">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
-    <?!= include('ComStyles') ?>
+    <?!= include('AppStyles') ?>
   </head>
 
   <body>
@@ -45,23 +45,24 @@
       const profile = <?= profile ?> 
     </script>
 
-    <?!= include('ComGlobals') ?>
-    <?!= include('ComStart')?>
-    <?!= include('ViewInfo') ?>
-    <?!= include('ViewEvents') ?>
-    <?!= include('ViewEventForm') ?>
-    <?!= include('ControllerEvents') ?>
-    <?!= include('ModelEvents') ?>
-    <?!= include('ViewReadings') ?>
-    <?!= include('ViewReadingForm') ?>
-    <?!= include('ControllerReadings') ?>
-    <?!= include('ModelReadings') ?>
-    <?!= include('ViewReports') ?>
-    <?!= include('ControllerReports') ?>
-    <?!= include('ModelReports') ?>
-    <?!= include('ViewCharges') ?>
-    <?!= include('ControllerCharges') ?>
-    <?!= include('ModelCharges') ?>
+    <?!= include('AppGlobals') ?>
+    <?!= include('AppStart')?>
+    <?!= include('InfoView') ?>
+    <?!= include('EventsView') ?>
+    <?!= include('EventFormView') ?>
+    <?!= include('EventsController') ?>
+    <?!= include('EventsModel') ?>
+    <?!= include('ReadingsView') ?>
+    <?!= include('ReadingFormView') ?>
+    <?!= include('ReadingsController') ?>
+    <?!= include('ReadingsModel') ?>
+    <?!= include('ReportsView') ?>
+    <?!= include('ReportsController') ?>
+    <?!= include('ReportsModel') ?>
+    <?!= include('ChargesView') ?>
+    <?!= include('ChargesController') ?>
+    <?!= include('ChargesModel') ?>
+    <?!= include('WaterPriceFormView') ?>
 
   </body>
 </html>

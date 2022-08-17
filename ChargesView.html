@@ -12,6 +12,22 @@ const chargesView = (function() {
 
     $('.controls').html(controls)
 
+    /* CONTROLS - EVENT HANDLERS */
+
+    $('#btn-submit').on('click', function() {
+      const date = $('#txt-day').val()
+      if ( date === '') {
+        alert('Tarkista päiväys')
+        return
+      }
+      chargesController.ackCharges(date)
+    })
+
+    if (profile === 'admin') {
+      $('#txt-day').show()
+      $('#btn-submit').show()
+    }
+
     /* CONTENT */
 
     let content = `
@@ -49,22 +65,6 @@ const chargesView = (function() {
       </table>`
 
     $('.content').html(content)
-
-    /* EVENT LISTENERS */
-  
-    if (profile === 'admin') {
-      $('#txt-day').show()
-      $('#btn-submit').show()
-      $('#btn-submit').on('click', function() {
-        const date = $('#txt-day').val()
-        if ( date === '') {
-          alert('Tarkista päiväys')
-          return
-        }
-        chargesController.clearCharges(date)
-      })
-
-    }
   }
 
   return {render: render}

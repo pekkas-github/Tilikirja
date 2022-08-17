@@ -7,12 +7,13 @@
       {
         "userSymbol": "DbLib2",
         "libraryId": "1tLekUn3aO2KDlv8GLsoHK4gXLKnuUpqReCu98iRY_Fwntbgu-hZv6XIa",
-        "version": "5"
+        "version": "6"
       },
       {
-        "userSymbol": "t",
+        "userSymbol": "TestFrame",
         "libraryId": "11l_SrvKPA_rofg5jyxFRny19812HA6VutAEAciI6blNAxr0BgcuVYFfv",
-        "version": "3"
+        "version": "0",
+        "developmentMode": true
       }
     ]
   },

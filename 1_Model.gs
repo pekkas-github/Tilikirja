@@ -4,92 +4,129 @@ class Model {
     this.db = DbLib2.getDataAccess(app.dbUrl)
   }
 
-  ackCharges (events, date) {
-
+  /* Change selected events as 'payed by A' on the given date */
+  ackCharges ({eventsToBeCharged, date}) {
     const table = this.db.getTable('GL_events')
 
-    events.forEach( (event) => {
+    eventsToBeCharged.forEach( (event) => {
       const record = table.getRecord(event.id)
+      if (record === false) {
+        throw(`Tapahtumaa "${event.event}" ei löydy tietokannasta.`)
+      }
       record.cleared = date
       table.updateRecord(record)
     })
+
+    this.updateChargingSheet()
   }
-
-
-  getEvents () {
-
-    const table = this.db.getTable('GL_events')
-    return table.getRecords()
-  }
-
-
-  getWaterReadings () {
-
-    const table = this.db.getTable('Water_readings')
-    return table.getRecords()
-  }
-
-  getYears () {
-
-    const table = this.db.getTable('Years')
-    return table.getRecords()
-  }
-
 
   getAccounts () {
-
-//    const table = this.db.getTable('List_accounts')
-    const table = this.db.getTable('Accounts')
-    return table.getRecords()
+    return this.db
+      .getTable('Accounts')
+      .getRecords()
   }
 
 
-  getCurrentYear () {
-    
-    const table = this.db.getTable('Years')
-    const years = table.getRecords().filterAnd('current', 'x')
+  getAllData () {
+    let response = []
+
+    response.push(this.getEvents())
+    response.push(this.getWaterReadings())
+    response.push(this.getYears())
+    response.push(this.getAccounts())
+    response.push(this.getCurrentYear())
+    response.push(this.getCurrentWaterPrice())
+
+    return response
+  }
+
+  getCurrentWaterPrice () {
+    // Return current water price record as an object {parameters and calculated total price}
+    const price = this.db
+      .getTable('Water_Prices2')
+      .getRecords()
+      .filterAnd('current_value', 'x')[0]
+
+    price.base_part = Math.floor(100 * (price.factor * price.area * price.base_price * 12 / price.consumption + 0.005))/100
+    price.total = price.base_part + price.water_price + price.waste_price
+    return price
+  }
+
+  getCurrentYear () {    
+    const years = this.db
+      .getTable('Years')
+      .getRecords()
+      .filterAnd('current', 'x')
 
     return years[0].year
   }
 
-  getWaterConsumption () {
+  getEvents () {
+    const events = this.db
+      .getTable('GL_events')
+      .getRecords()
+    const accounts = this.getAccounts()
 
+    //Add account_name field with account name values
+    events.forEach( (event) => {
+      for(const account of accounts) {
+        if (event.account_id === account.id) {
+          event.account_name = account.name
+          return
+        }
+      }
+    })
+
+    return events
+  }
+
+
+  getWaterConsumption () {
     // Sort last reading first and previous one in order after it
-    const readings = this.db.getTable('Water_readings')
+    const readings = this.db
+      .getTable('Water_readings')
       .getRecords()
       .sortDesc('id')
 
     return readings[0].a_reading - readings[1].a_reading
-
   }
+
 
   getWaterPrice () {
-    // Get current unit price
-    const price = this.db.getTable('Water_prices')
-      .getRecords()
-      .filterAnd('current_price', 'x')[0]
-      .Laskennallinen_hinta
-
-    return price
+    // Return current calculated total price (€/m3)
+    return this.getCurrentWaterPrice().total
   }
+
+
+  getWaterReadings () {
+    return this.db
+      .getTable('Water_readings')
+      .getRecords()
+  }
+
+  getYears () {
+    return this.db
+      .getTable('Years')
+      .getRecords()
+  }
+
 
 
   insertEvent (eventRecord) {
-
     const table = this.db.getTable('GL_events')
     const allEvents = table.getRecords()
     const eventYear = eventRecord.date.substring(0,4)
-
-    //hae tapahtumavuoden kaikki tapahtumat
+    //Get all events of the event year
     const eventYearRecordset = allEvents.filter((record) => {
       if (record.date.substring(0,4) === eventYear) {
         return record
       }
     })
-    //järjestä vuoden tapahtumat laskevaan järjestykseen
+
+    //Sort the events in descending order based on event log number
     eventYearRecordset.sort((a, b) => {return b.number - a.number})
 
-    //määritä tapahtuman numero (1 tai inc)
+    //Define the log number of this event (the first of the year or next after the last event)
     if (eventYearRecordset.length === 0) {
       eventRecord.number = 1
     } else {
@@ -103,18 +140,20 @@ class Model {
 
 
   insertReading (readingRecord) {
-
-    // Save water reading record
-    const tableWater = this.db.getTable('Water_readings')
-    readingRecord.id = tableWater.insertRecord(readingRecord)
+    // Save water reading record and set its id
+    readingRecord.id = this.db
+      .getTable('Water_readings')
+      .insertRecord(readingRecord)
 
     const consumption = this.getWaterConsumption()
     const price = this.getWaterPrice()
     const a_share = Math.floor(((consumption * price)*100+0.5))/100
-    // Create event record
-    const tableEvent = this.db.getTable('GL_events')
 
-    let event = tableEvent.newRecord()
+    // Create event record
+    const event = this.db
+      .getTable('GL_events')
+      .newRecord()
+
     event.date = readingRecord.date
     event.event = `Vesimaksu (lukeman mukaan ${consumption} m2)`
     event.total = 0
@@ -132,62 +171,62 @@ class Model {
   }
 
 
-  setChargingStatus (id, status) {
+  setChargingStatus ({id, status}) {
+    try {
+      const table = this.db.getTable('GL_events')
+      const record = table
+        .getRecords()
+        .filterAnd('id', id)
+      record[0].charging = status
+      table.updateRecords(record)
 
-    const table = this.db.getTable('GL_events')
-    const record = table.getRecords().filterAnd('id', id)
-    record[0].charging = status
-
-    table.updateRecords(record)
+      this.updateChargingSheet()
+    }
+    catch(err) {throw new Error(`Tapahtumaa ei löytynyt tietokannasta.`)}
   }
 
 
-updateChargingSheet () {
+  updateChargingSheet () {
+    const events = this.db
+      .getTable('GL_events')
+      .getRecords()
+    const accounts = this.db
+      .getTable('Accounts')
+      .getRecords()
+    const sheet = SpreadsheetApp
+      .openByUrl(app.printingSheet)
+      .getSheetByName('Summary')
+    const values = []
 
-  const table1 = this.db.getTable('GL_events')
-  const table2 = this.db.getTable('Accounts')
-  const sheet = SpreadsheetApp.openByUrl(app.printingSheet).getSheetByName('Summary')
+    sheet.getRange(5, 2, 14, 5).clearContent();
 
-  const events = table1.getRecords()
-  const accounts = table2.getRecords()
-  const values = []
+    events.forEach( (event) => {    
+      if (event.charging === 'x' && event.cleared === '') {
+        const newLine = []
+        newLine.push(event.date)
+        newLine.push(event.event)
+        newLine.push(event.total)
+        newLine.push(event.a_share)
 
-  sheet.getRange(5, 2, 14, 5).clearContent();
-
-
-  events.forEach( (event) => {
-
-    
-    if (event.charging === 'x' && event.cleared === '') {
-      const newLine = []
-      newLine.push(event.date)
-      newLine.push(event.event)
-      newLine.push(event.total)
-      newLine.push(event.a_share)
-
-      for (const account of accounts) {
-        if(account.id === event.account_id) {
-          newLine.push(account.name)
-          break
+        for (const account of accounts) {
+          if(account.id === event.account_id) {
+            newLine.push(account.name)
+            break
+          }
         }
+
+        values.push(newLine)
       }
+    })
 
-      values.push(newLine)
-    }
-  })
+    if (values.length === 0) {return}
 
-  if (values.length === 0) {return}
-
-  sheet.getRange(5, 2, values.length, 5).setValues(values);
-
-}
+    sheet.getRange(5, 2, values.length, 5).setValues(values)
+  }
 
   updateEvent (eventRecord) {
-
-  const table = this.db.getTable('GL_events')
-
-  return table.updateRecord(eventRecord)
-
+    if (this.db.getTable('GL_events').updateRecord(eventRecord) === false) {
+      throw new Error('Päivitettävää tietuetta ei löydy tietokannasta.')
+    }
   }
 }
-

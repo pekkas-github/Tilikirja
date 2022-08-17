@@ -1,0 +1,44 @@
+<script>
+  
+  const readingsModel = (function() {
+
+    function addReading(reading) {
+      return new Promise((resolve, reject) => {
+
+        app.water.push(reading)
+        // Add reading in server table and update its id and insert new event in local table
+        google.script.run
+        .withSuccessHandler( res => {
+          app.water.forEach( reading => {
+            if(reading.id === 0) {
+              reading.id = res.newId
+            }
+          })
+          app.events.push(res.newEvent)
+          resolve()
+        })
+        .withFailureHandler( err => {reject(err)})
+        .apiCall('insertReading', reading)
+      })
+    }
+
+    function getReadings() {
+      return new Promise((resolve, reject) => {
+        
+        google.script.run
+        .withSuccessHandler( readings => {
+          api.water = readings
+          resolve(readings)
+        })
+        .withFailureHandler( err => {reject(err)})
+        .apiCall('getWaterReadings')
+      })
+    }
+
+    return {
+      addReading: addReading,
+      getReadings: getReadings
+    }
+
+  })()
+</script>

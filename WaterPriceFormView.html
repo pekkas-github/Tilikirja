@@ -1,0 +1,78 @@
+<script>
+const waterPriceFormView = (function() {
+
+  function render () {
+
+    let popupContent = `
+      <p id="btn-popup-close">&times;</p>
+      <h3>Veden hinta</h3>
+      
+      <table class="tbl-water-price">
+        <tr>
+          <td colspan="3"><h3>Hinnoittelun parametrit</h3></td>
+        </tr>
+        <tr>
+          <td class="td-right">Alkaen:</td>
+          <td class="number">${app.currentWaterPrice.date}</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td class="td-right">Kiinteistökerroin:</td>
+          <td class="number">${app.currentWaterPrice.factor}</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td class="td-right">Pinta-alaperuste:</td>
+          <td class="number">${app.currentWaterPrice.area}</td>
+          <td>m2</td>
+        </tr>
+        <tr>
+          <td class="td-right">Perusmaksu:</td>
+          <td class="number">${app.currentWaterPrice.base_price}</td>
+          <td>€/kk/m2</td>
+        </tr>
+        <tr>
+          <td class="td-right">Arvioitu vuosikulutus:</td>
+          <td class="number">${app.currentWaterPrice.consumption}</td>
+          <td>m3/vuosi</td>
+        </tr>
+        <tr>
+          <td colspan="3"><h3>Veden hinta</h3></td>
+        </tr>
+        <tr>
+          <td class="td-right">Perusmaksuosuus:</td>
+          <td class="number">${app.currentWaterPrice.base_part.toFixed(2)}</td>
+          <td>€/m3</td>
+        </tr>
+        <tr>
+          <td class="td-right">Käyttövesimaksu:</td>
+          <td class="number">${app.currentWaterPrice.water_price}</td>
+          <td>€/m3</td>
+        </tr>
+        <tr>
+          <td class="td-right">Jätevesimaksu:</td>
+          <td class="number">${app.currentWaterPrice.waste_price}</td>
+          <td>€/m3</td>
+        </tr>
+        <tr>
+          <td class="td-right total">Kokonaishinta:</td>
+          <td class="total">${app.currentWaterPrice.total.toFixed(2)}</td>
+          <td class="total">€/m3</td>
+        </tr>
+      </table>
+
+      <div class="popup-info">
+        <p>Perusmaksuosuus = Kiinteistökerroin x Kerrosala x Perusmaksu x 12 / Vuosikulutus</p>
+        <p>Vesimaksuosuus = Käyttövesimaksu + Jätevesimaksu</p>
+      </div>`
+    
+    $('.popup-content').html(popupContent)
+
+    $('#btn-popup-close').on('click', popup.off)
+
+    popup.on()
+  }
+
+  return {render: render}
+})()
+</script>

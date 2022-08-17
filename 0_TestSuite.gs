@@ -2,21 +2,28 @@ app.dbUrl = 'https://docs.google.com/spreadsheets/d/1gs-h1ZPX2VWCZ4za2r8IGHVNu9W
 app.version = 'DEV'
 
 function test_Events () {
+  const t = TestFrame.getTestFrame()
+
+  t.test('Events Module tests', () => {
 
   const model = new Model()
   const ss = SpreadsheetApp.openByUrl(app.dbUrl)
 
   t.beforeEach( () => {
 
-    const sheetReplica = ss.getSheetByName('GL_events_repl')
-    const sheetOrig = ss.getSheetByName('GL_events')
-    
-    if (sheetOrig) {
-      ss.deleteSheet(sheetOrig)
-    }
-    
-    sheetReplica.copyTo(ss).setName('GL_events')
+    resume('GL_events')
+    resume('Water_readings')
 
+    function resume(sheetName) {
+      const sheetReplica = ss.getSheetByName(`${sheetName}_repl`)
+      const sheetOrig = ss.getSheetByName(sheetName)
+      
+      if (sheetOrig) {
+        ss.deleteSheet(sheetOrig)
+      }
+      
+      sheetReplica.copyTo(ss).setName(sheetName)
+    }
   })
 
   t.run('Model.ackCharges - kuittaa veloitukset', () => {
@@ -26,7 +33,24 @@ function test_Events () {
     const range = sheet.getRange(61,11,4,1)
 
     /* EXECUTE */
-    model.ackCharges(events, '2022-01-01')
+    model.ackCharges({eventsToBeCharged:events, date:'2022-01-01'})
+    const values =range.getValues()
+
+    /* ASSERT */
+    t.isEqual(values[0][0], '2022-01-01', 'Ensimmäinen kuitattu')
+    t.isEqual(values[2][0], '', 'Ei kuitaatava')
+    t.isEqual(values[3][0], '2022-01-01', 'Viimeinen kuitattava')
+  })
+
+  t.run('Model.ackCharges - kuitattavan veloituksen id:tä ei löydy (ERROR)', () => {
+    /* SETUP */
+    t.errorExpected()
+    const events = [{id:330}, {id:331}, {id:336, event:'Testitapahtuma'}]
+    const sheet = ss.getSheetByName('GL_events')
+    const range = sheet.getRange(61,11,4,1)
+
+    /* EXECUTE */
+    model.ackCharges({eventsToBeCharged:events, date:'2022-01-01'})
     const values =range.getValues()
 
     /* ASSERT */
@@ -42,7 +66,6 @@ function test_Events () {
     t.isEqual(response.length, 62, 'Tietueiden lukumäärä')
   })
 
-
   t.run('Model.getCurrentYear', () => {
 
     const response = model.getCurrentYear()
@@ -56,8 +79,8 @@ function test_Events () {
     const range = sheet.getRange(60, 10, 2, 1)
 
     /*EXECUTE*/
-    model.setChargingStatus(329, 'x')
-    model.setChargingStatus(330, '')
+    model.setChargingStatus({id:329, status:'x'})
+    model.setChargingStatus({id:330, status:''})
 
     /*ASSERT*/
     const values = range.getValues()
@@ -90,17 +113,18 @@ function test_Events () {
     t.isEqual(res.number, 1, 'Tapahtuman numero')
   })
 
-  t.run('Water.insertWaterReadingEvent - lukemasta tapahtumaksi', () => {
+  t.run('Water.insertReading - lukemasta tapahtumaksi', () => {
     
     /* SETUP */
 
     /* EXECUTE */
-    const event = model.insertWaterReadingEvent('2022-01-01', 63, 235.20, 2021)
+    const event = model.insertReading({id:0, date:'2022-01-01', master_reading:500, a_reading:4822, b_reading:5282, fiscal_year:2022, comment:'Test'})
 
     /* ASSERT */
-    t.isEqual(event.event, 'Vesimaksu (lukeman mukaan 63 m2)', 'Laskettu kulutuksen määrä')
-    t.isEqual(event.a_share, 235.20, 'Kulutuksesta laskettu hinta')
-    t.isEqual(event.fiscal_year, 2021, 'Tilivuosi')
+    t.isEqual(event.newId, 43, 'Uuden tietueen id')
+    t.isEqual(event.newEvent.event, 'Vesimaksu (lukeman mukaan 10 m2)', 'Laskettu kulutuksen määrä')
+    t.isEqual(event.newEvent.a_share, 41.30, 'Kulutuksesta laskettu hinta')
+    t.isEqual(event.newEvent.fiscal_year, 2022, 'Tilivuosi')
   })
 
 
@@ -130,63 +154,85 @@ function test_Events () {
     /* ASSERT */
     t.isEqual(res, false, 'Operaation status')
   })
-
+})
 }
 
 function test_Water() {
+  const t = TestFrame.getTestFrame()
 
-  const model = new Model()
+  t.test('Water Module tests', () => {
+    const model = new Model()
+    const ss = SpreadsheetApp.openByUrl(app.dbUrl)
+
+    t.beforeEach( () => {
+
+      replace('Water_readings')
+      replace('GL_events')
+      
+      function replace(sheetName) {
+        let sheetOrig = ss.getSheetByName(sheetName)
+        let sheetReplica = ss.getSheetByName(sheetName + '_repl')
+
+        if (sheetOrig) {
+          ss.deleteSheet(sheetOrig)
+        }
+        sheetReplica.copyTo(ss).setName(sheetName)
+      }
+
+    })
+
+    t.run('Water.insertReading - uusi lukema', () => {
+      
+      /* SETUP */
+      const record = {id:0, date:'2022-01-01', master_reading:2000, a_reading:4900, b_reading:3000, comment:'Huihai', fiscal_year: 2022}
+
+      /* EXECUTE */
+      const res = model.insertReading(record)
+
+      /* ASSERT */
+      t.isEqual(res.newId, 43, 'Lukematietueen id')
+      t.isEqual(res.newEvent.id, 335, 'Tapahtumatietueen id')
+      t.isEqual(res.newEvent.account_id, 6, 'Tilin nimi')
+      t.isEqual(res.newEvent.a_share - 363.44, 0, 'A-asunnon osuus')
+      t.isEqual(res.newEvent.fiscal_year, 2022, 'Tilivuosi')
+    })
+
+    t.run('Water.getWaterConsumption', () => {
+
+      /* EXECUTE */
+      const consumption = model.getWaterConsumption()
+
+      /* ASSERT */
+      t.isEqual(consumption, 63, 'Kulutuslukema')
+    })
+
+    t.run('Water.getWaterPrice', () => {
+
+      /* EXECUTE */
+      const price = model.getWaterPrice()
+
+      /* ASSERT */
+      t.lessThan(price - 4.13, 0.0001, 'Veloitus')
+    })
+  })
+}
+
+function resumeTables() {
+
   const ss = SpreadsheetApp.openByUrl(app.dbUrl)
 
-  t.beforeEach( () => {
+  replace('Water_readings')
+  replace('GL_events')
+  
+  function replace(sheetName) {
+    let sheetOrig = ss.getSheetByName(sheetName)
+    let sheetReplica = ss.getSheetByName(sheetName + '_repl')
 
-    replace('Water_readings')
-    replace('GL_events')
-    
-    function replace(sheetName) {
-      let sheetOrig = ss.getSheetByName(sheetName)
-      let sheetReplica = ss.getSheetByName(sheetName + '_repl')
-
-      if (sheetOrig) {
-        ss.deleteSheet(sheetOrig)
-      }
-      sheetReplica.copyTo(ss).setName(sheetName)
+    if (sheetOrig) {
+      ss.deleteSheet(sheetOrig)
     }
-
-  })
-
-  t.run('Water.insertReading - uusi lukema', () => {
-    
-    /* SETUP */
-    const record = {id:0, date:'2022-01-01', master_reading:2000, a_reading:4900, b_reading:3000, comment:'Huihai', fiscal_year: 2022}
-
-    /* EXECUTE */
-    const res = model.insertReading(record)
-
-    /* ASSERT */
-    t.isEqual(res.newId, 43, 'Lukematietueen id')
-    t.isEqual(res.newEvent.id, 335, 'Tapahtumatietueen id')
-    t.isEqual(res.newEvent.account_id, 6, 'Tilin nimi')
-    t.isEqual(res.newEvent.a_share-352, 0, 'A-asunnon osuus')
-    t.isEqual(res.newEvent.fiscal_year, 2022, 'Tilivuosi')
-  })
-
-  t.run('Water.getWaterConsumption', () => {
-
-    /* EXECUTE */
-    const consumption = model.getWaterConsumption()
-
-    /* ASSERT */
-    t.isEqual(consumption, 63, 'Kulutuslukema')
-  })
-
-  t.run('Water.getWaterPrice', () => {
-
-    /* EXECUTE */
-    const price = model.getWaterPrice()
-
-    /* ASSERT */
-    t.isEqual(price, 4, 'Veloitus')
-  })
+    sheetReplica.copyTo(ss).setName(sheetName)
+  }
 
 }
+
