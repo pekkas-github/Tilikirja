@@ -5,14 +5,11 @@ class Model {
   }
 
   /* Change selected events as 'payed by A' on the given date */
-  ackCharges ({eventsToBeCharged, date}) {
+  ackCharges ({events, date}) {
     const table = this.db.getTable('GL_events')
 
-    eventsToBeCharged.forEach( (event) => {
+    events.forEach( (event) => {
       const record = table.getRecord(event.id)
-      if (record === false) {
-        throw(`Tapahtumaa "${event.event}" ei löydy tietokannasta.`)
-      }
       record.cleared = date
       table.updateRecord(record)
     })
@@ -57,7 +54,6 @@ class Model {
       .getTable('Years')
       .getRecords()
       .filterAnd('current', 'x')
-
     return years[0].year
   }
 
@@ -225,8 +221,6 @@ class Model {
   }
 
   updateEvent (eventRecord) {
-    if (this.db.getTable('GL_events').updateRecord(eventRecord) === false) {
-      throw new Error('Päivitettävää tietuetta ei löydy tietokannasta.')
-    }
+    this.db.getTable('GL_events').updateRecord(eventRecord)
   }
 }

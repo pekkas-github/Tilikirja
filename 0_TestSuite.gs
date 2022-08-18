@@ -1,6 +1,17 @@
 app.dbUrl = 'https://docs.google.com/spreadsheets/d/1gs-h1ZPX2VWCZ4za2r8IGHVNu9WBRjnKihBfIvqCxZE/edit#gid=0'
 app.version = 'DEV'
 
+function resumeTable(sheetName) {
+  const ss = SpreadsheetApp.openByUrl(app.dbUrl)
+  const sheetReplica = ss.getSheetByName(`${sheetName}_repl`)
+  const sheetOrig = ss.getSheetByName(sheetName)      
+  if (sheetOrig) {
+    ss.deleteSheet(sheetOrig)
+  }
+  sheetReplica.copyTo(ss).setName(sheetName)
+
+}
+
 function test_Events () {
   const t = TestFrame.getTestFrame()
 
@@ -11,29 +22,18 @@ function test_Events () {
 
   t.beforeEach( () => {
 
-    resume('GL_events')
-    resume('Water_readings')
-
-    function resume(sheetName) {
-      const sheetReplica = ss.getSheetByName(`${sheetName}_repl`)
-      const sheetOrig = ss.getSheetByName(sheetName)
-      
-      if (sheetOrig) {
-        ss.deleteSheet(sheetOrig)
-      }
-      
-      sheetReplica.copyTo(ss).setName(sheetName)
-    }
+    resumeTable('GL_events')
+    resumeTable('Water_readings')
   })
 
   t.run('Model.ackCharges - kuittaa veloitukset', () => {
     /* SETUP */
-    const events = [{id:330}, {id:331}, {id:333}]
+    const testEvents = [{id:330}, {id:331}, {id:333}]
     const sheet = ss.getSheetByName('GL_events')
     const range = sheet.getRange(61,11,4,1)
 
     /* EXECUTE */
-    model.ackCharges({eventsToBeCharged:events, date:'2022-01-01'})
+    model.ackCharges({events:testEvents, date:'2022-01-01'})
     const values =range.getValues()
 
     /* ASSERT */
@@ -42,15 +42,15 @@ function test_Events () {
     t.isEqual(values[3][0], '2022-01-01', 'Viimeinen kuitattava')
   })
 
-  t.run('Model.ackCharges - kuitattavan veloituksen id:tä ei löydy (ERROR)', () => {
+  t.run('Model.ackCharges - kuitattavan veloituksen id:tä ei löydy', () => {
     /* SETUP */
-    t.errorExpected()
-    const events = [{id:330}, {id:331}, {id:336, event:'Testitapahtuma'}]
+    t.errorExpected('Tietuetta (336) ei löydy.')
+    const testEvents = [{id:330}, {id:331}, {id:336, event:'Testitapahtuma'}]
     const sheet = ss.getSheetByName('GL_events')
     const range = sheet.getRange(61,11,4,1)
 
     /* EXECUTE */
-    model.ackCharges({eventsToBeCharged:events, date:'2022-01-01'})
+    model.ackCharges({events:testEvents, date:'2022-01-01'})
     const values =range.getValues()
 
     /* ASSERT */
@@ -67,7 +67,6 @@ function test_Events () {
   })
 
   t.run('Model.getCurrentYear', () => {
-
     const response = model.getCurrentYear()
   
     t.isEqual(response, '2021', 'Oletusvuosi')
@@ -138,7 +137,6 @@ function test_Events () {
     const rec = model.getEvents().filterAnd('id', 330)
 
     /* ASSERT */
-    t.isEqual(res, true, 'Operaation status')
     t.isEqual(rec[0].event, 'Testing', 'Muutettu data')
     t.isEqual(rec[0].cleared, '2023-06-06', 'Viimeinen kenttä muutettu')
   })
@@ -146,13 +144,11 @@ function test_Events () {
   t.run('Model.updateEvent - tietuetta ei löydy', () => {
 
     /* SETUP */
+    t.errorExpected('Tietuetta (999) ei löydy.')
     const record = {id:999, number:10, date:'2023-04-10', event:'Testing', total:100, a_share:50, account:'Sähkö', comment:'Huihai', fiscal_year:2023, charging:'xx', cleared:'2023-06-06'}
 
     /* EXECUTE */
-    const res = model.updateEvent(record)
-
-    /* ASSERT */
-    t.isEqual(res, false, 'Operaation status')
+    model.updateEvent(record)
   })
 })
 }
@@ -162,23 +158,11 @@ function test_Water() {
 
   t.test('Water Module tests', () => {
     const model = new Model()
-    const ss = SpreadsheetApp.openByUrl(app.dbUrl)
 
     t.beforeEach( () => {
 
-      replace('Water_readings')
-      replace('GL_events')
-      
-      function replace(sheetName) {
-        let sheetOrig = ss.getSheetByName(sheetName)
-        let sheetReplica = ss.getSheetByName(sheetName + '_repl')
-
-        if (sheetOrig) {
-          ss.deleteSheet(sheetOrig)
-        }
-        sheetReplica.copyTo(ss).setName(sheetName)
-      }
-
+      resumeTable('Water_readings')
+      resumeTable('GL_events')      
     })
 
     t.run('Water.insertReading - uusi lukema', () => {
@@ -217,22 +201,17 @@ function test_Water() {
   })
 }
 
-function resumeTables() {
+function singleTest() {
+  const t = TestFrame.getTestFrame()
+  t.test('Single Test', () => {
+    t.run('Model.updateEvent - tietuetta ei löydy', () => {
 
-  const ss = SpreadsheetApp.openByUrl(app.dbUrl)
+      /* SETUP */
+      t.errorExpected('Tietuetta (999) ei löydy.')
+      const record = {id:999, number:10, date:'2023-04-10', event:'Testing', total:100, a_share:50, account:'Sähkö', comment:'Huihai', fiscal_year:2023, charging:'xx', cleared:'2023-06-06'}
 
-  replace('Water_readings')
-  replace('GL_events')
-  
-  function replace(sheetName) {
-    let sheetOrig = ss.getSheetByName(sheetName)
-    let sheetReplica = ss.getSheetByName(sheetName + '_repl')
-
-    if (sheetOrig) {
-      ss.deleteSheet(sheetOrig)
-    }
-    sheetReplica.copyTo(ss).setName(sheetName)
-  }
-
+      /* EXECUTE */
+      model.updateEvent(record)
+    })
+  })
 }
-

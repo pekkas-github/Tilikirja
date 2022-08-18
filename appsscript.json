@@ -7,7 +7,8 @@
       {
         "userSymbol": "DbLib2",
         "libraryId": "1tLekUn3aO2KDlv8GLsoHK4gXLKnuUpqReCu98iRY_Fwntbgu-hZv6XIa",
-        "version": "6"
+        "version": "8",
+        "developmentMode": false
       },
       {
         "userSymbol": "TestFrame",
