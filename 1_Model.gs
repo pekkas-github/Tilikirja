@@ -7,13 +7,12 @@ class Model {
   /* Change selected events as 'payed by A' on the given date */
   ackCharges ({events, date}) {
     const table = this.db.getTable('GL_events')
-
+    
     events.forEach( (event) => {
       const record = table.getRecord(event.id)
       record.cleared = date
       table.updateRecord(record)
     })
-
     this.updateChargingSheet()
   }
 

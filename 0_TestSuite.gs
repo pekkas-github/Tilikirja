@@ -1,6 +1,10 @@
 app.dbUrl = 'https://docs.google.com/spreadsheets/d/1gs-h1ZPX2VWCZ4za2r8IGHVNu9WBRjnKihBfIvqCxZE/edit#gid=0'
 app.version = 'DEV'
 
+function testInfo() {
+  TestFrame.getInfo()
+}
+
 function resumeTable(sheetName) {
   const ss = SpreadsheetApp.openByUrl(app.dbUrl)
   const sheetReplica = ss.getSheetByName(`${sheetName}_repl`)
