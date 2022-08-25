@@ -1,9 +1,8 @@
 <script>
 
-const reportsModel = (function() {
+class ReportsModel {
 
-  function getReport() {
-
+  getReport() {
     const summaryByAccount = {}
     const year = parseInt(app.currentYear)
 
@@ -32,15 +31,9 @@ const reportsModel = (function() {
       sums.a += summaryByAccount[key].a
       sums.b += summaryByAccount[key].b
     }
-
     summaryByAccount.Totals = sums
 
     return summaryByAccount
   }
-
-  return {
-    getReport: getReport
-  }
-
-})()
+}
 </script>

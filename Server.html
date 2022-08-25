@@ -1,0 +1,25 @@
+<script>
+
+/**
+ * Serverikutsujen 'tekninen' osa on eristetty omaksi objektikseen. Tämä
+ * mahdollistaa selainpäätä testattaessa sen korvaamisen mockupilla, joka
+ * ei tee todellisia serverikutsuja, vaan palauttaa haluttuja arvoja.
+*/
+class Server {
+
+  /** 
+   * @param (string) func - Kutsuttavan serveripään palvelun nimi
+   * @param (any)    args - Argumenttien lista (0...n) 
+  */
+  apiCall(functionName, ...args) {
+
+    return new Promise((resolve, reject) => {
+
+      google.script.run
+      .withSuccessHandler(result => resolve(result))
+      .withFailureHandler(error => reject(error))
+      .apiCall(functionName, args)
+    })
+  }
+}
+</script>

@@ -5,8 +5,8 @@ class Model {
   }
 
   /* Change selected events as 'payed by A' on the given date */
-  ackCharges ({events, date}) {
-    const table = this.db.getTable('GL_events')
+  ackCharges (events, date) {
+    const table   = this.db.getTable('GL_events')
     
     events.forEach( (event) => {
       const record = table.getRecord(event.id)
@@ -36,6 +36,7 @@ class Model {
     return response
   }
 
+  
   getCurrentWaterPrice () {
     // Return current water price record as an object {parameters and calculated total price}
     const price = this.db
@@ -75,7 +76,7 @@ class Model {
     return events
   }
 
-
+  //private
   getWaterConsumption () {
     // Sort last reading first and previous one in order after it
     const readings = this.db
@@ -86,7 +87,7 @@ class Model {
     return readings[0].a_reading - readings[1].a_reading
   }
 
-
+  //private
   getWaterPrice () {
     // Return current calculated total price (€/m3)
     return this.getCurrentWaterPrice().total
@@ -105,40 +106,43 @@ class Model {
       .getRecords()
   }
 
-
-
-  insertEvent (eventRecord) {
+  insertEvent(newEvent) {
     const table = this.db.getTable('GL_events')
-    const allEvents = table.getRecords()
-    const eventYear = eventRecord.date.substring(0,4)
-    //Get all events of the event year
-    const eventYearRecordset = allEvents.filter((record) => {
-      if (record.date.substring(0,4) === eventYear) {
-        return record
+    
+    newEvent.number = this.getNewEventNumber(newEvent)  
+    newEvent.id = table.insertRecord(newEvent)
+
+    return newEvent
+  }
+
+  //private
+  getNewEventNumber(newEvent) {
+    const eventYear = newEvent.date.substring(0,4)
+    const allEvents = this.db.getTable('GL_events').getRecords()
+    
+    //Filter out events of the year
+    const eventYearEvents = allEvents.filter((event) => {
+      if (event.date.substring(0,4) === eventYear) {
+        return event
       }
     })
+    
+    //Sort the events in descending order based on event log number (latest on top)
+    eventYearEvents.sort((a, b) => {return b.number - a.number})
 
-    //Sort the events in descending order based on event log number
-    eventYearRecordset.sort((a, b) => {return b.number - a.number})
-
-    //Define the log number of this event (the first of the year or next after the last event)
-    if (eventYearRecordset.length === 0) {
-      eventRecord.number = 1
-    } else {
-      eventRecord.number = eventYearRecordset[0].number + 1
-    }
-  
-    eventRecord.id = table.insertRecord(eventRecord)
-
-    return eventRecord
+    //Return 1 or next
+    if (eventYearEvents.length === 0) {
+      return 1
+    }    
+    return eventYearEvents[0].number + 1
   }
 
 
-  insertReading (readingRecord) {
+  insertReading (reading) {
     // Save water reading record and set its id
-    readingRecord.id = this.db
+    reading.id = this.db
       .getTable('Water_readings')
-      .insertRecord(readingRecord)
+      .insertRecord(reading)
 
     const consumption = this.getWaterConsumption()
     const price = this.getWaterPrice()
@@ -149,24 +153,24 @@ class Model {
       .getTable('GL_events')
       .newRecord()
 
-    event.date = readingRecord.date
+    event.date = reading.date
     event.event = `Vesimaksu (lukeman mukaan ${consumption} m2)`
     event.total = 0
     event.a_share = a_share
     event.account_id = 6
-    event.fiscal_year = readingRecord.fiscal_year
+    event.fiscal_year = reading.fiscal_year
 
     // Insert event record and return filled event record
     const newEvent = this.insertEvent(event)
     newEvent.account_name = 'Vesi' 
     return {
-      newId: readingRecord.id,
+      newId: reading.id,
       newEvent: newEvent
     }
   }
 
 
-  setChargingStatus ({id, status}) {
+  setChargingStatus (id, status) {
     try {
       const table = this.db.getTable('GL_events')
       const record = table
@@ -177,7 +181,10 @@ class Model {
 
       this.updateChargingSheet()
     }
-    catch(err) {throw new Error(`Tapahtumaa ei löytynyt tietokannasta.`)}
+
+    catch(err) {
+      throw new Error(`Tapahtumaa ei löytynyt tietokannasta.`)
+    }
   }
 
 
@@ -219,7 +226,7 @@ class Model {
     sheet.getRange(5, 2, values.length, 5).setValues(values)
   }
 
-  updateEvent (eventRecord) {
-    this.db.getTable('GL_events').updateRecord(eventRecord)
+  updateEvent (event) {
+    this.db.getTable('GL_events').updateRecord(event)
   }
 }

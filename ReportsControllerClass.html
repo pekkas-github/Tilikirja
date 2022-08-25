@@ -1,0 +1,22 @@
+<script>
+
+class ReportsController {
+
+  constructor() {
+    this.eventsModel  = new EventsModel
+    this.reportsModel = new ReportsModel()
+  }
+
+  changeYear(year) {
+    this.eventsModel.setCurrentYear(year)
+    this.openReportsPage()
+  }
+
+  openReportsPage() {
+    const report      = this.reportsModel.getReport()
+    const reportsView = new ReportsView(this)
+    
+    reportsView.render(report)
+  }
+}
+</script>

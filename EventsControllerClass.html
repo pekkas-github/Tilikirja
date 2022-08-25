@@ -1,0 +1,94 @@
+<script>
+
+class EventsController {
+
+  constructor() {
+    this.model = new EventsModel()
+  }
+
+  addNewEvent() {
+    const event = {}
+    event.id = 0
+    event.number = ''
+    event.date = ''
+    event.event= ''
+    event.total = 0
+    event.a_share = 0
+    event.account_id = 1
+    event.comment = ''
+    event.fiscal_year = app.currentYear
+    event.charging = ''
+    event.cleared = ''
+
+    const eventForm = new EventFormView(this, event)
+    eventForm.render()
+  }
+
+
+  setEventStatus(id) {
+    this.model.setEventStatus(id)      
+    .catch( error => {
+      alert(`Server: ${error.message}`)
+      this.reloadEvents()
+    })
+    const eventsView = new EventsView(this)
+    eventsView.render()
+  }
+
+
+  setCurrentYear(year) {
+    this.model.setCurrentYear(year)
+    const eventsView = new EventsView(this)
+    eventsView.render()
+  }
+
+  reloadEvents() {
+    spinner.on()
+
+    this.model.getEvents()
+    .then(() => {
+      const eventsView = new EventsView(this)
+      eventsView.render()
+      spinner.off()
+    })
+    .catch(error => {
+      alert(`Server: ${error.message}`)
+    })
+  }
+    
+  modifyEvent(id) {
+    const event = this.model.getEvent(id)
+    const eventForm = new EventFormView(this, event)
+    eventForm.render()
+  }
+
+  openEventsPage() {
+    const eventsView = new EventsView(this)
+    eventsView.render()
+  }
+
+  saveEvent(event) {
+    if (event.id === 0) {
+      //insertEvent(event)
+      spinner.on()
+      this.model.addEvent(event)
+      .then(() => {
+        const eventsView = new EventsView(this)
+        eventsView.render()
+        spinner.off()
+      })
+    } else {
+      //updateEvent(event)
+      this.model.updateEvent(event)
+      .catch(error => {
+        alert(error.message)
+        this.reloadEvents()
+      })
+      const eventsView = new EventsView(this)
+      eventsView.render()
+    }
+    popup.off()
+  }
+}
+
+</script>

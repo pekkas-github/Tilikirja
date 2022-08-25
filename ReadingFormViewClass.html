@@ -1,8 +1,12 @@
 <script>
 
-const readingFormView = (function() {
+class ReadingFormView {
 
-  function render() {
+  constructor(controller) {
+    this.controller = controller
+  }
+
+  render() {
 
     let popupContent = `
       <span id="btn-popup-close">&times;</span>
@@ -49,47 +53,46 @@ const readingFormView = (function() {
     $('.popup-content').html(popupContent)
 
     /* EVENT LISTENERS */
+    const that = this
 
-    $('#btn-popup-save').on('click', validateInput)
+    $('#btn-popup-save').on('click', () => {
+      const reading = that.getReading()
+      if (that.isValid(reading)) {
+        that.controller.addReading(reading)
+        popup.off()
+      }
+    })
     $('#btn-popup-close').on('click', popup.off)
 
     popup.on()
-
   }
 
-  function validateInput() {
+  getReading() {
+    const reading = {}
+    reading.id = 0
+    reading.date = $('#txt-date').val()
+    reading.master_reading = parseInt($('#txt-total').val())
+    reading.a_reading = parseInt($('#txt-a').val())
+    reading.b_reading = parseInt($('#txt-b').val())
+    reading.fiscal_year = parseInt($('#cbo-year').val())
+    reading.comment = $('#txt-comment').val()
 
-    const readingRecord = {}
+    return reading
+  }
 
-    // Read data
-    readingRecord.id = 0
-    readingRecord.date = $('#txt-date').val()
-    readingRecord.master_reading = parseInt($('#txt-total').val())
-    readingRecord.a_reading = parseInt($('#txt-a').val())
-    readingRecord.b_reading = parseInt($('#txt-b').val())
-    readingRecord.fiscal_year = parseInt($('#cbo-year').val())
-    readingRecord.comment = $('#txt-comment').val()
-
-    // Validate data
+  isValid(reading) {
     try {
-      if (readingRecord.date === '') {throw('Päiväys puuttuu')}      
-      if (readingRecord.master_reading === '' || isNaN(readingRecord.master_reading)) {throw('Tarkista kokonaismäärä')}    
-      if (readingRecord.a_reading === '' || isNaN(readingRecord.a_reading)) { throw('Tarkista A-osuus')}
-      if (readingRecord.b_reading === '' || isNaN(readingRecord.b_reading)) { throw('Tarkista B-osuus')}
+      if (reading.date === '') {throw('Päiväys puuttuu')}      
+      if (reading.master_reading === '' || isNaN(reading.master_reading)) {throw('Tarkista kokonaismäärä')}    
+      if (reading.a_reading === '' || isNaN(reading.a_reading)) { throw('Tarkista A-osuus')}
+      if (reading.b_reading === '' || isNaN(reading.b_reading)) { throw('Tarkista B-osuus')}
+      return true
     }
     catch(note) {
       alert(note)
-      return
+      return false
     }
-
-    readingsController.addReading(readingRecord)
-    popup.off()
   }
-
-  return {
-    render: render
-  }
-
-})()
+}
 
 </script>

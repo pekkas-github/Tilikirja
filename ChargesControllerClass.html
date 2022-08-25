@@ -1,0 +1,31 @@
+<script>
+
+class ChargesController {
+
+  constructor() {
+    this.chargesModel = new ChargesModel()
+    this.eventsModel  = new EventsModel()
+  }
+
+  ackCharges(date) {
+    this.chargesModel.ackCharges(date)
+    .catch(error => {
+      alert(error)
+      this.reloadEvents()
+    })
+    this.openChargesPage()
+  }
+
+  reloadEvents() {
+    this.eventsModel.getEvents()
+    .then(() => this.openChargesPage())
+    .catch(error => alert(error))
+  }
+
+  openChargesPage() {
+    const eventsToBeCharged = this.chargesModel.getEventsToBeCharged()
+    const chargesView = new ChargesView(this)
+    chargesView.render(eventsToBeCharged)
+  }
+}
+</script> 

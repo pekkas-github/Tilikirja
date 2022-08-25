@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+  </head>
+  <body>
+    Test Tilikirja
+  <?!= TestFrame.getTestFrameScript() ?>
+
+  <?!= include('AppGlobals') ?>
+  <?!= include('0_ServerMockup') ?>
+
+  <script>
+    const server = new Server()
+
+    server.apiCall('changeEventStatus', 0, 'x')
+    .then(res => console.log(res))
+    .catch(err => console.log(err.message))
+  </script>
+
+  </body>
+</html>

@@ -1,5 +1,5 @@
-app.dbUrl = 'https://docs.google.com/spreadsheets/d/1gs-h1ZPX2VWCZ4za2r8IGHVNu9WBRjnKihBfIvqCxZE/edit#gid=0'
 app.version = 'DEV'
+app.dbUrl = 'https://docs.google.com/spreadsheets/d/1gs-h1ZPX2VWCZ4za2r8IGHVNu9WBRjnKihBfIvqCxZE/edit#gid=0'
 
 function testInfo() {
   TestFrame.getInfo()
@@ -76,21 +76,29 @@ function test_Events () {
     t.isEqual(response, '2021', 'Oletusvuosi')
   })
 
-  t.run('Model.setChargingStatus', () => {
+  t.run('Model.setChargingStatus - tietue löytyy', () => {
 
     const sheet = ss.getSheetByName('GL_events')
     const range = sheet.getRange(60, 10, 2, 1)
 
     /*EXECUTE*/
-    model.setChargingStatus({id:329, status:'x'})
-    model.setChargingStatus({id:330, status:''})
+    model.setChargingStatus(329, 'x')
+    model.setChargingStatus(330, '')
 
     /*ASSERT*/
     const values = range.getValues()
     t.isEqual(values[0][0], 'x', 'Ensimmäinen asetus')
     t.isEqual(values[1][0], '', 'Toinen asetus')
-
   })
+
+  t.run('Model.setChargingStatus - tietuetta ei löydy', () => {
+    /*SETUP*/
+    t.errorExpected('Tapahtumaa ei löytynyt tietokannasta.')
+
+    /*EXECUTE*/
+    model.setChargingStatus(500, 'x')
+  })
+
 
   t.run('Model.insertEvent - uuden tapahtuman lisäys', () => {
     /* SETUP */
@@ -207,15 +215,28 @@ function test_Water() {
 
 function singleTest() {
   const t = TestFrame.getTestFrame()
+
+  t.beforeEach( () => {
+    resumeTable('GL_events')
+    resumeTable('Water_readings')
+  })
+
   t.test('Single Test', () => {
-    t.run('Model.updateEvent - tietuetta ei löydy', () => {
+    const model = new Model()
+    
+    t.run('Water.insertReading - lukemasta tapahtumaksi', () => {
+    
+    /* SETUP */
 
-      /* SETUP */
-      t.errorExpected('Tietuetta (999) ei löydy.')
-      const record = {id:999, number:10, date:'2023-04-10', event:'Testing', total:100, a_share:50, account:'Sähkö', comment:'Huihai', fiscal_year:2023, charging:'xx', cleared:'2023-06-06'}
+    /* EXECUTE */
+    const event = model.insertReading({id:0, date:'2022-01-01', master_reading:500, a_reading:4822, b_reading:5282, fiscal_year:2022, comment:'Test'})
 
-      /* EXECUTE */
-      model.updateEvent(record)
-    })
+    /* ASSERT */
+    t.isEqual(event.newId, 43, 'Uuden tietueen id')
+    t.isEqual(event.newEvent.event, 'Vesimaksu (lukeman mukaan 10 m2)', 'Laskettu kulutuksen määrä')
+    t.isEqual(event.newEvent.a_share, 41.30, 'Kulutuksesta laskettu hinta')
+    t.isEqual(event.newEvent.fiscal_year, 2022, 'Tilivuosi')
+  })
+
   })
 }

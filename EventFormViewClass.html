@@ -1,0 +1,133 @@
+<script>
+class EventFormView {
+
+  constructor(controller, event) {
+    this.controller   = controller
+    this.event        = event
+    this.dateDisabled = (event.id === 0) ? '' : 'disabled'    // enable date only if new record
+  }
+
+
+  render() {
+
+    /* CONTENT */
+    let popupContent = `
+      <span id="btn-popup-close">&times;</span>
+
+      <table class="empty" id="event-form">
+        <tr>
+          <td class="label">Tosite:</td>
+          <td class="empty"><input id="txt-nbr" type="text" value="${this.event.number}" size="1" disabled></td>
+        </tr>
+        <tr>
+          <td class="label">Päiväys:</td>
+          <td class="empty"><input id="txt-day" type="date" value="${this.event.date}" ${this.dateDisabled}></td>
+        </tr>
+        <tr>
+          <td class="label">Tapahtuma:</td>
+          <td class="empty"><input id="txt-event" type="text" value="${this.event.event}" size="50"></td>
+        </tr>
+        <tr>
+          <td class="label">Summa:</td>
+          <td class="empty"><input id="txt-total" type="text" value="${this.event.total.toFixed(2)}" size="5"></td>
+        </tr>
+        <tr>
+          <td class="label">A-osuus:</td>
+          <td class="empty">
+            <input id="txt-share" type="text" value="${this.event.a_share.toFixed(2)}" size="5">
+            <select id="cbo-percent">
+              <option value="0">Vapaa</option>
+              <option value="0.385">38.5</option>
+              <option value="0.5">50</option>
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">Tili:</td>
+          <td class="empty">
+            <select class="cbo" id="cbo-account">`
+
+    app.accounts.forEach(account => {
+      popupContent += `<option value="${account.id}">${account.name}</option>`
+    })
+    popupContent += `
+            </select>
+
+          </td>
+        </tr>
+        <tr>
+          <td class="label">Tilivuosi:</td>
+          <td class="empty">
+            <select class="cbo" id="cbo-year">`
+
+    app.years.forEach(year => {
+      popupContent += `<option>${year.year}</option>` 
+    })
+    popupContent += `
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">Kommentti:</td>
+          <td class="empty"><input id="txt-comment" type="text" value="${this.event.comment}" size="50"></td>
+        </tr>
+      </table>
+
+      <button class="btn" id="btn-popup-save">Talleta</button>`
+
+    $('.popup-content').html(popupContent)
+    $('#cbo-account').val(this.event.account_id)
+    $('#cbo-year').val(this.event.fiscal_year)
+
+    /* EVENT LISTENERS */
+    const that = this
+
+    $('#btn-popup-save').on('click', function() {
+      if (that.isValid(that.event)) {
+        that.controller.saveEvent(that.event)
+      }
+    })
+
+    $('#btn-popup-close').on('click', popup.off)
+
+    $('#cbo-percent').on('change', function() {
+      const total = $('#txt-total').val()
+      const per = $('#cbo-percent').val()
+
+      if (per > 0) {
+        $('#txt-share').val((total * per).toFixed(2))
+      }
+    })
+
+    popup.on()
+  }
+
+  isValid (event) {
+    // Read input
+    event.number = parseInt($('#txt-nbr').val())
+    event.date = $('#txt-day').val()
+    event.event = $('#txt-event').val()
+    event.total = Number($('#txt-total').val())
+    event.a_share = Number($('#txt-share').val())
+    event.account_id = parseInt($('#cbo-account').val())
+    event.comment = $('#txt-comment').val()
+    event.fiscal_year = parseInt($('#cbo-year').val())
+    event.account_name = $('#cbo-account option:selected').text()
+
+    // Validate input
+    try {
+      if (event.date === '') {throw('Päiväys puuttuu')}
+      if (event.event === '') {throw('Kuvaus puuttuu')}
+      if (event.total === '' || isNaN(event.total)) {throw('Tarkista kokonaissumma')}
+      if (event.a_share === '' || isNaN(event.a_share)) {throw('Tarkista A-osuus')}
+      if (isNaN(event.account_id)) {throw('Tili puuttuu')}
+      if (isNaN(event.fiscal_year)) {throw('Tilivuosi puuttuu')}
+      return true
+    }
+    catch(note) {
+      alert(note)
+      return false
+    }
+  }
+}
+</script>

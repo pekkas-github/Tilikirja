@@ -1,26 +1,29 @@
 <script>
 
-const chargesView = (function() {
+class ChargesView {
 
-  function render(eventsToBeCharged) {
+  constructor(controller) {
+    this.controller = controller
+  }
+
+  render(eventsToBeCharged) {
 
     /* CONTROLS */
-
     const controls = `
         <input id="txt-day" type="date" hidden>
         <button class="btn" id="btn-submit" hidden>Kuittaa maksetuksi</button>`
-
     $('.controls').html(controls)
 
     /* CONTROLS - EVENT HANDLERS */
+    const that = this
 
-    $('#btn-submit').on('click', function() {
+    $('#btn-submit').on('click', () => {
       const date = $('#txt-day').val()
       if ( date === '') {
         alert('Tarkista päiväys')
         return
       }
-      chargesController.ackCharges(date)
+      that.controller.ackCharges(date)
     })
 
     if (profile === 'admin') {
@@ -66,8 +69,5 @@ const chargesView = (function() {
 
     $('.content').html(content)
   }
-
-  return {render: render}
-  
-})()
+}
 </script>

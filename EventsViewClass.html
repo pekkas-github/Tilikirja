@@ -1,12 +1,14 @@
 <script>
 
-const eventsView = (function() { 
+class EventsView { 
 
-  function render() {
+  constructor(controller) {
+    this.controller = controller
+  }
 
+  render() {
+    
     /* CONTROLS */
-
-    // Year selection list
 
     let controls = '<select id="cbo-years" name="years" class="cbo">'
 
@@ -15,8 +17,6 @@ const eventsView = (function() {
     })
 
     controls += '</select>'
-
-    // Add button
 
     controls += '<button class="btn" id="btn-add" hidden>Lisää...</button>'
 
@@ -64,29 +64,28 @@ const eventsView = (function() {
 
     /* EVENT LISTENERS */
 
+    const that = this
+
     $('#cbo-years').on('change', function() {
-      eventsController.changeEventsYear($('#cbo-years').val())
-    })
+        that.controller.setCurrentYear($('#cbo-years').val())
+      })
 
     if (profile === 'admin') {
       $('td').on('dblclick', function() {
-        eventsController.modifyEvent(parseInt($(this).parent().attr('id')))})
+        that.controller.modifyEvent(parseInt($(this).parent().attr('id')))})
 
       $('#btn-add').show()
       $('#btn-add').on('click', function() {
-        eventsController.addNewEvent()})
+        that.controller.addNewEvent()})
 
       $('.charge-status').show()
       $('.charge-status').on('click', function() {
-        eventsController.changeEventStatus(parseInt($(this).parent().attr('id')))})
+        that.controller.setEventStatus(parseInt($(this).parent().attr('id')))})
 
       $('.is-payed').show()
     }
   }
   
-  return {
-    render: render
-  }
-})()
+}
 
 </script>

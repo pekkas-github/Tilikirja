@@ -1,0 +1,87 @@
+<script>
+
+class EventsModel {
+
+  constructor() {
+    this.server = new Server()
+    this.util   = new Util()
+  }
+
+  addEvent(event) {
+    return new Promise((resolve, reject) => {
+
+      this.server.apiCall('insertEvent', event)
+      .then(newEvent => {
+        app.events.push(newEvent)
+        resolve()
+      })
+      .catch(err => {
+        reject(err)
+      })
+    })    
+  }
+
+  getEvent(id) {
+    const index = this.util.getArrayIndex(app.events, id)
+    const event = app.events[index]
+
+    return event
+  }
+
+
+  getEvents() {
+    return new Promise((resolve, reject) => {
+
+      this.server.apiCall('getEvents')
+      .then(events => {
+        app.events = events
+        resolve(events)
+        })
+      .catch(err => {
+        reject(err)
+      })
+    })
+  }
+
+
+  setEventStatus(id) {
+    return new Promise((resolve,reject) => {
+
+      const index = this.util.getArrayIndex(app.events, id)
+      const event = app.events[index]
+
+      //if allowed
+      if (event.cleared === '') {
+        //then change locally
+        const status = (event.charging === 'x') ? '' : 'x'
+        app.events[index].charging = status
+
+        //then change on server
+        this.server.apiCall('setChargingStatus', id, status)
+        .then(resolve)
+        .catch(err => {
+          reject(err)
+        })
+      }
+    })
+  }
+
+  setCurrentYear(year) {
+    app.currentYear = year
+  }
+  
+  updateEvent(event) {
+    return new Promise((resolve, reject) => {
+
+      const index = this.util.getArrayIndex(app.events, event.id)
+      app.events[index] = event
+      this.server.apiCall('updateEvent', event)
+      .then(resolve)
+      .catch(err => {
+        reject(err)
+      })
+    })
+  }
+
+}
+</script>

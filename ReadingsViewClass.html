@@ -1,11 +1,13 @@
 <script>
 
-const readingsView = (function() { 
+class ReadingsView {
 
-  function render() {
+  constructor(controller) {
+    this.controller = controller
+  } 
 
+  render() {
     /* CONTROLS */
-
     const controls = `
       <button class="btn" id="btn-add" hidden>Lisää...</button>
       <span id="lnk-price"> Veden hinta</span>`
@@ -13,16 +15,18 @@ const readingsView = (function() {
     $('.controls').html(controls)
 
     /* CONTROLS - EVENT HANDLERS */
+    const that = this
 
-    $('#lnk-price').on('click', readingsController.openWaterPriceForm)
-    $('#btn-add').on('click', readingsController.openReadingForm)
+    $('#lnk-price').on('click', that.controller.openWaterPriceForm)
+    $('#btn-add').on('click', () => {
+      that.controller.openReadingForm()
+    })
 
     if (profile === 'admin') {
       $('#btn-add').show()
     }
 
     /* CONTENT */
-
     let content = `
       <table id="tbl-readings">
 
@@ -50,13 +54,13 @@ const readingsView = (function() {
 
     for (let i = len - 10; i < len; i++) {
 
-      const rec = app.water[i]
-      const prev = app.water[i-1]
+      const rec   = app.water[i]
+      const prev  = app.water[i-1]
 
-      let dTot = rec.master_reading - prev.master_reading
-      dTot = (dTot < 0) ? app.water[i].master_reading : dTot
-      let dA = rec.a_reading - prev.a_reading
-      let dB = rec.b_reading - prev.b_reading 
+      let dTot    = rec.master_reading - prev.master_reading
+      dTot        = (dTot < 0) ? app.water[i].master_reading : dTot
+      let dA      = rec.a_reading - prev.a_reading
+      let dB      = rec.b_reading - prev.b_reading 
 
       content += `
       <tr>
@@ -75,11 +79,5 @@ const readingsView = (function() {
 
     $('.content').html(content)
   }
-
-    return {
-      render: render
-    }
-
-  
-})()
+}
 </script>

@@ -1,13 +1,14 @@
 <script>
 
-/* MODULE */
+class ReportsView {
 
-const reportsView = ( () => {
+  constructor(controller) {
+    this.controller = controller
+  }
 
-  function render(summaryByAccount) {
+  render(summaryByAccount) {
   
     /* CONTROLS */ 
-
     let controls = '<select class="cbo" id="cbo-years" name="years">'
 
     app.years.forEach( (year) => {
@@ -15,12 +16,10 @@ const reportsView = ( () => {
     })
 
     controls += '</select>'
-
     $('.controls').html(controls)
     $('#cbo-years').val(app.currentYear)
 
     /* CONTENT */
-    
     let content = `
       <table id="tbl-reports">
       <tr>
@@ -50,18 +49,12 @@ const reportsView = ( () => {
       <th class="total"> ${ summaryByAccount.Totals.b.toFixed(2) } </th>
     </tr>
     </table>`
-
     $('.content').html(content)
 
     /* EVENT LISTENERS */
-
-    $('#cbo-years').on('change', function() {
-      reportsController.changeYear($('#cbo-years').val())})
-
+    const that = this
+    $('#cbo-years').on('change', () => {
+      that.controller.changeYear($('#cbo-years').val())})
   }
-
-  /* API */
-  return {render: render}
-
-})()
+}
 </script>

@@ -1,6 +1,10 @@
 const model = new Model()
 
 function doGet (e) {
+  if (e.parameters.test) {
+    console.log(e.parameters.test)
+    return HtmlService.createTemplateFromFile('0_TestBrowserSide').evaluate().setTitle('Tilikirja_test')
+  }
 
   const html = HtmlService.createTemplateFromFile('AppFrame')
   html.profile = (e.parameters.profile) ? e.parameters.profile : ''
@@ -14,18 +18,18 @@ function doGet (e) {
 }
 
 const interface = {
-  ackCharges:             model.ackCharges.bind(model),
-  getAccounts:            model.getAccounts.bind(model),
-  getAllData:             model.getAllData.bind(model),
-  getCurrentWaterPrice:   model.getCurrentWaterPrice.bind(model),
-  getCurrentYear:         model.getCurrentYear.bind(model),
-  getEvents:              model.getEvents.bind(model),
-  getWaterReadings:       model.getWaterReadings.bind(model),
-  getYears:               model.getYears.bind(model),
-  insertEvent:            model.insertEvent.bind(model),
-  insertReading:          model.insertReading.bind(model),
-  setChargingStatus:      model.setChargingStatus.bind(model),
-  updateEvent:            model.updateEvent.bind(model)
+  ackCharges:             (args) => model.ackCharges(args[0], args[1]),
+  getAccounts:            (args) => model.getAccounts(),
+  getAllData:             (args) => model.getAllData(),
+  getCurrentWaterPrice:   (args) => model.getCurrentWaterPrice(),
+  getCurrentYear:         (args) => model.getCurrentYear(),
+  getEvents:              (args) => model.getEvents(),
+  getWaterReadings:       (args) => model.getWaterReadings(),
+  getYears:               (args) => model.getYears(),
+  insertEvent:            (args) => model.insertEvent(args[0]),
+  insertReading:          (args) => model.insertReading(args[0]),
+  setChargingStatus:      (args) => model.setChargingStatus(args[0], args[1]),
+  updateEvent:            (args) => model.updateEvent(args[0]),
 }
 
 function apiCall (apiName, args) {

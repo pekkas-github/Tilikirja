@@ -1,0 +1,46 @@
+<script>
+
+class ReadingsController {
+
+  constructor() {
+    this.model = new ReadingsModel() 
+  }
+
+  addReading(reading) {
+    this.model.addReading(reading)
+    .catch( err => {
+      alert(`Server: ${err.message}`)
+      this.reloadReadings()
+    })
+    const readingsView = new ReadingsView(this)
+    readingsView.render()
+  }
+
+  openReadingsPage() {
+    const readingsView = new ReadingsView(this)
+    readingsView.render()
+  }
+
+  openReadingForm() {
+    const readingForm = new ReadingFormView(this)
+    readingForm.render()
+  }
+
+  openWaterPriceForm() {
+    const waterPriceForm = new WaterPriceFormView()
+    waterPriceForm.render()
+  }
+
+  reloadReadings() {
+    this.model.getReadings()
+    .then(() => {
+      const readingsView = new ReadingsView(this)
+      readingsView.render()
+    })
+    .catch(error => {
+      alert(`Server: ${error.message}`)
+    })
+  }
+}
+
+</script>
