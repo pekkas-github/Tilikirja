@@ -1,0 +1,25 @@
+<script>
+  // Show info page
+  const view = new InfoView()
+  view.render()
+
+  // Start late data import
+  app.spinner.on()
+  fetchData()
+
+  // Async data import
+  async function fetchData() {
+    const server = new Server()
+    const response = await server.apiCall('getAllData')
+    
+    app.events = response[0]
+    app.water = response[1]
+    app.years = response[2]
+    app.accounts = response[3]
+    app.currentYear = response[4]
+    app.currentWaterPrice = response[5]
+    // Done - clear spinner
+    app.spinner.off()
+  }
+
+</script>

@@ -1,0 +1,20 @@
+<script>
+  const app = {}
+
+  app.spinner = {
+    on: () => $('.spinner').show(),
+    off: () => $('.spinner').hide()
+  }
+
+  app.popup = {
+    on: () => $('.popup').show(),
+    off: () => $('.popup').hide()
+  }
+
+  app.getArrayIndex = (array, id) => {
+      return array.findIndex(rec => {
+        return rec.id === id
+      })
+    }
+
+</script>
