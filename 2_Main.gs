@@ -6,7 +6,7 @@ function doGet (e) {
     return HtmlService.createTemplateFromFile('0_TestBrowserSide').evaluate().setTitle('Tilikirja_test')
   }
 
-  const html = HtmlService.createTemplateFromFile('AppFrame')
+  const html = HtmlService.createTemplateFromFile('_frame_View')
   html.profile = (e.parameters.profile) ? e.parameters.profile : ''
   html.version = app.version
 

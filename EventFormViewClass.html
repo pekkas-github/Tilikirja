@@ -88,7 +88,7 @@ class EventFormView {
       }
     })
 
-    $('#btn-popup-close').on('click', popup.off)
+    $('#btn-popup-close').on('click', app.popup.off)
 
     $('#cbo-percent').on('change', function() {
       const total = $('#txt-total').val()
@@ -99,7 +99,7 @@ class EventFormView {
       }
     })
 
-    popup.on()
+    app.popup.on()
   }
 
   isValid (event) {

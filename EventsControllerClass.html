@@ -43,13 +43,13 @@ class EventsController {
   }
 
   reloadEvents() {
-    spinner.on()
+    app.spinner.on()
 
     this.model.getEvents()
     .then(() => {
       const eventsView = new EventsView(this)
       eventsView.render()
-      spinner.off()
+      app.spinner.off()
     })
     .catch(error => {
       alert(`Server: ${error.message}`)
@@ -70,12 +70,12 @@ class EventsController {
   saveEvent(event) {
     if (event.id === 0) {
       //insertEvent(event)
-      spinner.on()
+      app.spinner.on()
       this.model.addEvent(event)
       .then(() => {
         const eventsView = new EventsView(this)
         eventsView.render()
-        spinner.off()
+        app.spinner.off()
       })
     } else {
       //updateEvent(event)
@@ -87,7 +87,7 @@ class EventsController {
       const eventsView = new EventsView(this)
       eventsView.render()
     }
-    popup.off()
+    app.popup.off()
   }
 }
 

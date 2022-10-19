@@ -4,7 +4,7 @@
     <base target="_top">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
-    <?!= include('AppStyles') ?>
+    <?!= include('_frame_Styles') ?>
   </head>
 
   <body>
@@ -42,7 +42,40 @@
     </div>
 
     <script> 
-      const profile = <?= profile ?> 
+      const profile = <?= profile ?>
+
+      /* Event Listeners */
+      $('#page0').on('click', () => {
+        const view = new InfoView()
+        view.render()
+      })
+
+      $('#page1').on('click', () => {
+        const controller = new EventsController()
+        controller.openEventsPage()
+      })
+
+      $('#page2').on('click', () => {
+        const controller = new ReadingsController()
+        controller.openReadingsPage()
+      })
+
+      $('#page3').on('click',() => {
+        const controller = new ReportsController()
+        controller.openReportsPage() 
+      })
+
+      $('#page4').on('click',() => {
+        const controller = new ChargesController()  
+        controller.openChargesPage()
+      })
+      
+      $('.nav-item').on('click', function() {
+        $('.nav-item').css('background', '')
+        $('.nav-item').css('font-weight', '')
+        $(this).css('background', '#333385')
+        $(this).css('font-weight', 'bold')
+      })
     </script>
 
     <?!= include('Util') ?>
@@ -63,7 +96,8 @@
     <?!= include('ChargesControllerClass') ?>
     <?!= include('ChargesModelClass') ?>
     <?!= include('WaterPriceFormClass') ?>
-    <?!= include('AppStart')?>
+    <?!= include('_frame_Globals')?>
+    <?!= include('_frame_Start')?>
     
   </body>
 </html>
