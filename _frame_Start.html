@@ -1,0 +1,32 @@
+<script>
+  // Show info page
+  const view = new InfoView()
+  view.render()
+
+  // Start late data import
+  app.spinner.on()
+  fetchData()
+
+  // Parallel data import from server
+  function fetchData() {
+    const server = new Server()
+    const promise1 = server.apiCall('getEvents')
+    const promise2 = server.apiCall('getWaterReadings')
+    const promise3 = server.apiCall('getYears')
+    const promise4 = server.apiCall('getAccounts')
+    const promise5 = server.apiCall('getCurrentYear')
+    const promise6 = server.apiCall('getCurrentWaterPrice')
+
+    Promise.all([promise1, promise2, promise3, promise4, promise5, promise6])
+    .then(arrValues => {
+      app.events = arrValues[0]
+      app.water = arrValues[1]
+      app.years = arrValues[2]
+      app.accounts = arrValues[3]
+      app.currentYear = arrValues[4]
+      app.currentWaterPrice = arrValues[5]
+      // Done - clear spinner
+      app.spinner.off()
+    })
+  }
+</script>

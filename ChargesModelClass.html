@@ -4,7 +4,6 @@ class ChargesModel {
 
   constructor() {
     this.server = new Server()
-    this.util   = new Util()
   }
 
   ackCharges(date) {
@@ -12,7 +11,7 @@ class ChargesModel {
 
       const eventsToBeCharged = this.getEventsToBeCharged()
       eventsToBeCharged.forEach( (event) => {
-        const tableIndex = this.util.getArrayIndex(app.events, event.id)
+        const tableIndex = app.getArrayIndex(app.events, event.id)
         app.events[tableIndex].cleared = date
       })
 

@@ -22,20 +22,6 @@ class Model {
       .getRecords()
   }
 
-
-  getAllData () {
-    let response = []
-
-    response.push(this.getEvents())
-    response.push(this.getWaterReadings())
-    response.push(this.getYears())
-    response.push(this.getAccounts())
-    response.push(this.getCurrentYear())
-    response.push(this.getCurrentWaterPrice())
-
-    return response
-  }
-
   
   getCurrentWaterPrice () {
     // Return current water price record as an object {parameters and calculated total price}

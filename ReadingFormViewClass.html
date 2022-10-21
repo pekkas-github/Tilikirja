@@ -59,12 +59,12 @@ class ReadingFormView {
       const reading = that.getReading()
       if (that.isValid(reading)) {
         that.controller.addReading(reading)
-        popup.off()
+        app.popup.off()
       }
     })
-    $('#btn-popup-close').on('click', popup.off)
+    $('#btn-popup-close').on('click', app.popup.off)
 
-    popup.on()
+    app.popup.on()
   }
 
   getReading() {
