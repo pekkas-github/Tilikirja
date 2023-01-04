@@ -62,15 +62,16 @@ class Model {
     return events
   }
 
-  //private
+  //private - return consumption of a-dept.
   getWaterConsumption () {
-    // Sort last reading first and previous one in order after it
+    // Sort last reading first [0]. Previous reading is the next one [1].
     const readings = this.db
       .getTable('Water_readings')
       .getRecords()
       .sortDesc('id')
 
-    return readings[0].a_reading - readings[1].a_reading
+    // A consumption is master cons - b cons
+    return (readings[0].master_reading - readings[1].master_reading) - (readings[0].b_reading - readings[1].b_reading)
   }
 
   //private

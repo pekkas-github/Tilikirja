@@ -199,7 +199,7 @@ function test_Water() {
       const consumption = model.getWaterConsumption()
 
       /* ASSERT */
-      t.isEqual(consumption, 63, 'Kulutuslukema')
+      t.isEqual(consumption, 59, 'Kulutuslukema')
     })
 
     t.run('Water.getWaterPrice', () => {
@@ -224,19 +224,14 @@ function singleTest() {
   t.test('Single Test', () => {
     const model = new Model()
     
-    t.run('Water.insertReading - lukemasta tapahtumaksi', () => {
-    
-    /* SETUP */
+    t.run('Water.getWaterConsumption', () => {
 
-    /* EXECUTE */
-    const event = model.insertReading({id:0, date:'2022-01-01', master_reading:500, a_reading:4822, b_reading:5282, fiscal_year:2022, comment:'Test'})
+      /* EXECUTE */
+      const consumption = model.getWaterConsumption()
 
-    /* ASSERT */
-    t.isEqual(event.newId, 43, 'Uuden tietueen id')
-    t.isEqual(event.newEvent.event, 'Vesimaksu (lukeman mukaan 10 m2)', 'Laskettu kulutuksen määrä')
-    t.isEqual(event.newEvent.a_share, 41.30, 'Kulutuksesta laskettu hinta')
-    t.isEqual(event.newEvent.fiscal_year, 2022, 'Tilivuosi')
-  })
+      /* ASSERT */
+      t.isEqual(consumption, 59, 'Kulutuslukema')
+    })
 
   })
 }
