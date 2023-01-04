@@ -37,7 +37,7 @@ function test_Events () {
     const range = sheet.getRange(61,11,4,1)
 
     /* EXECUTE */
-    model.ackCharges({events:testEvents, date:'2022-01-01'})
+    model.ackCharges(testEvents, '2022-01-01')
     const values =range.getValues()
 
     /* ASSERT */
@@ -54,7 +54,7 @@ function test_Events () {
     const range = sheet.getRange(61,11,4,1)
 
     /* EXECUTE */
-    model.ackCharges({events:testEvents, date:'2022-01-01'})
+    model.ackCharges(testEvents, '2022-01-01')
     const values =range.getValues()
 
     /* ASSERT */
@@ -124,21 +124,6 @@ function test_Events () {
     t.isEqual(res.number, 1, 'Tapahtuman numero')
   })
 
-  t.run('Water.insertReading - lukemasta tapahtumaksi', () => {
-    
-    /* SETUP */
-
-    /* EXECUTE */
-    const event = model.insertReading({id:0, date:'2022-01-01', master_reading:500, a_reading:4822, b_reading:5280, fiscal_year:2022, comment:'Test'})
-
-    /* ASSERT */
-    t.isEqual(event.newId, 43, 'Uuden tietueen id')
-    t.isEqual(event.newEvent.event, 'Vesimaksu (lukeman mukaan 2 m2)', 'Laskettu kulutuksen määrä')
-    t.isEqual(event.newEvent.a_share, 36.67, 'Kulutuksesta laskettu hinta')
-    t.isEqual(event.newEvent.fiscal_year, 2022, 'Tilivuosi')
-  })
-
-
   t.run('Model.updateEvent - tietueen päivitys', () => {
 
     /* SETUP */
@@ -177,21 +162,20 @@ function test_Water() {
       resumeTable('GL_events')      
     })
 
-    t.run('Water.insertReading - uusi lukema', () => {
-      
-      /* SETUP */
-      const record = {id:0, date:'2022-01-01', master_reading:2000, a_reading:4900, b_reading:3000, comment:'Huihai', fiscal_year: 2022}
+  t.run('Water.insertReading - lukemasta tapahtumaksi', () => {
+    
+    /* SETUP */
 
-      /* EXECUTE */
-      const res = model.insertReading(record)
+    /* EXECUTE */
+    const event = model.insertReading({id:0, date:'2022-01-01', master_reading:500, a_reading:4822, b_reading:5280, fiscal_year:2022, comment:'Test'})
 
-      /* ASSERT */
-      t.isEqual(res.newId, 43, 'Lukematietueen id')
-      t.isEqual(res.newEvent.id, 335, 'Tapahtumatietueen id')
-      t.isEqual(res.newEvent.account_id, 6, 'Tilin nimi')
-      t.isEqual(res.newEvent.a_share - 363.44, 0, 'A-asunnon osuus')
-      t.isEqual(res.newEvent.fiscal_year, 2022, 'Tilivuosi')
-    })
+    /* ASSERT */
+    t.isEqual(event.newId, 43, 'Uuden tietueen id')
+    t.isEqual(event.newEvent.event, 'Vesimaksu (lukeman mukaan 2 m2)', 'Laskettu kulutuksen määrä')
+    t.isEqual(event.newEvent.account_id, 6, 'Tilin nimi')
+    t.isEqual(event.newEvent.a_share, 36.67, 'Kulutuksesta laskettu hinta')
+    t.isEqual(event.newEvent.fiscal_year, 2022, 'Tilivuosi')
+  })
 
     t.run('Water.getWaterConsumption', () => {
 
