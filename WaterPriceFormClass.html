@@ -42,7 +42,7 @@ class WaterPriceFormView {
         <tr>
           <td class="td-right">Perusmaksuosuus:</td>
           <td class="number">${app.currentWaterPrice.base_part.toFixed(2)}</td>
-          <td>€/m3</td>
+          <td>€/kk</td>
         </tr>
         <tr>
           <td class="td-right">Käyttövesimaksu:</td>
@@ -55,16 +55,18 @@ class WaterPriceFormView {
           <td>€/m3</td>
         </tr>
         <tr>
-          <td class="td-right total">Kokonaishinta:</td>
-          <td class="total">${app.currentWaterPrice.total.toFixed(2)}</td>
-          <td class="total">€/m3</td>
-        </tr>
       </table>
 
       <div class="popup-info">
-        <p>Perusmaksuosuus = Kiinteistökerroin x Kerrosala x Perusmaksu x 12 / Vuosikulutus</p>
+        <p>Perusmaksuosuus = Kiinteistökerroin x Kerrosala x Perusmaksu</p>
         <p>Vesimaksuosuus = Käyttövesimaksu + Jätevesimaksu</p>
+      </div>
+      
+      <div class="popup-info">
+        <p>A-asunnon lukema määritetään kaavasta "Talon lukema - B-asunnon lukema."</p>
+        <p>Perusmaksuosuus jaetaan tasan asuntojen kesken.</p>
       </div>`
+
     
     $('.popup-content').html(popupContent)
 
