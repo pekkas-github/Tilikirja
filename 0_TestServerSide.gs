@@ -129,12 +129,12 @@ function test_Events () {
     /* SETUP */
 
     /* EXECUTE */
-    const event = model.insertReading({id:0, date:'2022-01-01', master_reading:500, a_reading:4822, b_reading:5282, fiscal_year:2022, comment:'Test'})
+    const event = model.insertReading({id:0, date:'2022-01-01', master_reading:500, a_reading:4822, b_reading:5280, fiscal_year:2022, comment:'Test'})
 
     /* ASSERT */
     t.isEqual(event.newId, 43, 'Uuden tietueen id')
-    t.isEqual(event.newEvent.event, 'Vesimaksu (lukeman mukaan 10 m2)', 'Laskettu kulutuksen määrä')
-    t.isEqual(event.newEvent.a_share, 41.30, 'Kulutuksesta laskettu hinta')
+    t.isEqual(event.newEvent.event, 'Vesimaksu (lukeman mukaan 2 m2)', 'Laskettu kulutuksen määrä')
+    t.isEqual(event.newEvent.a_share, 36.67, 'Kulutuksesta laskettu hinta')
     t.isEqual(event.newEvent.fiscal_year, 2022, 'Tilivuosi')
   })
 
@@ -205,10 +205,11 @@ function test_Water() {
     t.run('Water.getWaterPrice', () => {
 
       /* EXECUTE */
-      const price = model.getWaterPrice()
+      const price = model.getCurrentWaterPrice()
 
       /* ASSERT */
-      t.lessThan(price - 4.13, 0.0001, 'Veloitus')
+      t.isEqual(price.base_part, 19.89, 'Perusmaksu / kk')
+      t.isEqual(price.usage, 3.42, 'Vesimaksu / m3')
     })
   })
 }
@@ -224,14 +225,19 @@ function singleTest() {
   t.test('Single Test', () => {
     const model = new Model()
     
-    t.run('Water.getWaterConsumption', () => {
+  t.run('Water.insertReading - lukemasta tapahtumaksi', () => {
+    
+    /* SETUP */
 
-      /* EXECUTE */
-      const consumption = model.getWaterConsumption()
+    /* EXECUTE */
+    const event = model.insertReading({id:0, date:'2022-01-01', master_reading:500, a_reading:4822, b_reading:5280, fiscal_year:2022, comment:'Test'})
 
-      /* ASSERT */
-      t.isEqual(consumption, 59, 'Kulutuslukema')
-    })
+    /* ASSERT */
+    t.isEqual(event.newId, 43, 'Uuden tietueen id')
+    t.isEqual(event.newEvent.event, 'Vesimaksu (lukeman mukaan 2 m2)', 'Laskettu kulutuksen määrä')
+    t.isEqual(event.newEvent.a_share, 36.67, 'Kulutuksesta laskettu hinta')
+    t.isEqual(event.newEvent.fiscal_year, 2022, 'Tilivuosi')
+  })
 
   })
 }

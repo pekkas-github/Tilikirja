@@ -24,14 +24,14 @@ class Model {
 
   
   getCurrentWaterPrice () {
-    // Return current water price record as an object {parameters and calculated total price}
+    // Return current water price record with calculated base price and total usage price
     const price = this.db
       .getTable('Water_Prices2')
       .getRecords()
       .filterAnd('current_value', 'x')[0]
 
-    price.base_part = Math.floor(100 * (price.factor * price.area * price.base_price * 12 / price.consumption + 0.005))/100
-    price.total = price.base_part + price.water_price + price.waste_price
+    price.base_part = Math.floor(100 * (price.factor * price.area * price.base_price + 0.005))/100
+    price.usage = price.water_price + price.waste_price
     return price
   }
 
@@ -73,13 +73,6 @@ class Model {
     // A consumption is master cons - b cons
     return (readings[0].master_reading - readings[1].master_reading) - (readings[0].b_reading - readings[1].b_reading)
   }
-
-  //private
-  getWaterPrice () {
-    // Return current calculated total price (€/m3)
-    return this.getCurrentWaterPrice().total
-  }
-
 
   getWaterReadings () {
     return this.db
@@ -131,9 +124,10 @@ class Model {
       .getTable('Water_readings')
       .insertRecord(reading)
 
-    const consumption = this.getWaterConsumption()
-    const price = this.getWaterPrice()
-    const a_share = Math.floor(((consumption * price)*100+0.5))/100
+    //Charging per every three months 
+    const a_consumption = this.getWaterConsumption()
+    const price = this.getCurrentWaterPrice()
+    const a_share = Math.floor(((a_consumption * price.usage + 3 * price.base_part / 2)*100+0.5))/100 
 
     // Create event record
     const event = this.db
@@ -141,7 +135,7 @@ class Model {
       .newRecord()
 
     event.date = reading.date
-    event.event = `Vesimaksu (lukeman mukaan ${consumption} m2)`
+    event.event = `Vesimaksu (lukeman mukaan ${a_consumption} m2)`
     event.total = 0
     event.a_share = a_share
     event.account_id = 6
