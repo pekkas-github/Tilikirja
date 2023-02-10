@@ -62,6 +62,12 @@ class EventsController {
     eventForm.render()
   }
 
+  openEventComment(id) {
+    const event = this.model.getEvent(id)
+    const eventComment = new EventCommentForm()
+    eventComment.render(event)
+  }
+
   openEventsPage() {
     const eventsView = new EventsView(this)
     eventsView.render()
