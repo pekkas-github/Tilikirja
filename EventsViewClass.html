@@ -42,6 +42,7 @@ class EventsView {
     `
     app.events.forEach( (event) => {
       if (event.date.substring(0, 4) === app.currentYear) {
+        const comment = (event.comment != '') ? '*)' : ''
         content += `
         <tr id="${event.id}">
           <td> ${event.number}</td>
@@ -50,7 +51,7 @@ class EventsView {
           <td class="number"> ${event.total.toFixed(2)}</td>
           <td class="number"> ${event.a_share.toFixed(2)}</td>
           <td> ${event.account_name}</td>
-          <td> ${event.comment}</td>
+          <td class="comment"> ${comment}</td>
           <td> ${event.fiscal_year}</td>
           <td class="charge-status" hidden>${event.charging}</td>
           <td class="is-payed" hidden>${event.cleared}</td>
@@ -69,6 +70,10 @@ class EventsView {
     $('#cbo-years').on('change', function() {
         that.controller.setCurrentYear($('#cbo-years').val())
       })
+
+    $('.comment').on('click', function() {
+      that.controller.openEventComment(parseInt($(this).parent().attr('id')))
+    })
 
     if (profile === 'admin') {
       $('td').on('dblclick', function() {
