@@ -19,6 +19,7 @@ function doGet (e) {
 
 const interface = {
   ackCharges:             (args) => model.ackCharges(args[0], args[1]),
+  exportYearlyEvents:     (args) => model.printYearlyEventsOnSpreadsheet(args[0]),
   getAccounts:            (args) => model.getAccounts(),
   getCurrentWaterPrice:   (args) => model.getCurrentWaterPrice(),
   getCurrentYear:         (args) => model.getCurrentYear(),
