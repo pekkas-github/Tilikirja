@@ -18,7 +18,9 @@ class EventsView {
 
     controls += '</select>'
 
-    controls += '<button class="btn" id="btn-add" hidden>Lisää...</button>'
+    controls += `
+      <button class="btn" id="btn-add" hidden>Lisää...</button>
+      <button class="btn" id="btn-export" hidden>Vie taulukkoon</button> `
 
     $('.controls').html(controls)
     $('#cbo-years').val(app.currentYear)
@@ -82,6 +84,11 @@ class EventsView {
       $('#btn-add').show()
       $('#btn-add').on('click', function() {
         that.controller.addNewEvent()})
+
+      $('#btn-export').show()
+      $('#btn-export').on('click', function() {
+        that.controller.exportYearlyEvents($('#cbo-years').val())
+      })
 
       $('.charge-status').show()
       $('.charge-status').on('click', function() {
