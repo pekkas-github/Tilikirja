@@ -86,15 +86,6 @@ class Model {
       .getRecords()
   }
 
-  insertEvent(newEvent) {
-    const table = this.db.getTable('GL_events')
-    
-    newEvent.number = this.getNewEventNumber(newEvent)  
-    newEvent.id = table.insertRecord(newEvent)
-
-    return newEvent
-  }
-
   //private
   getNewEventNumber(newEvent) {
     const eventYear = newEvent.date.substring(0,4)
@@ -115,6 +106,15 @@ class Model {
       return 1
     }    
     return eventYearEvents[0].number + 1
+  }
+
+  insertEvent(newEvent) {
+    const table = this.db.getTable('GL_events')
+    
+    newEvent.number = this.getNewEventNumber(newEvent)  
+    newEvent.id = table.insertRecord(newEvent)
+
+    return newEvent
   }
 
 
@@ -150,6 +150,31 @@ class Model {
     }
   }
 
+  printYearlyEventsOnSpreadsheet(year) {
+    const events = this.getEvents()
+    const listToPrint = []
+    for (const event of events) {
+      const line = []
+      if (event.date.substring(0, 4) === year) {
+        line.push(event.number)
+        line.push(event.date)
+        line.push(event.event)
+        line.push(event.total)
+        line.push(event.a_share)
+        const b_share = (event.total - event.a_share < 0) ? 0 : event.total - event.a_share
+        line.push(b_share)
+        line.push(event.account_name)
+        listToPrint.push(line)
+      }
+    }
+    const sheet = SpreadsheetApp
+      .openById(app.printEventsSheet)
+      .getSheetByName('EventsList')
+
+    sheet.getRange(1, 2, 1, 1).setValue(year)
+    sheet.getRange(4, 1, 100, 7).clearContent();
+    sheet.getRange(4, 1, listToPrint.length, 7).setValues(listToPrint)
+  }
 
   setChargingStatus (id, status) {
     try {

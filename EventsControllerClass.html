@@ -73,6 +73,11 @@ class EventsController {
     eventsView.render()
   }
 
+  async exportYearlyEvents(year) {
+    await this.model.exportYearlyEvents(year)
+    alert(`Vuoden ${year} tapahtumat talletettu taulukkoon.`)
+  }
+
   saveEvent(event) {
     if (event.id === 0) {
       //insertEvent(event)

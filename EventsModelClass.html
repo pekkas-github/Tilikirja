@@ -20,6 +20,10 @@ class EventsModel {
     })    
   }
 
+  async exportYearlyEvents(year) {
+    await this.server.apiCall('exportYearlyEvents', year)
+  }
+
   getEvent(id) {
     const index = app.getArrayIndex(app.events, id)
     const event = app.events[index]
