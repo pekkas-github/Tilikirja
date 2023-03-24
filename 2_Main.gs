@@ -6,6 +6,13 @@ function doGet (e) {
     return HtmlService.createTemplateFromFile('0_TestBrowserSide').evaluate().setTitle('Tilikirja_test')
   }
 
+  if (e.parameter.profile === 'user') {
+    const sheet = SpreadsheetApp.openByUrl(app.dbUrl).getSheetByName('Visitor')
+    const range = sheet.getRange(sheet.getLastRow()+1, 1, 1, 1)
+
+    range.setValue(DateTimeLib.getDate())
+  }
+
   const html = HtmlService.createTemplateFromFile('_frame_View')
   html.profile = (e.parameters.profile) ? e.parameters.profile : ''
   html.version = app.version

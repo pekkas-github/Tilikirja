@@ -226,7 +226,7 @@ function singleTest() {
   })
 }
 
-function test() {
+function test_PrintSummary() {
   const model = new Model()
   model.printYearlyEventsOnSpreadsheet('2021')
 }
