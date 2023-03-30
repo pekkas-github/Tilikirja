@@ -23,14 +23,9 @@ class EventsController {
     const eventForm = new EventFormView(this, event)
     eventForm.render()
   }
-
-
+     
   setEventStatus(id) {
     this.model.setEventStatus(id)      
-    .catch( error => {
-      alert(`Server: ${error.message}`)
-      this.reloadEvents()
-    })
     const eventsView = new EventsView(this)
     eventsView.render()
   }
@@ -41,20 +36,6 @@ class EventsController {
     const eventsView = new EventsView(this)
     eventsView.render()
   }
-
-  reloadEvents() {
-    app.spinner.on()
-
-    this.model.getEvents()
-    .then(() => {
-      const eventsView = new EventsView(this)
-      eventsView.render()
-      app.spinner.off()
-    })
-    .catch(error => {
-      alert(`Server: ${error.message}`)
-    })
-  }
     
   modifyEvent(id) {
     const event = this.model.getEvent(id)
@@ -64,8 +45,10 @@ class EventsController {
 
   openEventComment(id) {
     const event = this.model.getEvent(id)
-    const eventComment = new EventCommentForm()
-    eventComment.render(event)
+    if (event.comment != '') {
+      const eventComment = new EventCommentForm()
+      eventComment.render(event)
+    }
   }
 
   openEventsPage() {
@@ -73,32 +56,28 @@ class EventsController {
     eventsView.render()
   }
 
+
   async exportYearlyEvents(year) {
     await this.model.exportYearlyEvents(year)
     alert(`Vuoden ${year} tapahtumat talletettu taulukkoon.`)
   }
 
-  saveEvent(event) {
+  async saveEvent(event) {
     if (event.id === 0) {
-      //insertEvent(event)
+      //insert
       app.spinner.on()
-      this.model.addEvent(event)
-      .then(() => {
+      await this.model.addEvent(event)
         const eventsView = new EventsView(this)
         eventsView.render()
         app.spinner.off()
-      })
+        app.popup.off()
     } else {
-      //updateEvent(event)
-      this.model.updateEvent(event)
-      .catch(error => {
-        alert(error.message)
-        this.reloadEvents()
-      })
+      //update
       const eventsView = new EventsView(this)
       eventsView.render()
+      app.popup.off()
+      await this.model.updateEvent(event)
     }
-    app.popup.off()
   }
 }
 
