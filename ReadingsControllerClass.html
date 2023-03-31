@@ -8,17 +8,13 @@ class ReadingsController {
 
   addReading(reading) {
     this.model.addReading(reading)
-    .catch( err => {
-      alert(`Server: ${err.message}`)
-      this.reloadReadings()
-    })
-    const readingsView = new ReadingsView(this)
-    readingsView.render()
+    this.openReadingsPage()
   }
 
   openReadingsPage() {
+    const readings = this.model.getReadings(10)
     const readingsView = new ReadingsView(this)
-    readingsView.render()
+    readingsView.render(readings)
   }
 
   openReadingForm() {
@@ -29,17 +25,6 @@ class ReadingsController {
   openWaterPriceForm() {
     const waterPriceForm = new WaterPriceFormView()
     waterPriceForm.render()
-  }
-
-  reloadReadings() {
-    this.model.getReadings()
-    .then(() => {
-      const readingsView = new ReadingsView(this)
-      readingsView.render()
-    })
-    .catch(error => {
-      alert(`Server: ${error.message}`)
-    })
   }
 }
 

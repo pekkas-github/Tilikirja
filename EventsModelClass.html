@@ -22,6 +22,15 @@ class EventsModel {
     return event
   }
 
+  getEvents(year) {
+    const eventsPerYear = app.events.filter( event => {
+      if (event.date.substring(0, 4) === year) {
+        return event
+      }
+    })
+    return eventsPerYear
+  }
+
   setEventStatus(id) {
 
     const index = app.getArrayIndex(app.events, id)
