@@ -24,7 +24,7 @@ class EventsModel {
 
   getEvents(year) {
     const eventsPerYear = app.events.filter( event => {
-      if (event.date.substring(0, 4) === year) {
+      if (event.date.substring(0, 4) == year) {   // String compared with Number
         return event
       }
     })
@@ -32,7 +32,6 @@ class EventsModel {
   }
 
   setEventStatus(id) {
-
     const index = app.getArrayIndex(app.events, id)
     const event = app.events[index]
 
@@ -56,6 +55,5 @@ class EventsModel {
 
     await this.server.apiCall('updateEvent', event)
   }
-
 }
 </script>

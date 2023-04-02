@@ -155,7 +155,7 @@ class Model {
     const listToPrint = []
     for (const event of events) {
       const line = []
-      if (event.date.substring(0, 4) === year) {
+      if (parseInt(event.date.substring(0, 4)) === year) {
         line.push(event.number)
         line.push(event.date)
         line.push(event.event)

@@ -26,17 +26,13 @@ class EventsController {
      
   setEventStatus(id) {
     this.model.setEventStatus(id)      
-    this.openEventsPage()
-//    const eventsView = new EventsView(this)
-//    eventsView.render()
+    this.openEventsPage(app.currentYear)
   }
 
 
   setCurrentYear(year) {
     this.model.setCurrentYear(year)
-    this.openEventsPage()
-//    const eventsView = new EventsView(this)
-//    eventsView.render()
+    this.openEventsPage(year)
   }
     
   modifyEvent(id) {
@@ -53,10 +49,10 @@ class EventsController {
     }
   }
 
-  openEventsPage() {
+  openEventsPage(year) {
     const eventsView = new EventsView(this)
-    const events = this.model.getEvents(app.currentYear)
-    eventsView.render(events, app.years, app.currentYear)
+    const events = this.model.getEvents(year)
+    eventsView.render(events, app.years, year)
   }
 
 
@@ -70,16 +66,12 @@ class EventsController {
       //insert
       app.spinner.on()
       await this.model.addEvent(event)
-        this.openEventsPage()
-//        const eventsView = new EventsView(this)
-//        eventsView.render()
+        this.openEventsPage(app.currentYear)
         app.spinner.off()
         app.popup.off()
     } else {
       //update
-      this.openEventsPage()
-//      const eventsView = new EventsView(this)
-//      eventsView.render()
+      this.openEventsPage(app.currentYear)
       app.popup.off()
       await this.model.updateEvent(event)
     }

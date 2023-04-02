@@ -8,8 +8,8 @@ class ReadingsView {
 
   render(readings) {
     this.renderControls()
+    this.setControlsEventListeners()
     this.renderContent(readings)
-    this.setEventListeners()
   }
 
   renderControls() {
@@ -21,7 +21,6 @@ class ReadingsView {
   }
 
   renderContent(readings) {
-    /* CONTENT */
     const headerLines = `
       <tr>
         <th></th>
@@ -66,7 +65,7 @@ class ReadingsView {
     $('.content').html(content)
   }
 
-  setEventListeners() {
+  setControlsEventListeners() {
     const self = this
 
     $('#lnk-price').on('click', self.controller.openWaterPriceForm)

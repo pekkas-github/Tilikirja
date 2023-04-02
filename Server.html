@@ -17,7 +17,10 @@ class Server {
 
       google.script.run
       .withSuccessHandler(result => resolve(result))
-      .withFailureHandler(error => reject(error))
+      .withFailureHandler(error => {
+        alert('Palvelinvirhe: ' + error)
+        reject(error)
+      })
       .apiCall(functionName, args)
     })
   }

@@ -18,11 +18,11 @@ class ReadingsModel {
     app.events.push(result.newEvent)  // Add created event in local table
   }
 
-  getReadings(nbr) {
+  getReadings(count) {
     const len    = app.water.length
     const deltas = []
 
-    for (let i = len - nbr; i < len; i++) {
+    for (let i = len - count; i < len; i++) {
       const actual   = {...app.water[i]} // Clone reading object
       const previous = app.water[i-1]
 

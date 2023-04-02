@@ -7,19 +7,39 @@ class ReportsView {
   }
 
   render(summaryByAccount) {
-  
-    /* CONTROLS */ 
-    let controls = '<select class="cbo" id="cbo-years" name="years">'
+    this.renderControls()
+    this.setControlsEventListeners()
+    this.renderContent(summaryByAccount)
+  }
 
-    app.years.forEach( (year) => {
-      controls += `<option>${year.year}</option>`
-    })
+  renderControls() {
 
-    controls += '</select>'
+    let options = ''
+    for(const year of app.years) {
+      const selected = (year.year === app.currentYear) ? 'selected' : ''
+      options += `
+        <option ${selected}>
+          ${year.year}
+        </option>
+      `
+    }
+    const controls = `
+      <select class="cbo" id="cbo-years" name="years">
+        ${options}
+      </select>  
+    `
     $('.controls').html(controls)
-    $('#cbo-years').val(app.currentYear)
+  }
 
-    /* CONTENT */
+  setControlsEventListeners() {
+    
+    const self = this
+    $('#cbo-years').on('change', () => {
+      self.controller.changeYear(parseInt($('#cbo-years').val()))})
+  }
+
+  renderContent(summaryByAccount) {
+    
     let content = `
       <table id="tbl-reports">
       <tr>
@@ -51,10 +71,6 @@ class ReportsView {
     </table>`
     $('.content').html(content)
 
-    /* EVENT LISTENERS */
-    const that = this
-    $('#cbo-years').on('change', () => {
-      that.controller.changeYear($('#cbo-years').val())})
   }
 }
 </script>

@@ -52,7 +52,7 @@
 
       $('#page1').on('click', () => {
         const controller = new EventsController()
-        controller.openEventsPage()
+        controller.openEventsPage(app.currentYear)
       })
 
       $('#page2').on('click', () => {
@@ -62,7 +62,7 @@
 
       $('#page3').on('click',() => {
         const controller = new ReportsController()
-        controller.openReportsPage() 
+        controller.openReportsPage(app.currentYear) 
       })
 
       $('#page4').on('click',() => {

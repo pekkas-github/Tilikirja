@@ -2,9 +2,8 @@
 
 class ReportsModel {
 
-  getReport() {
+  getReport(year) {
     const summaryByAccount = {}
-    const year = parseInt(app.currentYear)
 
     //Get events per current year 
     const eventsByYear = app.events.filter( (event) => {
