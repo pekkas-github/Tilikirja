@@ -4,29 +4,18 @@ class EventsController {
 
   constructor() {
     this.model = new EventsModel()
+    this.currentYear = this.model.getCurrentYear()
   }
 
   addNewEvent() {
-    const event = {}
-    event.id = 0
-    event.number = ''
-    event.date = ''
-    event.event= ''
-    event.total = 0
-    event.a_share = 0
-    event.account_id = 1
-    event.comment = ''
-    event.fiscal_year = app.currentYear
-    event.charging = ''
-    event.cleared = ''
-
+    const event = this.model.getNewEvent()
     const eventForm = new EventFormView(this, event)
-    eventForm.render()
+    eventForm.render(this.model.getAccounts(), this.model.getYears())
   }
      
   setEventStatus(id) {
     this.model.setEventStatus(id)      
-    this.openEventsPage(app.currentYear)
+    this.openEventsPage(this.currentYear)
   }
 
 
@@ -38,7 +27,7 @@ class EventsController {
   modifyEvent(id) {
     const event = this.model.getEvent(id)
     const eventForm = new EventFormView(this, event)
-    eventForm.render()
+    eventForm.render(this.model.getAccounts(), this.model.getYears())
   }
 
   openEventComment(id) {
@@ -52,7 +41,8 @@ class EventsController {
   openEventsPage(year) {
     const eventsView = new EventsView(this)
     const events = this.model.getEvents(year)
-    eventsView.render(events, app.years, year)
+    const years  = this.model.getYears()
+    eventsView.render(events, years, year)
   }
 
 
@@ -66,14 +56,14 @@ class EventsController {
       //insert
       app.spinner.on()
       await this.model.addEvent(event)
-        this.openEventsPage(app.currentYear)
+        this.openEventsPage(this.currentYear)
         app.spinner.off()
         app.popup.off()
     } else {
       //update
-      this.openEventsPage(app.currentYear)
+      this.model.updateEvent(event)
+      this.openEventsPage(this.currentYear)
       app.popup.off()
-      await this.model.updateEvent(event)
     }
   }
 }

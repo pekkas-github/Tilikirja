@@ -28,7 +28,7 @@ class Model {
     const price = this.db
       .getTable('Water_Prices2')
       .getRecords()
-      .filterAnd('current_value', 'x')[0]
+      .where('current_value', 'x')[0]
 
     price.base_part = Math.floor(100 * (price.factor * price.area * price.base_price + 0.005))/100
     price.usage = price.water_price + price.waste_price
@@ -39,7 +39,7 @@ class Model {
     const years = this.db
       .getTable('Years')
       .getRecords()
-      .filterAnd('current', 'x')
+      .where('current', 'x')
     return years[0].year
   }
 
@@ -181,7 +181,7 @@ class Model {
       const table = this.db.getTable('GL_events')
       const record = table
         .getRecords()
-        .filterAnd('id', id)
+        .where('id', id)
       record[0].charging = status
       table.updateRecords(record)
 

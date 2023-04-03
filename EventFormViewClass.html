@@ -7,22 +7,22 @@ class EventFormView {
     this.dateDisabled = (event.id === 0) ? '' : 'disabled'    // enable date only if new record
   }
 
-  render() {
-    this.renderContent()
+  render(accounts, years) {
+    this.renderContent(accounts, years)
     this.setEventListeners()
   }
 
-  renderContent() {
+  renderContent(accounts, years) {
 
     // Create drop downs
     let accountOptions = ''
-    for (const account of app.accounts) {
+    for (const account of accounts) {
       const selected = (account.id === this.event.account_id) ? 'selected' : ''
       accountOptions += `<option value="${account.id}" ${selected}> ${account.name} </option>`
     }
 
     let fiscalYearOptions = ''
-    for (const year of app.years) {
+    for (const year of years) {
       const selected = (year.year === this.event.fiscal_year) ? 'selected' : ''
       fiscalYearOptions += `<option ${selected}> ${year.year} </option>`
     }

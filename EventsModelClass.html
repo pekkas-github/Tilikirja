@@ -8,51 +8,73 @@ class EventsModel {
 
   async addEvent(event) {
     const newEvent = await this.server.apiCall('insertEvent', event)
-      app.events.push(newEvent)
+      Db.insertRecord('events', newEvent)
   }
 
   async exportYearlyEvents(year) {
     await this.server.apiCall('exportYearlyEvents', year)
   }
 
+  getAccounts() {
+    return Db.getRecords('accounts')
+  }
+
+  getCurrentYear() {
+    return Db.currentYear
+  }
+
   getEvent(id) {
-    const index = app.getArrayIndex(app.events, id)
-    const event = app.events[index]
+    return Db.getRecord('events', id)
+  }
+
+  getEvents(year) {
+    const events = Db.getRecords('events')
+    
+    const eventsPerYear = events.filter( event => {
+       if (event.date.substring(0, 4) == year) {   // String compared with Number
+         return event
+       }
+     })
+    
+    return eventsPerYear
+  }
+
+  getNewEvent() {
+    const event = Db.getNewRecord('events')
+    event.id          = 0
+    event.total       = 0
+    event.a_share     = 0
+    event.account_id  = 1
+    event.fiscal_year = Db.currentYear
 
     return event
   }
 
-  getEvents(year) {
-    const eventsPerYear = app.events.filter( event => {
-      if (event.date.substring(0, 4) == year) {   // String compared with Number
-        return event
-      }
-    })
-    return eventsPerYear
+  getYears() {
+    return Db.getRecords('years')
   }
 
   setEventStatus(id) {
-    const index = app.getArrayIndex(app.events, id)
-    const event = app.events[index]
-
+    const event = Db.getRecord('events', id)
     // if change is allowed
     if (event.cleared === '') {
       const status = (event.charging === 'x') ? '' : 'x'
       // change locally
-      app.events[index].charging = status
+      event.charging = status
+      Db.updateRecord('events', event)
       // change on server
       this.server.apiCall('setChargingStatus', id, status)
     }
   }
 
   setCurrentYear(year) {
-    app.currentYear = year
+    Db.currentYear = year
   }
   
   async updateEvent(event) {
-    const index = app.getArrayIndex(app.events, event.id)
-    app.events[index] = event
-
+    // Update local Db
+    Db.updateRecord('events', event)
+    // Update server Db
     await this.server.apiCall('updateEvent', event)
   }
 }

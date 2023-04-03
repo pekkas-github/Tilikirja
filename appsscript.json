@@ -19,6 +19,12 @@
         "userSymbol": "DateTimeLib",
         "libraryId": "1X3JOOljUnTjcPCV6Qc1XRBopOmartGl3-5OsPyLuGg4ta6SaspVK0S5W",
         "version": "2"
+      },
+      {
+        "userSymbol": "BrowserLibraries",
+        "version": "0",
+        "libraryId": "11QJoksiAC6GkPzLD-VHz65IuAWkhLVcgaEMB3ZEliRyCKla8pLH96vyS",
+        "developmentMode": true
       }
     ]
   },
