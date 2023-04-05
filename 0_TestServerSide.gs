@@ -209,18 +209,11 @@ function singleTest() {
   t.test('Single Test', () => {
     const model = new Model()
     
-  t.run('Water.insertReading - lukemasta tapahtumaksi', () => {
-    
-    /* SETUP */
+  t.run('Model.getEvents', () => {
 
-    /* EXECUTE */
-    const event = model.insertReading({id:0, date:'2022-01-01', master_reading:500, a_reading:4822, b_reading:5280, fiscal_year:2022, comment:'Test'})
+    const response = model.getEvents()
 
-    /* ASSERT */
-    t.isEqual(event.newId, 43, 'Uuden tietueen id')
-    t.isEqual(event.newEvent.event, 'Vesimaksu (lukeman mukaan 2 m2)', 'Laskettu kulutuksen määrä')
-    t.isEqual(event.newEvent.a_share, 36.67, 'Kulutuksesta laskettu hinta')
-    t.isEqual(event.newEvent.fiscal_year, 2022, 'Tilivuosi')
+    t.isEqual(response.length, 62, 'Tietueiden lukumäärä')
   })
 
   })

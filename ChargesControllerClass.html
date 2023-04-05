@@ -9,17 +9,7 @@ class ChargesController {
 
   ackCharges(date) {
     this.chargesModel.ackCharges(date)
-    .catch(error => {
-      alert(error)
-      this.reloadEvents()
-    })
     this.openChargesPage()
-  }
-
-  reloadEvents() {
-    this.eventsModel.getEvents()
-    .then(() => this.openChargesPage())
-    .catch(error => alert(error))
   }
 
   openChargesPage() {

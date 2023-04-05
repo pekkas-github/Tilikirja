@@ -19,12 +19,12 @@
 
     Promise.all([promise1, promise2, promise3, promise4, promise5, promise6])
     .then(arrValues => {
-      app.events = arrValues[0]
-      app.water = arrValues[1]
-      app.years = arrValues[2]
-      app.accounts = arrValues[3]
-      app.currentYear = arrValues[4]
-      app.currentWaterPrice = arrValues[5]
+      Db.events  = arrValues[0]
+      Db.water  = arrValues[1]
+      Db.years  = arrValues[2]
+      Db.accounts = arrValues[3]
+      Db.currentYear  = arrValues[4]
+      Db.currentWaterPrice  = arrValues[5]
       // Done - clear spinner
       app.spinner.off()
     })

@@ -2,16 +2,9 @@
 
 class ReportsModel {
 
-  getReport() {
-    const summaryByAccount = {}
-    const year = parseInt(app.currentYear)
-
-    //Get events per current year 
-    const eventsByYear = app.events.filter( (event) => {
-      if (event.fiscal_year === year) {
-        return event
-      }
-    })
+  getReport(year) {
+    const summaryByAccount = {} 
+    const eventsByYear = Db.getRecords('events').where('fiscal_year', year)
 
     //Calculate summation per account
     eventsByYear.forEach( (event) => {

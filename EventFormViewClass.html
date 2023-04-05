@@ -7,10 +7,27 @@ class EventFormView {
     this.dateDisabled = (event.id === 0) ? '' : 'disabled'    // enable date only if new record
   }
 
+  render(accounts, years) {
+    this.renderContent(accounts, years)
+    this.setEventListeners()
+  }
 
-  render() {
+  renderContent(accounts, years) {
 
-    /* CONTENT */
+    // Create drop downs
+    let accountOptions = ''
+    for (const account of accounts) {
+      const selected = (account.id === this.event.account_id) ? 'selected' : ''
+      accountOptions += `<option value="${account.id}" ${selected}> ${account.name} </option>`
+    }
+
+    let fiscalYearOptions = ''
+    for (const year of years) {
+      const selected = (year.year === this.event.fiscal_year) ? 'selected' : ''
+      fiscalYearOptions += `<option ${selected}> ${year.year} </option>`
+    }
+
+    // Create content
     let popupContent = `
       <span id="btn-popup-close">&times;</span>
 
@@ -21,20 +38,20 @@ class EventFormView {
         </tr>
         <tr>
           <td class="label">Päiväys:</td>
-          <td class="empty"><input id="txt-day" type="date" value="${this.event.date}" ${this.dateDisabled}></td>
+          <td class="empty"><input id="txt-day" type="date" value="${this.event.date}" ${this.dateDisabled} required></td>
         </tr>
         <tr>
           <td class="label">Tapahtuma:</td>
-          <td class="empty"><input id="txt-event" type="text" value="${this.event.event}" size="50"></td>
+          <td class="empty"><input id="txt-event" type="text" value="${this.event.event}" size="50" required></td>
         </tr>
         <tr>
           <td class="label">Summa:</td>
-          <td class="empty"><input id="txt-total" type="text" value="${this.event.total.toFixed(2)}" size="5"></td>
+          <td class="empty"><input id="txt-total" type="text" value="${this.event.total.toFixed(2)}" size="5" required></td>
         </tr>
         <tr>
           <td class="label">A-osuus:</td>
           <td class="empty">
-            <input id="txt-share" type="text" value="${this.event.a_share.toFixed(2)}" size="5">
+            <input id="txt-share" type="text" value="${this.event.a_share.toFixed(2)}" size="5" required>
             <select id="cbo-percent">
               <option value="0">Vapaa</option>
               <option value="0.385">38.5</option>
@@ -45,12 +62,8 @@ class EventFormView {
         <tr>
           <td class="label">Tili:</td>
           <td class="empty">
-            <select class="cbo" id="cbo-account">`
-
-    app.accounts.forEach(account => {
-      popupContent += `<option value="${account.id}">${account.name}</option>`
-    })
-    popupContent += `
+            <select class="cbo" id="cbo-account">
+              ${accountOptions}
             </select>
 
           </td>
@@ -58,12 +71,8 @@ class EventFormView {
         <tr>
           <td class="label">Tilivuosi:</td>
           <td class="empty">
-            <select class="cbo" id="cbo-year">`
-
-    app.years.forEach(year => {
-      popupContent += `<option>${year.year}</option>` 
-    })
-    popupContent += `
+            <select class="cbo" id="cbo-year">
+              ${fiscalYearOptions}
             </select>
           </td>
         </tr>
@@ -76,15 +85,15 @@ class EventFormView {
       <button class="btn" id="btn-popup-save">Talleta</button>`
 
     $('.popup-content').html(popupContent)
-    $('#cbo-account').val(this.event.account_id)
-    $('#cbo-year').val(this.event.fiscal_year)
+    app.popup.on()
+  }
 
-    /* EVENT LISTENERS */
-    const that = this
+  setEventListeners() {
+    const self = this
 
     $('#btn-popup-save').on('click', function() {
-      if (that.isValid(that.event)) {
-        that.controller.saveEvent(that.event)
+      if (self.isValid(self.event)) {
+        self.controller.saveEvent(self.event)
       }
     })
 
@@ -98,8 +107,6 @@ class EventFormView {
         $('#txt-share').val((total * per).toFixed(2))
       }
     })
-
-    app.popup.on()
   }
 
   isValid (event) {

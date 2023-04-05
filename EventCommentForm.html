@@ -3,9 +3,10 @@ class EventCommentForm {
 
   render(event) {
     let popupContent = `
-    <span id="btn-popup-close">&times;</span>
-    <h3>Kommentti</h3>
-    <p>${event.comment}</p>`
+      <span id="btn-popup-close">&times;</span>
+      <h3>Kommentti</h3>
+      <div>${event.comment}</div>
+    `
 
     $('.popup-content').html(popupContent)
     $('#btn-popup-close').on('click', app.popup.off)

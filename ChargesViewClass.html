@@ -7,15 +7,22 @@ class ChargesView {
   }
 
   render(eventsToBeCharged) {
+    this.renderControls()
+    this.setControlsEventListeners()
+    this.renderContent(eventsToBeCharged)
+  }
+  
+  renderControls() {
 
-    /* CONTROLS */
     const controls = `
         <input id="txt-day" type="date" hidden>
         <button class="btn" id="btn-submit" hidden>Kuittaa maksetuksi</button>`
     $('.controls').html(controls)
+  }
 
-    /* CONTROLS - EVENT HANDLERS */
-    const that = this
+  setControlsEventListeners() {
+
+    const self = this
 
     $('#btn-submit').on('click', () => {
       const date = $('#txt-day').val()
@@ -23,15 +30,16 @@ class ChargesView {
         alert('Tarkista päiväys')
         return
       }
-      that.controller.ackCharges(date)
+      self.controller.ackCharges(date)
     })
 
     if (profile === 'admin') {
       $('#txt-day').show()
       $('#btn-submit').show()
     }
+  }
 
-    /* CONTENT */
+  renderContent(eventsToBeCharged) {
 
     let content = `
       <table id="tbl-charges">

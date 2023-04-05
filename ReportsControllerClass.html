@@ -9,14 +9,16 @@ class ReportsController {
 
   changeYear(year) {
     this.eventsModel.setCurrentYear(year)
-    this.openReportsPage()
+    this.openReportsPage(year)
   }
 
-  openReportsPage() {
-    const report      = this.reportsModel.getReport()
+  openReportsPage(year) {
+    const report      = this.reportsModel.getReport(year)
+    const accounts    = this.eventsModel.getAccounts()
+    const years       = this.eventsModel.getYears()
     const reportsView = new ReportsView(this)
     
-    reportsView.render(report)
+    reportsView.render(report, accounts, years, year)
   }
 }
 </script>

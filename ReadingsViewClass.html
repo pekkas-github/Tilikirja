@@ -6,30 +6,22 @@ class ReadingsView {
     this.controller = controller
   } 
 
-  render() {
-    /* CONTROLS */
+  render(readings) {
+    this.renderControls()
+    this.setControlsEventListeners()
+    this.renderContent(readings)
+  }
+
+  renderControls() {
     const controls = `
       <button class="btn" id="btn-add" hidden>Lisää...</button>
-      <span id="lnk-price"> Veden hinta</span>`
-
+      <span id="lnk-price"> Veden hinta</span>
+    `
     $('.controls').html(controls)
+  }
 
-    /* CONTROLS - EVENT HANDLERS */
-    const that = this
-
-    $('#lnk-price').on('click', that.controller.openWaterPriceForm)
-    $('#btn-add').on('click', () => {
-      that.controller.openReadingForm()
-    })
-
-    if (profile === 'admin') {
-      $('#btn-add').show()
-    }
-
-    /* CONTENT */
-    let content = `
-      <table id="tbl-readings">
-
+  renderContent(readings) {
+    const headerLines = `
       <tr>
         <th></th>
         <th colspan="2">Talon mittari</th>
@@ -37,7 +29,6 @@ class ReadingsView {
         <th colspan="2">Asunto B</th>
         <th></th>
       </tr>
-
       <tr>
         <th>Lukemispäivä</th>
         <th>Lukema</th>
@@ -49,35 +40,45 @@ class ReadingsView {
         <th>Kommentti</th>
       </tr>
     `
-
-    const len = app.water.length
-
-    for (let i = len - 10; i < len; i++) {
-
-      const rec   = app.water[i]
-      const prev  = app.water[i-1]
-
-      let dTot    = rec.master_reading - prev.master_reading
-      dTot        = (dTot < 0) ? app.water[i].master_reading : dTot
-      let dA      = rec.a_reading - prev.a_reading
-      let dB      = rec.b_reading - prev.b_reading 
-
-      content += `
-      <tr>
-        <td> ${rec.date} </td>
-        <td> ${rec.master_reading} </td>
-        <td> ${dTot} </td>
-        <td> ${rec.a_reading} </td>
-        <td> ${dA} </td>
-        <td> ${rec.b_reading} </td>
-        <td> ${dB} </td>
-        <td> ${rec.comment} </td>
-      </tr>`
+    let tableContent = ''
+    for (const reading of readings) {
+      tableContent += `
+        <tr>
+          <td> ${reading.date} </td>
+          <td> ${reading.master_reading} </td>
+          <td> ${reading.totDelta} </td>
+          <td> ${reading.a_reading} </td>
+          <td> ${reading.aDelta} </td>
+          <td> ${reading.b_reading} </td>
+          <td> ${reading.bDelta} </td>
+          <td> ${reading.comment} </td>
+        </tr>
+      `
     }
 
-    content += '</table>'
-
+    const content = `
+      <table id="tbl-readings"> 
+        ${headerLines}
+        ${tableContent}
+      </table>
+    `
     $('.content').html(content)
+  }
+
+  setControlsEventListeners() {
+    const self = this
+
+    $('#lnk-price').on('click', () => {
+      self.controller.openWaterPriceForm()
+    })
+  
+    $('#btn-add').on('click', () => {
+      self.controller.openReadingForm()
+    })
+
+    if (profile === 'admin') {
+      $('#btn-add').show()
+    }
   }
 }
 </script>
