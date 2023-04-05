@@ -6,17 +6,17 @@ class ReportsView {
     this.controller = controller
   }
 
-  render(summaryByAccount) {
-    this.renderControls()
+  render(summaryByAccount, accounts, years, currentYear) {
+    this.renderControls(years, currentYear)
     this.setControlsEventListeners()
-    this.renderContent(summaryByAccount)
+    this.renderContent(summaryByAccount, accounts)
   }
 
-  renderControls() {
+  renderControls(years, currentYear) {
 
     let options = ''
-    for(const year of app.years) {
-      const selected = (year.year === app.currentYear) ? 'selected' : ''
+    for(const year of years) {
+      const selected = (year.year === currentYear) ? 'selected' : ''
       options += `
         <option ${selected}>
           ${year.year}
@@ -38,7 +38,7 @@ class ReportsView {
       self.controller.changeYear(parseInt($('#cbo-years').val()))})
   }
 
-  renderContent(summaryByAccount) {
+  renderContent(summaryByAccount, accounts) {
     
     let content = `
       <table id="tbl-reports">
@@ -49,7 +49,7 @@ class ReportsView {
         <th>B-osuus</th>
       </tr>`
 
-    app.accounts.forEach( (account) => {
+    accounts.forEach( (account) => {
       if (summaryByAccount[account.id]) {
       content += `
       <tr id="${account.id}">

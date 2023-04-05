@@ -6,16 +6,16 @@ class ReadingFormView {
     this.controller = controller
   }
 
-  render() {
-    this.renderContent()
+  render(years, currentYear) {
+    this.renderContent(years, currentYear)
     this.setEventListeners()
   }
 
-  renderContent() {
+  renderContent(years, currentYear) {
 
     let options = ''
-    for (const year of app.years) {
-      const selected = (year.year === app.currentYear) ? 'selected' : ''
+    for (const year of years) {
+      const selected = (year.year === currentYear) ? 'selected' : ''
       options += `<option ${selected}> ${year.year} </option>`
     }  
     
@@ -67,7 +67,6 @@ class ReadingFormView {
       const reading = self.getReading()
       if (self.isValid(reading)) {
         self.controller.addReading(reading)
-        app.popup.off()
       }
     })
 

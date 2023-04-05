@@ -14,9 +14,11 @@ class ReportsController {
 
   openReportsPage(year) {
     const report      = this.reportsModel.getReport(year)
+    const accounts    = this.eventsModel.getAccounts()
+    const years       = this.eventsModel.getYears()
     const reportsView = new ReportsView(this)
     
-    reportsView.render(report)
+    reportsView.render(report, accounts, years, year)
   }
 }
 </script>

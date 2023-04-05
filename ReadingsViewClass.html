@@ -68,7 +68,9 @@ class ReadingsView {
   setControlsEventListeners() {
     const self = this
 
-    $('#lnk-price').on('click', self.controller.openWaterPriceForm)
+    $('#lnk-price').on('click', () => {
+      self.controller.openWaterPriceForm()
+    })
   
     $('#btn-add').on('click', () => {
       self.controller.openReadingForm()

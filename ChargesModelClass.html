@@ -8,21 +8,20 @@ class ChargesModel {
 
   ackCharges(date) {
     // Local update
-      const eventsToBeCharged = this.getEventsToBeCharged()
-      eventsToBeCharged.forEach( (event) => {
-        const tableIndex = app.getArrayIndex(app.events, event.id)
-        app.events[tableIndex].cleared = date
-      })
-      // Server update
-      this.server.apiCall('ackCharges', eventsToBeCharged, date)
+    const events = this.getEventsToBeCharged()
+
+    for (const event of events) {
+      event.cleared = date
+      Db.updateRecord('events', event)
+    }
+
+
+    this.server.apiCall('ackCharges', events, date)
   }
 
   getEventsToBeCharged() {
-    return app.events.filter( (event) => {
-      if (event.charging === 'x' && event.cleared === '') {
-        return event
-      }
-    })
+    const events = Db.getRecords('events').where('cleared', '').where('charging', 'x')
+    return events.slice(0, events.length)  // Drop function defs from the array
   }
 }
 

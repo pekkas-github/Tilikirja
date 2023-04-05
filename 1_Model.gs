@@ -145,7 +145,7 @@ class Model {
     const newEvent = this.insertEvent(event)
     newEvent.account_name = 'Vesi' 
     return {
-      newId: reading.id,
+      newReading: reading,
       newEvent: newEvent
     }
   }

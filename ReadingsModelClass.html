@@ -7,24 +7,23 @@ class ReadingsModel {
   }
 
   async addReading(reading) {
-    app.water.push(reading)
-
     const result = await this.server.apiCall('insertReading', reading)
-    for (const reading of app.water) {
-      if (reading.id === result.newId) {
-        reading.id = result.newId     // Update new reading id in local table
-      }
-    }
-    app.events.push(result.newEvent)  // Add created event in local table
+      Db.insertRecord('water', result.newReading)
+      Db.insertRecord('events', result.newEvent)
+  }
+
+  getCurrentWaterPrice() {
+    return Db.currentWaterPrice
   }
 
   getReadings(count) {
-    const len    = app.water.length
-    const deltas = []
+    const readings = Db.getRecords('water')
+    const len      = readings.length
+    const deltas   = []
 
     for (let i = len - count; i < len; i++) {
-      const actual   = {...app.water[i]} // Clone reading object
-      const previous = app.water[i-1]
+      const actual   = {...readings[i]} // Clone reading object
+      const previous = readings[i-1]
 
       const tot        = actual.master_reading - previous.master_reading
       actual.totDelta  = (tot < 0) ? actual.master_reading : tot
