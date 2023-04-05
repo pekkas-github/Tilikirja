@@ -6,38 +6,44 @@ class ReadingFormView {
     this.controller = controller
   }
 
-  render() {
+  render(years, currentYear) {
+    this.renderContent(years, currentYear)
+    this.setEventListeners()
+  }
 
-    let popupContent = `
+  renderContent(years, currentYear) {
+
+    let options = ''
+    for (const year of years) {
+      const selected = (year.year === currentYear) ? 'selected' : ''
+      options += `<option ${selected}> ${year.year} </option>`
+    }  
+    
+    const popupContent = `
       <span id="btn-popup-close">&times;</span>
 
       <table class="empty">
         <tr>
           <td class="label">Lukemispäivä:</td>
-          <td class="empty"><input id="txt-date" type="date"></td>
+          <td class="empty"><input id="txt-date" type="date" required></td>
         </tr>
         <tr>
           <td class="label">Talon mittari:</td>
-          <td class="empty"><input id="txt-total" type="text" size="4"></td>
+          <td class="empty"><input id="txt-total" type="text" size="4" required></td>
         </tr>
         <tr>
           <td class="label">Asunto A:</td>
-          <td class="empty"><input id="txt-a" type="text" size="4"></td>
+          <td class="empty"><input id="txt-a" type="text" size="4" required></td>
         </tr>
         <tr>
           <td class="label">Asunto B:</td>
-          <td class="empty"><input id="txt-b" type="text" size="4"></td>
+          <td class="empty"><input id="txt-b" type="text" size="4" required></td>
         </tr>
         <tr>
           <td class="label">Tilivuosi:</td>
           <td class="empty">
-            <select class="cbo" id="cbo-year">`
-
-      app.years.forEach( (year) => {
-      popupContent += `<option>${year.year}</option>`
-      })
-
-    popupContent += `
+            <select class="cbo" id="cbo-year">
+              ${options}
             </select>
           </td>
         </tr>
@@ -51,20 +57,20 @@ class ReadingFormView {
     `
 
     $('.popup-content').html(popupContent)
+    app.popup.on()
+  }
 
-    /* EVENT LISTENERS */
-    const that = this
+  setEventListeners() {
+    const self = this
 
     $('#btn-popup-save').on('click', () => {
-      const reading = that.getReading()
-      if (that.isValid(reading)) {
-        that.controller.addReading(reading)
-        app.popup.off()
+      const reading = self.getReading()
+      if (self.isValid(reading)) {
+        self.controller.addReading(reading)
       }
     })
-    $('#btn-popup-close').on('click', app.popup.off)
 
-    app.popup.on()
+    $('#btn-popup-close').on('click', app.popup.off)
   }
 
   getReading() {

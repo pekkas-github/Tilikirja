@@ -7,26 +7,21 @@ class ChargesModel {
   }
 
   ackCharges(date) {
-    return new Promise((resolve, reject) => {
+    // Local update
+    const events = this.getEventsToBeCharged()
 
-      const eventsToBeCharged = this.getEventsToBeCharged()
-      eventsToBeCharged.forEach( (event) => {
-        const tableIndex = app.getArrayIndex(app.events, event.id)
-        app.events[tableIndex].cleared = date
-      })
+    for (const event of events) {
+      event.cleared = date
+      Db.updateRecord('events', event)
+    }
 
-      this.server.apiCall('ackCharges', eventsToBeCharged, date)
-      .then(resolve)
-      .catch(err => reject(err))
-    })
+
+    this.server.apiCall('ackCharges', events, date)
   }
 
   getEventsToBeCharged() {
-    return app.events.filter( (event) => {
-      if (event.charging === 'x' && event.cleared === '') {
-        return event
-      }
-    })
+    const events = Db.getRecords('events').where('cleared', '').where('charging', 'x')
+    return events.slice(0, events.length)  // Drop function defs from the array
   }
 }
 

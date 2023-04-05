@@ -4,101 +4,67 @@ class EventsController {
 
   constructor() {
     this.model = new EventsModel()
+    this.currentYear = this.model.getCurrentYear()
   }
 
   addNewEvent() {
-    const event = {}
-    event.id = 0
-    event.number = ''
-    event.date = ''
-    event.event= ''
-    event.total = 0
-    event.a_share = 0
-    event.account_id = 1
-    event.comment = ''
-    event.fiscal_year = app.currentYear
-    event.charging = ''
-    event.cleared = ''
-
+    const event = this.model.getNewEvent()
     const eventForm = new EventFormView(this, event)
-    eventForm.render()
+    eventForm.render(this.model.getAccounts(), this.model.getYears())
   }
-
-
+     
   setEventStatus(id) {
     this.model.setEventStatus(id)      
-    .catch( error => {
-      alert(`Server: ${error.message}`)
-      this.reloadEvents()
-    })
-    const eventsView = new EventsView(this)
-    eventsView.render()
+    this.openEventsPage(this.currentYear)
   }
 
 
   setCurrentYear(year) {
     this.model.setCurrentYear(year)
-    const eventsView = new EventsView(this)
-    eventsView.render()
-  }
-
-  reloadEvents() {
-    app.spinner.on()
-
-    this.model.getEvents()
-    .then(() => {
-      const eventsView = new EventsView(this)
-      eventsView.render()
-      app.spinner.off()
-    })
-    .catch(error => {
-      alert(`Server: ${error.message}`)
-    })
+    this.openEventsPage(year)
   }
     
   modifyEvent(id) {
     const event = this.model.getEvent(id)
     const eventForm = new EventFormView(this, event)
-    eventForm.render()
+    eventForm.render(this.model.getAccounts(), this.model.getYears())
   }
 
   openEventComment(id) {
     const event = this.model.getEvent(id)
-    const eventComment = new EventCommentForm()
-    eventComment.render(event)
+    if (event.comment != '') {
+      const eventComment = new EventCommentForm()
+      eventComment.render(event)
+    }
   }
 
-  openEventsPage() {
+  openEventsPage(year) {
     const eventsView = new EventsView(this)
-    eventsView.render()
+    const events = this.model.getEvents(year)
+    const years  = this.model.getYears()
+    eventsView.render(events, years, year)
   }
+
 
   async exportYearlyEvents(year) {
     await this.model.exportYearlyEvents(year)
     alert(`Vuoden ${year} tapahtumat talletettu taulukkoon.`)
   }
 
-  saveEvent(event) {
+  async saveEvent(event) {
     if (event.id === 0) {
-      //insertEvent(event)
+      //insert
       app.spinner.on()
-      this.model.addEvent(event)
-      .then(() => {
-        const eventsView = new EventsView(this)
-        eventsView.render()
+      await this.model.addEvent(event)
+        this.openEventsPage(this.currentYear)
         app.spinner.off()
-      })
+        app.popup.off()
     } else {
-      //updateEvent(event)
+      //update
       this.model.updateEvent(event)
-      .catch(error => {
-        alert(error.message)
-        this.reloadEvents()
-      })
-      const eventsView = new EventsView(this)
-      eventsView.render()
+      this.openEventsPage(this.currentYear)
+      app.popup.off()
     }
-    app.popup.off()
   }
 }
 

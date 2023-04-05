@@ -1,7 +1,7 @@
 <script>
 class WaterPriceFormView {
 
-  render() {
+  render(waterPrice) {
 
     let popupContent = `
       <p id="btn-popup-close">&times;</p>
@@ -13,27 +13,27 @@ class WaterPriceFormView {
         </tr>
         <tr>
           <td class="td-right">Alkaen:</td>
-          <td class="number">${app.currentWaterPrice.date}</td>
+          <td class="number">${waterPrice.date}</td>
           <td></td>
         </tr>
         <tr>
           <td class="td-right">Kiinteistökerroin:</td>
-          <td class="number">${app.currentWaterPrice.factor}</td>
+          <td class="number">${waterPrice.factor}</td>
           <td></td>
         </tr>
         <tr>
           <td class="td-right">Pinta-alaperuste:</td>
-          <td class="number">${app.currentWaterPrice.area}</td>
+          <td class="number">${waterPrice.area}</td>
           <td>m2</td>
         </tr>
         <tr>
           <td class="td-right">Perusmaksu:</td>
-          <td class="number">${app.currentWaterPrice.base_price}</td>
+          <td class="number">${waterPrice.base_price}</td>
           <td>€/kk/m2</td>
         </tr>
         <tr>
           <td class="td-right">Arvioitu vuosikulutus:</td>
-          <td class="number">${app.currentWaterPrice.consumption}</td>
+          <td class="number">${waterPrice.consumption}</td>
           <td>m3/vuosi</td>
         </tr>
         <tr>
@@ -41,17 +41,17 @@ class WaterPriceFormView {
         </tr>
         <tr>
           <td class="td-right">Perusmaksuosuus:</td>
-          <td class="number">${app.currentWaterPrice.base_part.toFixed(2)}</td>
+          <td class="number">${waterPrice.base_part.toFixed(2)}</td>
           <td>€/kk</td>
         </tr>
         <tr>
           <td class="td-right">Käyttövesimaksu:</td>
-          <td class="number">${app.currentWaterPrice.water_price}</td>
+          <td class="number">${waterPrice.water_price}</td>
           <td>€/m3</td>
         </tr>
         <tr>
           <td class="td-right">Jätevesimaksu:</td>
-          <td class="number">${app.currentWaterPrice.waste_price}</td>
+          <td class="number">${waterPrice.waste_price}</td>
           <td>€/m3</td>
         </tr>
         <tr>

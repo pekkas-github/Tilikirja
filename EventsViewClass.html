@@ -1,34 +1,67 @@
 <script>
-
 class EventsView { 
 
   constructor(controller) {
     this.controller = controller
   }
 
-  render() {
-    
-    /* CONTROLS */
+  render(events, years, currentYear) {
+    this.renderControls(years, currentYear)
+    this.setControlsEventListeners()
+    this.renderContent(events)
+    this.setContentEventListeners()
+  }
 
-    let controls = '<select id="cbo-years" name="years" class="cbo">'
+  renderControls(years, currentYear) {
 
-    app.years.forEach( (year) => {
-      controls += `<option>${year.year}</option>`
-    })
-
-    controls += '</select>'
-
-    controls += `
+    let options = ''
+    for(const year of years) {
+      options += `
+        <option>
+          ${year.year}
+        </option>
+      `
+    }
+    const select = `
+      <select class="cbo" id="cbo-years" name="years">
+        ${options}
+      </select>
+    `
+    const buttons = `
       <button class="btn" id="btn-add" hidden>Lisää...</button>
-      <button class="btn" id="btn-export" hidden>Vie taulukkoon</button> `
-
+      <button class="btn" id="btn-export" hidden>Vie taulukkoon</button> 
+    `
+    const controls = `
+      ${select}
+      ${buttons}
+    `
     $('.controls').html(controls)
-    $('#cbo-years').val(app.currentYear)
+    $('#cbo-years').val(currentYear)
+  }
 
-    /* CONTENT */
+  setControlsEventListeners() {
 
-    let content = `
-    <table id="tbl-events">
+    const that = this
+
+    $('#cbo-years').on('change', function() {
+        that.controller.setCurrentYear(parseInt($('#cbo-years').val()))
+      })
+
+    if (profile === 'admin') {
+      $('#btn-add').show()
+      $('#btn-add').on('click', function() {
+        that.controller.addNewEvent()})
+
+      $('#btn-export').show()
+      $('#btn-export').on('click', function() {
+        that.controller.exportYearlyEvents(parseInt($('#cbo-years').val()))
+      })
+    }
+  }
+
+  renderContent(events) {
+
+    const headerLine = `
       <tr>
         <th>Tosite</th>
         <th>Päiväys</th>
@@ -42,10 +75,9 @@ class EventsView {
         <th class="is-payed" hidden>Ok</th>
       </tr>
     `
-    app.events.forEach( (event) => {
-      if (event.date.substring(0, 4) === app.currentYear) {
-        const comment = (event.comment != '') ? '*)' : ''
-        content += `
+    let table =''
+    for (const event of events) {
+      table += `
         <tr id="${event.id}">
           <td> ${event.number}</td>
           <td> ${event.date}</td>
@@ -53,25 +85,25 @@ class EventsView {
           <td class="number"> ${event.total.toFixed(2)}</td>
           <td class="number"> ${event.a_share.toFixed(2)}</td>
           <td> ${event.account_name}</td>
-          <td class="comment"> ${comment}</td>
+          <td class="comment"> ${(event.comment != '') ? '*)' : ''}</td>
           <td> ${event.fiscal_year}</td>
           <td class="charge-status" hidden>${event.charging}</td>
           <td class="is-payed" hidden>${event.cleared}</td>
-        </tr>`
-      }
-    })
-    
-    content += '</table>'
-    
+        </tr>
+      `
+    }
+    const content = `
+      <table id="tbl-events">
+        ${headerLine}
+        ${table}
+      </table>
+    `
     $('.content').html(content)
+  }
 
-    /* EVENT LISTENERS */
+  setContentEventListeners() {
 
     const that = this
-
-    $('#cbo-years').on('change', function() {
-        that.controller.setCurrentYear($('#cbo-years').val())
-      })
 
     $('.comment').on('click', function() {
       that.controller.openEventComment(parseInt($(this).parent().attr('id')))
@@ -81,23 +113,12 @@ class EventsView {
       $('td').on('dblclick', function() {
         that.controller.modifyEvent(parseInt($(this).parent().attr('id')))})
 
-      $('#btn-add').show()
-      $('#btn-add').on('click', function() {
-        that.controller.addNewEvent()})
-
-      $('#btn-export').show()
-      $('#btn-export').on('click', function() {
-        that.controller.exportYearlyEvents($('#cbo-years').val())
-      })
-
       $('.charge-status').show()
       $('.charge-status').on('click', function() {
         that.controller.setEventStatus(parseInt($(this).parent().attr('id')))})
 
       $('.is-payed').show()
     }
-  }
-  
+  }  
 }
-
 </script>

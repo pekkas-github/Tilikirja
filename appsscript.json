@@ -7,8 +7,7 @@
       {
         "userSymbol": "DbLib2",
         "libraryId": "1tLekUn3aO2KDlv8GLsoHK4gXLKnuUpqReCu98iRY_Fwntbgu-hZv6XIa",
-        "version": "8",
-        "developmentMode": false
+        "version": "13"
       },
       {
         "userSymbol": "TestFrame",
@@ -18,9 +17,14 @@
       },
       {
         "userSymbol": "DateTimeLib",
-        "version": "2",
         "libraryId": "1X3JOOljUnTjcPCV6Qc1XRBopOmartGl3-5OsPyLuGg4ta6SaspVK0S5W",
-        "developmentMode": false
+        "version": "2"
+      },
+      {
+        "userSymbol": "BrowserLibraries",
+        "version": "0",
+        "libraryId": "11QJoksiAC6GkPzLD-VHz65IuAWkhLVcgaEMB3ZEliRyCKla8pLH96vyS",
+        "developmentMode": true
       }
     ]
   },

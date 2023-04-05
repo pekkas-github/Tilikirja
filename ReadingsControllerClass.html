@@ -3,43 +3,34 @@
 class ReadingsController {
 
   constructor() {
-    this.model = new ReadingsModel() 
+    this.model = new ReadingsModel()
+    this.eventModel = new EventsModel() 
   }
 
-  addReading(reading) {
-    this.model.addReading(reading)
-    .catch( err => {
-      alert(`Server: ${err.message}`)
-      this.reloadReadings()
-    })
-    const readingsView = new ReadingsView(this)
-    readingsView.render()
+  async addReading(reading) {
+    app.spinner.on()
+    await this.model.addReading(reading)
+      this.openReadingsPage()
+      app.spinner.off()
+      app.popup.off()
   }
 
   openReadingsPage() {
+    const readings = this.model.getReadings(10)
     const readingsView = new ReadingsView(this)
-    readingsView.render()
+    readingsView.render(readings)
   }
 
   openReadingForm() {
+    const years = this.eventModel.getYears()
+    const currentYear = this.eventModel.getCurrentYear()
     const readingForm = new ReadingFormView(this)
-    readingForm.render()
+    readingForm.render(years, currentYear)
   }
 
   openWaterPriceForm() {
     const waterPriceForm = new WaterPriceFormView()
-    waterPriceForm.render()
-  }
-
-  reloadReadings() {
-    this.model.getReadings()
-    .then(() => {
-      const readingsView = new ReadingsView(this)
-      readingsView.render()
-    })
-    .catch(error => {
-      alert(`Server: ${error.message}`)
-    })
+    waterPriceForm.render(this.model.getCurrentWaterPrice())
   }
 }
 

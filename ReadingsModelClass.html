@@ -6,40 +6,32 @@ class ReadingsModel {
     this.server = new Server()
   }
 
-  addReading(reading) {
-    return new Promise((resolve, reject) => {
-
-      app.water.push(reading)
-
-      this.server.apiCall('insertReading', reading) //Save reading and create event
-      .then(result => {
-        app.water.forEach( reading => {
-          if(reading.id === 0) {
-            reading.id = result.newId  //Update new reading id in local table
-          }
-        })
-        app.events.push(result.newEvent) //Add created event in local table
-        resolve()
-      })
-      .catch(err => {
-        reject(err)
-      })
-    })
+  async addReading(reading) {
+    const result = await this.server.apiCall('insertReading', reading)
+      Db.insertRecord('water', result.newReading)
+      Db.insertRecord('events', result.newEvent)
   }
 
-  getReadings() {
-    return new Promise((resolve, reject) => {
-      
-      this.server.apiCall('getWaterReadings')
-      .then(readings => {
-        app.water = readings
-        resolve(readings)
-      })
-      .catch(err => {
-        reject(err)
-      })
+  getCurrentWaterPrice() {
+    return Db.currentWaterPrice
+  }
 
-    })
+  getReadings(count) {
+    const readings = Db.getRecords('water')
+    const len      = readings.length
+    const deltas   = []
+
+    for (let i = len - count; i < len; i++) {
+      const actual   = {...readings[i]} // Clone reading object
+      const previous = readings[i-1]
+
+      const tot        = actual.master_reading - previous.master_reading
+      actual.totDelta  = (tot < 0) ? actual.master_reading : tot
+      actual.aDelta    = actual.a_reading - previous.a_reading
+      actual.bDelta    = actual.b_reading - previous.b_reading 
+      deltas.push(actual)
+    }
+    return deltas
   }
 }
 </script>
