@@ -3,11 +3,11 @@
 class ReadingsModel {
 
   constructor() {
-    this.server = new Server()
+    //this.server = new Server()
   }
 
   async addReading(reading) {
-    const result = await this.server.apiCall('insertReading', reading)
+    const result = await Server.apiCall('insertReading', reading)
       Db.insertRecord('water', result.newReading)
       Db.insertRecord('events', result.newEvent)
   }

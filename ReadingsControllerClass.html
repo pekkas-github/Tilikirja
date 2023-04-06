@@ -4,7 +4,7 @@ class ReadingsController {
 
   constructor() {
     this.model = new ReadingsModel()
-    this.eventModel = new EventsModel() 
+    this.eventModel = EventsModel 
   }
 
   async addReading(reading) {
@@ -17,15 +17,17 @@ class ReadingsController {
 
   openReadingsPage() {
     const readings = this.model.getReadings(10)
-    const readingsView = new ReadingsView(this)
-    readingsView.render(readings)
+    
+    ReadingsView.controller = this
+    ReadingsView.render(readings)
   }
 
   openReadingForm() {
     const years = this.eventModel.getYears()
     const currentYear = this.eventModel.getCurrentYear()
-    const readingForm = new ReadingFormView(this)
-    readingForm.render(years, currentYear)
+    
+    ReadingFormView.controller = this
+    ReadingFormView.render(years, currentYear)
   }
 
   openWaterPriceForm() {
