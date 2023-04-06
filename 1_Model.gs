@@ -4,25 +4,43 @@
 const service = {}
 
 service.printYearlyEventsOnSpreadsheet = function(year) {
-
 }
+
+service.updateChargingSheet = function() {
+  const events   = db.getTable('GL_events').getRecords().where('cleared', '').where('charging', 'x')
+  const accounts = db.getTable('Accounts').getRecords()
+  const sheet    = SpreadsheetApp.openByUrl(app.printingSheet).getSheetByName('Summary')
+  const values   = []
+
+  sheet.getRange(5, 2, 14, 5).clearContent();
+
+  events.forEach( (event) => {    
+    const newLine = []
+    newLine.push(event.date)
+    newLine.push(event.event)
+    newLine.push(event.total)
+    newLine.push(event.a_share)
+
+    for (const account of accounts) {
+      if(account.id === event.account_id) {
+        newLine.push(account.name)
+        break
+      }
+    }
+
+    values.push(newLine)
+  })
+
+  if (values.length === 0) {return}
+
+  sheet.getRange(5, 2, values.length, 5).setValues(values)
+}
+
 
 class Model {
 
   constructor() {
     this.db = DbLib2.getDataAccess(app.dbUrl)
-  }
-
-  /* Change selected events as 'payed by A' on the given date */
-  ackCharges (events, date) {
-    const table   = this.db.getTable('GL_events')
-    
-    events.forEach( (event) => {
-      const record = table.getRecord(event.id)
-      record.cleared = date
-      table.updateRecord(record)
-    })
-    this.updateChargingSheet()
   }
 
   getAccounts () {
@@ -194,7 +212,7 @@ class Model {
       record[0].charging = status
       table.updateRecords(record)
 
-      this.updateChargingSheet()
+      service.updateChargingSheet()
     }
 
     catch(err) {
@@ -202,44 +220,6 @@ class Model {
     }
   }
 
-
-  updateChargingSheet () {
-    const events = this.db
-      .getTable('GL_events')
-      .getRecords()
-    const accounts = this.db
-      .getTable('Accounts')
-      .getRecords()
-    const sheet = SpreadsheetApp
-      .openByUrl(app.printingSheet)
-      .getSheetByName('Summary')
-    const values = []
-
-    sheet.getRange(5, 2, 14, 5).clearContent();
-
-    events.forEach( (event) => {    
-      if (event.charging === 'x' && event.cleared === '') {
-        const newLine = []
-        newLine.push(event.date)
-        newLine.push(event.event)
-        newLine.push(event.total)
-        newLine.push(event.a_share)
-
-        for (const account of accounts) {
-          if(account.id === event.account_id) {
-            newLine.push(account.name)
-            break
-          }
-        }
-
-        values.push(newLine)
-      }
-    })
-
-    if (values.length === 0) {return}
-
-    sheet.getRange(5, 2, values.length, 5).setValues(values)
-  }
 
   updateEvent (event) {
     this.db.getTable('GL_events').updateRecord(event)
