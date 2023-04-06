@@ -9,8 +9,12 @@ class EventsController {
 
   addNewEvent() {
     const event = this.model.getNewEvent()
-    const eventForm = new EventFormView(this, event)
-    eventForm.render(this.model.getAccounts(), this.model.getYears())
+    const accounts = this.model.getAccounts()
+    const years    = this.model.getYears()
+
+    EventFormView.controller = this
+    EventFormView.event      = event
+    EventFormView.render(accounts, years)
   }
      
   setEventStatus(id) {
@@ -25,9 +29,13 @@ class EventsController {
   }
     
   modifyEvent(id) {
-    const event = this.model.getEvent(id)
-    const eventForm = new EventFormView(this, event)
-    eventForm.render(this.model.getAccounts(), this.model.getYears())
+    const event    = this.model.getEvent(id)
+    const accounts = this.model.getAccounts()
+    const years    = this.model.getYears()
+
+    EventFormView.controller = this
+    EventFormView.event      = event
+    EventFormView.render(accounts, years)
   }
 
   openEventComment(id) {
