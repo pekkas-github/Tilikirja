@@ -13,7 +13,7 @@ function doGet (e) {
     range.setValue(DateTimeLib.getDate())
   }
 
-  const html = HtmlService.createTemplateFromFile('_frame_View')
+  const html = HtmlService.createTemplateFromFile('frame')
   html.profile = (e.parameters.profile) ? e.parameters.profile : ''
   html.version = app.version
 
@@ -24,6 +24,7 @@ function doGet (e) {
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL)
 }
 
+// ROUTERIIN JÄÄ VAIN printYearlyEventsOnSpreadsheet JA LISÄTÄÄN VELOITUSLISTAN PÄIVITYS
 const interface = {
   ackCharges:             (args) => model.ackCharges(args[0], args[1]),
   exportYearlyEvents:     (args) => model.printYearlyEventsOnSpreadsheet(args[0]),
@@ -39,11 +40,8 @@ const interface = {
   updateEvent:            (args) => model.updateEvent(args[0]),
 }
 
+// TÄHÄN TULEE KAKSI API-RAJAPINTAA: dbApi ja serviceApi
 function apiCall (apiName, args) {
   return interface[apiName](args)
 }
 
-
-function include (filename) {
-  return HtmlService.createHtmlOutputFromFile(filename).getContent()
-}

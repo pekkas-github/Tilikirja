@@ -5,4 +5,6 @@ const app = {}
   app.printingSheet = 'https://docs.google.com/spreadsheets/d/1lVYY_7hIzs6LV3cliD9CzUudKmHgoLcKtGb_JD8sacA/edit#gid=0'
   app.printEventsSheet = '1ny7uTACEAderhT7oza956uhsHIsgd3nNoFH8FuhMIDk'
 
-
+  app.include = function(filename) {
+    return HtmlService.createTemplateFromFile(filename).evaluate().getContent()
+  }

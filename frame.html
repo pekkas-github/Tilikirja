@@ -4,8 +4,10 @@
     <base target="_top">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
-    <?!= include('_frame_Styles') ?>
+    <?!= app.include('styles') ?>
+    <?!= app.include('globals') ?>
     <?!= BrowserLibraries.importLib('LocalDb') ?>
+    <?!= BrowserLibraries.importLib('ServerAccess') ?>
   </head>
 
   <body>
@@ -79,26 +81,7 @@
       })
     </script>
 
-    <?!= include('Server') ?>
-    <?!= include('InfoViewClass') ?>
-    <?!= include('EventsControllerClass') ?>
-    <?!= include('EventsModelClass') ?>
-    <?!= include('EventsViewClass') ?>
-    <?!= include('EventFormViewClass') ?>
-    <?!= include('EventCommentForm') ?>
-    <?!= include('ReadingsModelClass') ?>
-    <?!= include('ReadingsViewClass') ?>
-    <?!= include('ReadingFormViewClass') ?>
-    <?!= include('ReadingsControllerClass') ?>
-    <?!= include('ReportsControllerClass') ?>
-    <?!= include('ReportsViewClass') ?>
-    <?!= include('ReportsModelClass') ?>
-    <?!= include('ChargesViewClass') ?>
-    <?!= include('ChargesControllerClass') ?>
-    <?!= include('ChargesModelClass') ?>
-    <?!= include('WaterPriceFormClass') ?>
-    <?!= include('_frame_Globals')?>
-    <?!= include('_frame_Start')?>
+    <?!= app.include('modules') ?>
     
   </body>
 </html>
