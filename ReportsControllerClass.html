@@ -2,8 +2,6 @@
 
 class ReportsController {
 
-  static reportsModel = new ReportsModel()
-
   static changeYear(year) {
     EventsModel.setCurrentYear(year)
     this.openReportsPage()
@@ -13,7 +11,7 @@ class ReportsController {
     const accounts    = EventsModel.getAccounts()
     const years       = EventsModel.getYears()
     const currentYear = EventsModel.getCurrentYear()
-    const report      = this.reportsModel.getReport(currentYear)
+    const report      = ReportsModel.getReport(currentYear)
     
     ReportsView.controller = this
     ReportsView.render(report, accounts, years, currentYear)
