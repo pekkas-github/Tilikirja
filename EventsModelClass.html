@@ -2,32 +2,28 @@
 
 class EventsModel {
 
-  constructor() {
-    this.server = new Server()
-  }
-
-  async addEvent(event) {
-    const newEvent = await this.server.apiCall('insertEvent', event)
+  static async addEvent(event) {
+    const newEvent = await Server.apiCall('insertEvent', event)
       Db.insertRecord('events', newEvent)
   }
 
-  async exportYearlyEvents(year) {
-    await this.server.apiCall('exportYearlyEvents', year)
+  static async exportYearlyEvents(year) {
+    await Server.apiCall('exportYearlyEvents', year)
   }
 
-  getAccounts() {
+  static getAccounts() {
     return Db.getRecords('accounts')
   }
 
-  getCurrentYear() {
+  static getCurrentYear() {
     return Db.currentYear
   }
 
-  getEvent(id) {
+  static getEvent(id) {
     return Db.getRecord('events', id)
   }
 
-  getEvents(year) {
+  static getEvents(year) {
     const events = Db.getRecords('events')
     
     const eventsPerYear = events.filter( event => {
@@ -39,7 +35,7 @@ class EventsModel {
     return eventsPerYear
   }
 
-  getNewEvent() {
+  static getNewEvent() {
     const event = Db.getNewRecord('events')
     event.id          = 0
     event.total       = 0
@@ -50,11 +46,11 @@ class EventsModel {
     return event
   }
 
-  getYears() {
+  static getYears() {
     return Db.getRecords('years')
   }
 
-  setEventStatus(id) {
+  static setEventStatus(id) {
     const event = Db.getRecord('events', id)
     // if change is allowed
     if (event.cleared === '') {
@@ -63,19 +59,19 @@ class EventsModel {
       event.charging = status
       Db.updateRecord('events', event)
       // change on server
-      this.server.apiCall('setChargingStatus', id, status)
+      Server.apiCall('setChargingStatus', id, status)
     }
   }
 
-  setCurrentYear(year) {
+  static setCurrentYear(year) {
     Db.currentYear = year
   }
   
-  async updateEvent(event) {
+  static async updateEvent(event) {
     // Update local Db
     Db.updateRecord('events', event)
     // Update server Db
-    await this.server.apiCall('updateEvent', event)
+    await Server.apiCall('updateEvent', event)
   }
 }
 </script>
