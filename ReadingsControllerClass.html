@@ -2,19 +2,16 @@
 
 class ReadingsController {
 
-    static model = new ReadingsModel()
-    static eventModel = EventsModel 
-
   static async addReading(reading) {
     app.spinner.on()
-    await this.model.addReading(reading)
+    await ReadingsModel.addReading(reading)
       this.openReadingsPage()
       app.spinner.off()
       app.popup.off()
   }
 
   static openReadingsPage() {
-    const readings = this.model.getReadings(10)
+    const readings = ReadingsModel.getReadings(10)
     
     ReadingsView.controller = this
     ReadingsView.render(readings)
@@ -29,7 +26,7 @@ class ReadingsController {
   }
 
   static openWaterPriceForm() {
-    WaterPriceFormView.render(this.model.getCurrentWaterPrice())
+    WaterPriceFormView.render(ReadingsModel.getCurrentWaterPrice())
   }
 }
 

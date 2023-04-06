@@ -5,9 +5,9 @@ class EventsController {
   static model = EventsModel
 
   static addNewEvent() {
-    const event = this.model.getNewEvent()
-    const accounts = this.model.getAccounts()
-    const years    = this.model.getYears()
+    const event = EventsModel.getNewEvent()
+    const accounts = Events.getAccounts()
+    const years    = EventsModel.getYears()
 
     EventFormView.controller = this
     EventFormView.event      = event
@@ -15,20 +15,20 @@ class EventsController {
   }
      
   static setEventStatus(id) {
-    this.model.setEventStatus(id)
+    EventsModel.setEventStatus(id)
     this.openEventsPage()
   }
 
 
   static setCurrentYear(year) {
-    this.model.setCurrentYear(year)
+    EventsModel.setCurrentYear(year)
     this.openEventsPage()
   }
     
   static modifyEvent(id) {
-    const event    = this.model.getEvent(id)
-    const accounts = this.model.getAccounts()
-    const years    = this.model.getYears()
+    const event    = EventsModel.getEvent(id)
+    const accounts = EventsModel.getAccounts()
+    const years    = EventsModel.getYears()
 
     EventFormView.controller = this
     EventFormView.event      = event
@@ -36,16 +36,16 @@ class EventsController {
   }
 
   static openEventComment(id) {
-    const event = this.model.getEvent(id)
+    const event = EventsModel.getEvent(id)
     if (event.comment != '') {
       EventCommentView.render(event)
     }
   }
 
   static openEventsPage() {
-    const years       = this.model.getYears()
-    const currentYear = this.model.getCurrentYear()
-    const events      = this.model.getEvents(currentYear)
+    const years       = EventsModel.getYears()
+    const currentYear = EventsModel.getCurrentYear()
+    const events      = EventsModel.getEvents(currentYear)
 
     EventsView.controller = this
     EventsView.render(events, years, currentYear)
@@ -53,7 +53,7 @@ class EventsController {
 
 
   static async exportYearlyEvents(year) {
-    await this.model.exportYearlyEvents(year)
+    await EventsModel.exportYearlyEvents(year)
     alert(`Vuoden ${year} tapahtumat talletettu taulukkoon.`)
   }
 
@@ -61,13 +61,13 @@ class EventsController {
     if (event.id === 0) {
       //insert
       app.spinner.on()
-      await this.model.addEvent(event)
+      await EventsModel.addEvent(event)
         this.openEventsPage()
         app.spinner.off()
         app.popup.off()
     } else {
       //update
-      this.model.updateEvent(event)
+      EventsModel.updateEvent(event)
       this.openEventsPage()
       app.popup.off()
     }
