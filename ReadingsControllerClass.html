@@ -2,12 +2,10 @@
 
 class ReadingsController {
 
-  constructor() {
-    this.model = new ReadingsModel()
-    this.eventModel = EventsModel 
-  }
+    static model = new ReadingsModel()
+    static eventModel = EventsModel 
 
-  async addReading(reading) {
+  static async addReading(reading) {
     app.spinner.on()
     await this.model.addReading(reading)
       this.openReadingsPage()
@@ -15,24 +13,23 @@ class ReadingsController {
       app.popup.off()
   }
 
-  openReadingsPage() {
+  static openReadingsPage() {
     const readings = this.model.getReadings(10)
     
     ReadingsView.controller = this
     ReadingsView.render(readings)
   }
 
-  openReadingForm() {
-    const years = this.eventModel.getYears()
-    const currentYear = this.eventModel.getCurrentYear()
+  static openReadingForm() {
+    const years       = EventsModel.getYears()
+    const currentYear = EventsModel.getCurrentYear()
     
     ReadingFormView.controller = this
     ReadingFormView.render(years, currentYear)
   }
 
-  openWaterPriceForm() {
-    const waterPriceForm = new WaterPriceFormView()
-    waterPriceForm.render(this.model.getCurrentWaterPrice())
+  static openWaterPriceForm() {
+    WaterPriceFormView.render(this.model.getCurrentWaterPrice())
   }
 }
 
