@@ -63,8 +63,7 @@
       })
 
       $('#page3').on('click',() => {
-        const controller = new ReportsController()
-        controller.openReportsPage(Db.currentYear) 
+        ReportsController.openReportsPage() 
       })
 
       $('#page4').on('click',() => {
