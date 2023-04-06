@@ -55,8 +55,7 @@
       })
 
       $('#page1').on('click', () => {
-        const controller = new EventsController()
-        controller.openEventsPage(Db.currentYear)
+        EventsController.openEventsPage()
       })
 
       $('#page2').on('click', () => {
