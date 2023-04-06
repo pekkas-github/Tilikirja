@@ -1,18 +1,16 @@
 <script>
 class EventsView { 
 
-  constructor(controller) {
-    this.controller = controller
-  }
+  static controller;
 
-  render(events, years, currentYear) {
+  static render(events, years, currentYear) {
     this.renderControls(years, currentYear)
     this.setControlsEventListeners()
     this.renderContent(events)
     this.setContentEventListeners()
   }
 
-  renderControls(years, currentYear) {
+  static renderControls(years, currentYear) {
 
     let options = ''
     for(const year of years) {
@@ -39,27 +37,27 @@ class EventsView {
     $('#cbo-years').val(currentYear)
   }
 
-  setControlsEventListeners() {
+  static setControlsEventListeners() {
 
-    const that = this
+    const ctrl = this.controller
 
     $('#cbo-years').on('change', function() {
-        that.controller.setCurrentYear(parseInt($('#cbo-years').val()))
+        ctrl.setCurrentYear(parseInt($('#cbo-years').val()))
       })
 
     if (profile === 'admin') {
       $('#btn-add').show()
       $('#btn-add').on('click', function() {
-        that.controller.addNewEvent()})
+        ctrl.addNewEvent()})
 
       $('#btn-export').show()
       $('#btn-export').on('click', function() {
-        that.controller.exportYearlyEvents(parseInt($('#cbo-years').val()))
+        ctrl.exportYearlyEvents(parseInt($('#cbo-years').val()))
       })
     }
   }
 
-  renderContent(events) {
+  static renderContent(events) {
 
     const headerLine = `
       <tr>
@@ -101,21 +99,21 @@ class EventsView {
     $('.content').html(content)
   }
 
-  setContentEventListeners() {
+  static setContentEventListeners() {
 
-    const that = this
+    const ctrl = this.controller
 
     $('.comment').on('click', function() {
-      that.controller.openEventComment(parseInt($(this).parent().attr('id')))
+      ctrl.openEventComment(parseInt($(this).parent().attr('id')))
     })
 
     if (profile === 'admin') {
       $('td').on('dblclick', function() {
-        that.controller.modifyEvent(parseInt($(this).parent().attr('id')))})
+        ctrl.modifyEvent(parseInt($(this).parent().attr('id')))})
 
       $('.charge-status').show()
       $('.charge-status').on('click', function() {
-        that.controller.setEventStatus(parseInt($(this).parent().attr('id')))})
+        ctrl.setEventStatus(parseInt($(this).parent().attr('id')))})
 
       $('.is-payed').show()
     }

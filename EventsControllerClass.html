@@ -39,10 +39,10 @@ class EventsController {
   }
 
   openEventsPage(year) {
-    const eventsView = new EventsView(this)
     const events = this.model.getEvents(year)
     const years  = this.model.getYears()
-    eventsView.render(events, years, year)
+    EventsView.controller = this
+    EventsView.render(events, years, year)
   }
 
 
