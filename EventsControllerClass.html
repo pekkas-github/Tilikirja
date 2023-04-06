@@ -2,8 +2,6 @@
 
 class EventsController {
 
-  static model = EventsModel
-
   static addNewEvent() {
     const event = EventsModel.getNewEvent()
     const accounts = Events.getAccounts()

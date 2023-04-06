@@ -1,12 +1,8 @@
 <script>
-
+//NÄMÄ OVAT EVENTS-TAPAHTUMIA. CHARGES-MODELIA EI ERIKSEEN TARVITA
 class ChargesModel {
 
-  constructor() {
-    this.server = new Server()
-  }
-
-  ackCharges(date) {
+  static ackCharges(date) {
     // Local update
     const events = this.getEventsToBeCharged()
 
@@ -16,10 +12,10 @@ class ChargesModel {
     }
 
 
-    this.server.apiCall('ackCharges', events, date)
+    Server.apiCall('ackCharges', events, date)
   }
 
-  getEventsToBeCharged() {
+  static getEventsToBeCharged() {
     const events = Db.getRecords('events').where('cleared', '').where('charging', 'x')
     return events.slice(0, events.length)  // Drop function defs from the array
   }
