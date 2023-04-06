@@ -1,4 +1,15 @@
-const model = new Model()
+const model = new Model()   //TÄMÄ JA KOKO Model LUOKKA TULEVAT POISTUMAAN
+const db = DbLib2.getDataAccess(app.dbId)
+
+function dbApi(tableName, methodName, arg1, arg2, arg3) {
+  const table = db.getTable(tableName)
+  return table[methodName](arg1, arg2, arg3)
+}
+
+function serviceApi(functionName, arg1, arg2, arg3) {
+  return service[functionName](arg1, arg2, arg3)
+}
+
 
 function doGet (e) {
   if (e.parameters.test) {
@@ -24,7 +35,7 @@ function doGet (e) {
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL)
 }
 
-// ROUTERIIN JÄÄ VAIN printYearlyEventsOnSpreadsheet JA LISÄTÄÄN VELOITUSLISTAN PÄIVITYS
+// ROUTERIIN TULEE POISTUMAAN KOKONAAN. SPESSU-FUNKTIOT TULEVAT service-OBJEKTIN ALLE
 const interface = {
   ackCharges:             (args) => model.ackCharges(args[0], args[1]),
   exportYearlyEvents:     (args) => model.printYearlyEventsOnSpreadsheet(args[0]),

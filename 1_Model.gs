@@ -1,5 +1,12 @@
 // VALTAOSA TÄMÄN MODULIN LOGIIKASTA SIIRRETÄÄN SELAINPÄÄHÄN. AINOASTAAN SHEETS-TAULUKOIDEN PÄIVITYKSIIN
 // LIITTYÄVT METODIT JÄÄVÄT. MUILTA OSIN MAIN:STA VIITATAAN SUORAAN DBLIB-METODEIHIN
+
+const service = {}
+
+service.printYearlyEventsOnSpreadsheet = function(year) {
+
+}
+
 class Model {
 
   constructor() {
