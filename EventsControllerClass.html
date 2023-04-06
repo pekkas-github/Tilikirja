@@ -41,8 +41,7 @@ class EventsController {
   openEventComment(id) {
     const event = this.model.getEvent(id)
     if (event.comment != '') {
-      const eventComment = new EventCommentForm()
-      eventComment.render(event)
+      EventCommentView.render(event)
     }
   }
 
