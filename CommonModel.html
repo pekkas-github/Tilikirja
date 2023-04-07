@@ -1,0 +1,20 @@
+<script>
+class Common {
+
+  static getAccounts() {
+    return Db.getRecords('accounts')
+  }
+
+  static getCurrentYear() {
+    return Db.currentYear
+  }
+
+  static getYears() {
+    return Db.getRecords('years')
+  }
+  
+  static setCurrentYear(year) {
+    Db.currentYear = year
+  }
+}
+</script>

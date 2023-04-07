@@ -4,8 +4,8 @@ class EventsController {
 
   static addNewEvent() {
     const event = EventsModel.getNewEvent()
-    const accounts = Events.getAccounts()
-    const years    = EventsModel.getYears()
+    const accounts = Common.getAccounts()
+    const years    = Common.getYears()
 
     EventFormView.controller = this
     EventFormView.event      = event
@@ -19,14 +19,14 @@ class EventsController {
 
 
   static setCurrentYear(year) {
-    EventsModel.setCurrentYear(year)
+    Common.setCurrentYear(year)
     this.openEventsPage()
   }
     
   static modifyEvent(id) {
     const event    = EventsModel.getEvent(id)
-    const accounts = EventsModel.getAccounts()
-    const years    = EventsModel.getYears()
+    const accounts = Common.getAccounts()
+    const years    = Common.getYears()
 
     EventFormView.controller = this
     EventFormView.event      = event
@@ -41,8 +41,8 @@ class EventsController {
   }
 
   static openEventsPage() {
-    const years       = EventsModel.getYears()
-    const currentYear = EventsModel.getCurrentYear()
+    const years       = Common.getYears()
+    const currentYear = Common.getCurrentYear()
     const events      = EventsModel.getEvents(currentYear)
 
     EventsView.controller = this

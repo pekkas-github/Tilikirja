@@ -11,14 +11,6 @@ class EventsModel {
     await Server.apiCall('exportYearlyEvents', year)
   }
 
-  static getAccounts() {
-    return Db.getRecords('accounts')
-  }
-
-  static getCurrentYear() {
-    return Db.currentYear
-  }
-
   static getEvent(id) {
     return Db.getRecord('events', id)
   }
@@ -46,10 +38,6 @@ class EventsModel {
     return event
   }
 
-  static getYears() {
-    return Db.getRecords('years')
-  }
-
   static setEventStatus(id) {
     const event = Db.getRecord('events', id)
     // if change is allowed
@@ -61,10 +49,6 @@ class EventsModel {
       // change on server
       Server.apiCall('setChargingStatus', id, status)
     }
-  }
-
-  static setCurrentYear(year) {
-    Db.currentYear = year
   }
   
   static async updateEvent(event) {

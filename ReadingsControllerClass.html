@@ -18,8 +18,8 @@ class ReadingsController {
   }
 
   static openReadingForm() {
-    const years       = EventsModel.getYears()
-    const currentYear = EventsModel.getCurrentYear()
+    const years       = Common.getYears()
+    const currentYear = Common.getCurrentYear()
     
     ReadingFormView.controller = this
     ReadingFormView.render(years, currentYear)
