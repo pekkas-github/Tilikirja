@@ -2,6 +2,20 @@
 
 class EventsModel {
 
+  static async ackCharges(date) {
+    const events = this.getEventsToBeCharged()
+
+    // Local update
+    for (const event of events) {
+      event.cleared = date
+      Db.updateRecord('events', event)
+    }
+
+    // Server updates
+    await Server.dbApi('GL_Events', 'updateRecords', events)
+      Server.serviceApi('updateChargingSheet')
+  }
+
   static async addEvent(event) {
     const newEvent = await Server.apiCall('insertEvent', event)
       Db.insertRecord('events', newEvent)
@@ -25,6 +39,11 @@ class EventsModel {
      })
     
     return eventsPerYear
+  }
+
+  static getEventsToBeCharged() {
+    const events = Db.getRecords('events').where('cleared', '').where('charging', 'x')
+    return events.slice(0, events.length)  // Drop function defs from the array
   }
 
   static getNewEvent() {
