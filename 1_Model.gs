@@ -1,42 +1,3 @@
-// VALTAOSA TÄMÄN MODULIN LOGIIKASTA SIIRRETÄÄN SELAINPÄÄHÄN. AINOASTAAN SHEETS-TAULUKOIDEN PÄIVITYKSIIN
-// LIITTYÄVT METODIT JÄÄVÄT. MUILTA OSIN MAIN:STA VIITATAAN SUORAAN DBLIB-METODEIHIN
-
-const service = {}
-
-service.printYearlyEventsOnSpreadsheet = function(year) {
-}
-
-service.updateChargingSheet = function() {
-  const events   = db.getTable('GL_events').getRecords().where('cleared', '').where('charging', 'x')
-  const accounts = db.getTable('Accounts').getRecords()
-  const sheet    = SpreadsheetApp.openByUrl(app.printingSheet).getSheetByName('Summary')
-  const values   = []
-
-  sheet.getRange(5, 2, 14, 5).clearContent();
-
-  events.forEach( (event) => {    
-    const newLine = []
-    newLine.push(event.date)
-    newLine.push(event.event)
-    newLine.push(event.total)
-    newLine.push(event.a_share)
-
-    for (const account of accounts) {
-      if(account.id === event.account_id) {
-        newLine.push(account.name)
-        break
-      }
-    }
-
-    values.push(newLine)
-  })
-
-  if (values.length === 0) {return}
-
-  sheet.getRange(5, 2, values.length, 5).setValues(values)
-}
-
-
 class Model {
 
   constructor() {
@@ -44,18 +5,12 @@ class Model {
   }
 
   getAccounts () {
-    return this.db
-      .getTable('Accounts')
-      .getRecords()
+    return this.db.getTable('Accounts').getRecords()
   }
-
   
   getCurrentWaterPrice () {
     // Return current water price record with calculated base price and total usage price
-    const price = this.db
-      .getTable('Water_Prices2')
-      .getRecords()
-      .where('current_value', 'x')[0]
+    const price = this.db.getTable('Water_Prices2').getRecords().where('current_value', 'x')[0]
 
     price.base_part = Math.floor(100 * (price.factor * price.area * price.base_price + 0.005))/100
     price.usage = price.water_price + price.waste_price
@@ -63,17 +18,12 @@ class Model {
   }
 
   getCurrentYear () {    
-    const years = this.db
-      .getTable('Years')
-      .getRecords()
-      .where('current', 'x')
+    const years = this.db.getTable('Years').getRecords().where('current', 'x')
     return years[0].year
   }
 
   getEvents () {
-    const events = this.db
-      .getTable('GL_events')
-      .getRecords()
+    const events = this.db.getTable('GL_events').getRecords()
     const accounts = this.getAccounts()
 
     //Add account_name field with account name values
@@ -87,30 +37,6 @@ class Model {
     })
 
     return events
-  }
-
-  //private - return consumption of a-dept.
-  getWaterConsumption () {
-    // Sort last reading first [0]. Previous reading is the next one [1].
-    const readings = this.db
-      .getTable('Water_readings')
-      .getRecords()
-      .sortDesc('id')
-
-    // A consumption is master cons - b cons
-    return (readings[0].master_reading - readings[1].master_reading) - (readings[0].b_reading - readings[1].b_reading)
-  }
-
-  getWaterReadings () {
-    return this.db
-      .getTable('Water_readings')
-      .getRecords()
-  }
-
-  getYears () {
-    return this.db
-      .getTable('Years')
-      .getRecords()
   }
 
   //private
@@ -135,6 +61,23 @@ class Model {
     return eventYearEvents[0].number + 1
   }
 
+  //private - return consumption of a-dept.
+  getWaterConsumption () {
+    // Sort last reading first [0]. Previous reading is the next one [1].
+    const readings = this.db.getTable('Water_readings').getRecords().sortDesc('id')
+
+    // A consumption is master cons - b cons
+    return (readings[0].master_reading - readings[1].master_reading) - (readings[0].b_reading - readings[1].b_reading)
+  }
+
+  getWaterReadings () {
+    return this.db.getTable('Water_readings').getRecords()
+  }
+
+  getYears () {
+    return this.db.getTable('Years').getRecords()
+  }
+
   insertEvent(newEvent) {
     const table = this.db.getTable('GL_events')
     
@@ -147,9 +90,7 @@ class Model {
 
   insertReading (reading) {
     // Save water reading record and set its id
-    reading.id = this.db
-      .getTable('Water_readings')
-      .insertRecord(reading)
+    reading.id = this.db.getTable('Water_readings').insertRecord(reading)
 
     //Charging per every three months 
     const a_consumption = this.getWaterConsumption()
@@ -157,9 +98,7 @@ class Model {
     const a_share = Math.floor(((a_consumption * price.usage + 3 * price.base_part / 2)*100+0.5))/100 
 
     // Create event record
-    const event = this.db
-      .getTable('GL_events')
-      .newRecord()
+    const event = this.db.getTable('GL_events').newRecord()
 
     event.date = reading.date
     event.event = `Vesimaksu (lukeman mukaan ${a_consumption} m2)`
@@ -194,9 +133,7 @@ class Model {
         listToPrint.push(line)
       }
     }
-    const sheet = SpreadsheetApp
-      .openById(app.printEventsSheet)
-      .getSheetByName('EventsList')
+    const sheet = SpreadsheetApp.openById(app.printEventsSheet).getSheetByName('EventsList')
 
     sheet.getRange(1, 2, 1, 1).setValue(year)
     sheet.getRange(4, 1, 100, 7).clearContent();
@@ -206,9 +143,8 @@ class Model {
   setChargingStatus (id, status) {
     try {
       const table = this.db.getTable('GL_events')
-      const record = table
-        .getRecords()
-        .where('id', id)
+      const record = table.getRecords().where('id', id)
+
       record[0].charging = status
       table.updateRecords(record)
 
@@ -220,8 +156,41 @@ class Model {
     }
   }
 
+  updateChargingSheet() {
+    const events   = db.getTable('GL_events').getRecords().where('cleared', '').where('charging', 'x')
+    const accounts = db.getTable('Accounts').getRecords()
+    const sheet    = SpreadsheetApp.openByUrl(app.printingSheet).getSheetByName('Summary')
+    const values   = []
+
+    sheet.getRange(5, 2, 14, 5).clearContent();
+
+    events.forEach( (event) => {    
+      const newLine = []
+      newLine.push(event.date)
+      newLine.push(event.event)
+      newLine.push(event.total)
+      newLine.push(event.a_share)
+
+      for (const account of accounts) {
+        if(account.id === event.account_id) {
+          newLine.push(account.name)
+          break
+        }
+      }
+
+      values.push(newLine)
+    })
+
+    if (values.length === 0) {return}
+
+    sheet.getRange(5, 2, values.length, 5).setValues(values)
+  }
 
   updateEvent (event) {
     this.db.getTable('GL_events').updateRecord(event)
+  }
+
+  updateEvents(events) {
+    this.db.getTable('GL_events').updateRecords(events)
   }
 }

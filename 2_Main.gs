@@ -1,5 +1,9 @@
-const model = new Model()   //TÄMÄ JA KOKO Model LUOKKA TULEVAT POISTUMAAN
+const model = new Model()
 const db = DbLib2.getDataAccess(app.dbId)
+
+function api(methodName, arg1, arg2, arg3) {
+  return model[methodName](arg1, arg2, arg3)
+}
 
 function dbApi(tableName, methodName, arg1, arg2, arg3) {
   const table = db.getTable(tableName)
@@ -44,7 +48,7 @@ const interface = {
   getEvents:              (args) => model.getEvents(),
   getWaterReadings:       (args) => model.getWaterReadings(),
   getYears:               (args) => model.getYears(),
-  insertEvent:            (args) => model.insertEvent(args[0]),
+//  insertEvent:            (args) => model.insertEvent(args[0]),
   insertReading:          (args) => model.insertReading(args[0]),
   setChargingStatus:      (args) => model.setChargingStatus(args[0], args[1]),
   updateEvent:            (args) => model.updateEvent(args[0]),

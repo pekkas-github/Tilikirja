@@ -12,12 +12,14 @@ class EventsModel {
     }
 
     // Server updates
-    await Server.dbApi('GL_Events', 'updateRecords', events)
-      Server.serviceApi('updateChargingSheet')
+    await Server.api('updateEvents', events)
+      Server.api('updateChargingSheet')
   }
 
   static async addEvent(event) {
-    const newEvent = await Server.apiCall('insertEvent', event)
+    // Server insert
+    const newEvent = await Server.serviceApi('insertEvent', event)
+      // Local insert
       Db.insertRecord('events', newEvent)
   }
 
