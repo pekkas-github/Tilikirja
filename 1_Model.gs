@@ -1,7 +1,7 @@
 class Model {
 
-  constructor() {
-    this.db = DbLib2.getDataAccess(app.dbUrl)
+  constructor(db) {
+    this.db = db
   }
 
   getAccounts () {
@@ -78,11 +78,9 @@ class Model {
     return this.db.getTable('Years').getRecords()
   }
 
-  insertEvent(newEvent) {
-    const table = this.db.getTable('GL_events')
-    
+  insertEvent(newEvent) {    
     newEvent.number = this.getNewEventNumber(newEvent)  
-    newEvent.id = table.insertRecord(newEvent)
+    newEvent.id = this.db.getTable('GL_events').insertRecord(newEvent)
 
     return newEvent
   }
@@ -119,6 +117,7 @@ class Model {
   printYearlyEventsOnSpreadsheet(year) {
     const events = this.getEvents()
     const listToPrint = []
+    console.log(events)
     for (const event of events) {
       const line = []
       if (parseInt(event.date.substring(0, 4)) === year) {
@@ -147,19 +146,23 @@ class Model {
 
       record[0].charging = status
       table.updateRecords(record)
-
-      service.updateChargingSheet()
     }
-
     catch(err) {
       throw new Error(`Tapahtumaa ei löytynyt tietokannasta.`)
+    }
+
+    try {
+      this.updateChargingSheet()
+    } 
+    catch(err) {
+      throw new Error(`Sheets taulukon päivityksessä virhe.`)
     }
   }
 
   updateChargingSheet() {
     const events   = db.getTable('GL_events').getRecords().where('cleared', '').where('charging', 'x')
     const accounts = db.getTable('Accounts').getRecords()
-    const sheet    = SpreadsheetApp.openByUrl(app.printingSheet).getSheetByName('Summary')
+    const sheet    = SpreadsheetApp.openById(app.printingSheet).getSheetByName('Summary')
     const values   = []
 
     sheet.getRange(5, 2, 14, 5).clearContent();

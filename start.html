@@ -8,12 +8,12 @@
 
   // Parallel data import from server
   function fetchData() {
-    const promise1 = Server.apiCall('getEvents')
-    const promise2 = Server.apiCall('getWaterReadings')
-    const promise3 = Server.apiCall('getYears')
-    const promise4 = Server.apiCall('getAccounts')
-    const promise5 = Server.apiCall('getCurrentYear')
-    const promise6 = Server.apiCall('getCurrentWaterPrice')
+    const promise1 = Server.api('getEvents')
+    const promise2 = Server.api('getWaterReadings')
+    const promise3 = Server.api('getYears')
+    const promise4 = Server.api('getAccounts')
+    const promise5 = Server.api('getCurrentYear')
+    const promise6 = Server.api('getCurrentWaterPrice')
 
     Promise.all([promise1, promise2, promise3, promise4, promise5, promise6])
     .then(arrValues => {
