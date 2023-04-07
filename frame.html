@@ -4,8 +4,10 @@
     <base target="_top">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
-    <?!= include('_frame_Styles') ?>
+    <?!= app.include('styles') ?>
+    <?!= app.include('globals') ?>
     <?!= BrowserLibraries.importLib('LocalDb') ?>
+    <?!= BrowserLibraries.importLib('ServerAccess') ?>
   </head>
 
   <body>
@@ -42,33 +44,29 @@
       <div class="spinner-roller"></div>
     </div>
 
+    <!-- EVENT LISTENERS (FRAME) -->
     <script> 
       const profile = <?= profile ?>
 
       /* Event Listeners */
       $('#page0').on('click', () => {
-        const view = new InfoView()
-        view.render()
+        InfoView.render()
       })
 
       $('#page1').on('click', () => {
-        const controller = new EventsController()
-        controller.openEventsPage(Db.currentYear)
+        EventsController.openEventsPage()
       })
 
       $('#page2').on('click', () => {
-        const controller = new ReadingsController()
-        controller.openReadingsPage()
+        ReadingsController.openReadingsPage()
       })
 
       $('#page3').on('click',() => {
-        const controller = new ReportsController()
-        controller.openReportsPage(Db.currentYear) 
+        ReportsController.openReportsPage() 
       })
 
       $('#page4').on('click',() => {
-        const controller = new ChargesController()  
-        controller.openChargesPage()
+        ChargesController.openChargesPage()
       })
       
       $('.nav-item').on('click', function() {
@@ -79,26 +77,8 @@
       })
     </script>
 
-    <?!= include('Server') ?>
-    <?!= include('InfoViewClass') ?>
-    <?!= include('EventsControllerClass') ?>
-    <?!= include('EventsModelClass') ?>
-    <?!= include('EventsViewClass') ?>
-    <?!= include('EventFormViewClass') ?>
-    <?!= include('EventCommentForm') ?>
-    <?!= include('ReadingsModelClass') ?>
-    <?!= include('ReadingsViewClass') ?>
-    <?!= include('ReadingFormViewClass') ?>
-    <?!= include('ReadingsControllerClass') ?>
-    <?!= include('ReportsControllerClass') ?>
-    <?!= include('ReportsViewClass') ?>
-    <?!= include('ReportsModelClass') ?>
-    <?!= include('ChargesViewClass') ?>
-    <?!= include('ChargesControllerClass') ?>
-    <?!= include('ChargesModelClass') ?>
-    <?!= include('WaterPriceFormClass') ?>
-    <?!= include('_frame_Globals')?>
-    <?!= include('_frame_Start')?>
+    <!-- APPLICATION CODE MODULES -->
+    <?!= app.include('modules') ?>
     
   </body>
 </html>

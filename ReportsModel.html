@@ -2,7 +2,7 @@
 
 class ReportsModel {
 
-  getReport(year) {
+  static getReport(year) {
     const summaryByAccount = {} 
     const eventsByYear = Db.getRecords('events').where('fiscal_year', year)
 

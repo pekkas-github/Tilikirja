@@ -1,0 +1,33 @@
+<script>
+
+class ReadingsController {
+
+  static async addReading(reading) {
+    app.spinner.on()
+    await ReadingsModel.addReading(reading)
+      this.openReadingsPage()
+      app.spinner.off()
+      app.popup.off()
+  }
+
+  static openReadingsPage() {
+    const readings = ReadingsModel.getReadings(10)
+    
+    ReadingsView.controller = this
+    ReadingsView.render(readings)
+  }
+
+  static openReadingForm() {
+    const years       = Common.getYears()
+    const currentYear = Common.getCurrentYear()
+    
+    ReadingFormView.controller = this
+    ReadingFormView.render(years, currentYear)
+  }
+
+  static openWaterPriceForm() {
+    WaterPriceFormView.render(ReadingsModel.getCurrentWaterPrice())
+  }
+}
+
+</script>

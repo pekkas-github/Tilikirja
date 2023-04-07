@@ -1,0 +1,83 @@
+<script>
+
+class EventsModel {
+
+  static async ackCharges(date) {
+    const events = this.getEventsToBeCharged()
+
+    // Local update
+    for (const event of events) {
+      event.cleared = date
+      Db.updateRecord('events', event)
+    }
+
+    // Server updates
+    await Server.api('updateEvents', events)
+      Server.api('updateChargingSheet')
+  }
+
+  static async addEvent(event) {
+    // Server insert
+    const newEvent = await Server.api('insertEvent', event)
+      // Local insert
+      console.log(newEvent)
+      Db.insertRecord('events', newEvent)
+  }
+
+  static async exportYearlyEvents(year) {
+    await Server.api('printYearlyEventsOnSpreadsheet', year)
+  }
+
+  static getEvent(id) {
+    return Db.getRecord('events', id)
+  }
+
+  static getEvents(year) {
+    const events = Db.getRecords('events')
+    
+    const eventsPerYear = events.filter( event => {
+       if (event.date.substring(0, 4) == year) {   // String compared with Number
+         return event
+       }
+     })
+    
+    return eventsPerYear
+  }
+
+  static getEventsToBeCharged() {
+    const events = Db.getRecords('events').where('cleared', '').where('charging', 'x')
+    return events.slice(0, events.length)  // Drop function defs from the array
+  }
+
+  static getNewEvent() {
+    const event = Db.getNewRecord('events')
+    event.id          = 0
+    event.total       = 0
+    event.a_share     = 0
+    event.account_id  = 1
+    event.fiscal_year = Db.currentYear
+
+    return event
+  }
+
+  static setEventStatus(id) {
+    const event = Db.getRecord('events', id)
+    // if change is allowed
+    if (event.cleared === '') {
+      const status = (event.charging === 'x') ? '' : 'x'
+      // change locally
+      event.charging = status
+      Db.updateRecord('events', event)
+      // change on server
+      Server.api('setChargingStatus', id, status)
+    }
+  }
+  
+  static async updateEvent(event) {
+    // Update local Db
+    Db.updateRecord('events', event)
+    // Update server Db
+    await Server.api('updateEvent', event)
+  }
+}
+</script>

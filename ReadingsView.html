@@ -2,17 +2,15 @@
 
 class ReadingsView {
 
-  constructor(controller) {
-    this.controller = controller
-  } 
+  static controller;
 
-  render(readings) {
+  static render(readings) {
     this.renderControls()
     this.setControlsEventListeners()
     this.renderContent(readings)
   }
 
-  renderControls() {
+  static renderControls() {
     const controls = `
       <button class="btn" id="btn-add" hidden>Lisää...</button>
       <span id="lnk-price"> Veden hinta</span>
@@ -20,7 +18,7 @@ class ReadingsView {
     $('.controls').html(controls)
   }
 
-  renderContent(readings) {
+  static renderContent(readings) {
     const headerLines = `
       <tr>
         <th></th>
@@ -65,15 +63,15 @@ class ReadingsView {
     $('.content').html(content)
   }
 
-  setControlsEventListeners() {
-    const self = this
+  static setControlsEventListeners() {
+    const ctrl = this.controller
 
     $('#lnk-price').on('click', () => {
-      self.controller.openWaterPriceForm()
+      ctrl.openWaterPriceForm()
     })
   
     $('#btn-add').on('click', () => {
-      self.controller.openReadingForm()
+      ctrl.openReadingForm()
     })
 
     if (profile === 'admin') {

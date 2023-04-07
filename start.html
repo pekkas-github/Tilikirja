@@ -1,7 +1,6 @@
 <script>
   // Show info page
-  const view = new InfoView()
-  view.render()
+  InfoView.render()
 
   // Start late data import
   app.spinner.on()
@@ -9,13 +8,12 @@
 
   // Parallel data import from server
   function fetchData() {
-    const server = new Server()
-    const promise1 = server.apiCall('getEvents')
-    const promise2 = server.apiCall('getWaterReadings')
-    const promise3 = server.apiCall('getYears')
-    const promise4 = server.apiCall('getAccounts')
-    const promise5 = server.apiCall('getCurrentYear')
-    const promise6 = server.apiCall('getCurrentWaterPrice')
+    const promise1 = Server.api('getEvents')
+    const promise2 = Server.api('getWaterReadings')
+    const promise3 = Server.api('getYears')
+    const promise4 = Server.api('getAccounts')
+    const promise5 = Server.api('getCurrentYear')
+    const promise6 = Server.api('getCurrentWaterPrice')
 
     Promise.all([promise1, promise2, promise3, promise4, promise5, promise6])
     .then(arrValues => {

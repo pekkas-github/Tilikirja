@@ -2,16 +2,14 @@
 
 class ReadingFormView {
 
-  constructor(controller) {
-    this.controller = controller
-  }
+  static controller;
 
-  render(years, currentYear) {
+  static render(years, currentYear) {
     this.renderContent(years, currentYear)
     this.setEventListeners()
   }
 
-  renderContent(years, currentYear) {
+  static renderContent(years, currentYear) {
 
     let options = ''
     for (const year of years) {
@@ -60,20 +58,21 @@ class ReadingFormView {
     app.popup.on()
   }
 
-  setEventListeners() {
+  static setEventListeners() {
     const self = this
+    const ctrl = this.controller
 
     $('#btn-popup-save').on('click', () => {
       const reading = self.getReading()
       if (self.isValid(reading)) {
-        self.controller.addReading(reading)
+        ctrl.addReading(reading)
       }
     })
 
     $('#btn-popup-close').on('click', app.popup.off)
   }
 
-  getReading() {
+  static getReading() {
     const reading = {}
     reading.id = 0
     reading.date = $('#txt-date').val()
@@ -86,7 +85,7 @@ class ReadingFormView {
     return reading
   }
 
-  isValid(reading) {
+  static isValid(reading) {
     try {
       if (reading.date === '') {throw('Päiväys puuttuu')}      
       if (reading.master_reading === '' || isNaN(reading.master_reading)) {throw('Tarkista kokonaismäärä')}    
