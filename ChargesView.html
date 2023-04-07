@@ -2,17 +2,15 @@
 
 class ChargesView {
 
-  constructor(controller) {
-    this.controller = controller
-  }
+  static controller;
 
-  render(eventsToBeCharged) {
+  static render(eventsToBeCharged) {
     this.renderControls()
     this.setControlsEventListeners()
     this.renderContent(eventsToBeCharged)
   }
   
-  renderControls() {
+  static renderControls() {
 
     const controls = `
         <input id="txt-day" type="date" hidden>
@@ -20,9 +18,9 @@ class ChargesView {
     $('.controls').html(controls)
   }
 
-  setControlsEventListeners() {
+  static setControlsEventListeners() {
 
-    const self = this
+    const ctrl = this.controller
 
     $('#btn-submit').on('click', () => {
       const date = $('#txt-day').val()
@@ -30,7 +28,7 @@ class ChargesView {
         alert('Tarkista päiväys')
         return
       }
-      self.controller.ackCharges(date)
+      ctrl.ackCharges(date)
     })
 
     if (profile === 'admin') {
@@ -39,7 +37,7 @@ class ChargesView {
     }
   }
 
-  renderContent(eventsToBeCharged) {
+  static renderContent(eventsToBeCharged) {
 
     let content = `
       <table id="tbl-charges">

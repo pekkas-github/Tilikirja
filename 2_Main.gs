@@ -1,4 +1,9 @@
-const model = new Model()
+const db    = DbLib2.getDataAccess(app.dbId)
+const model = new Model(db)
+
+function api(methodName, arg1, arg2, arg3) {
+  return model[methodName](arg1, arg2, arg3)
+}
 
 function doGet (e) {
   if (e.parameters.test) {
@@ -7,13 +12,13 @@ function doGet (e) {
   }
 
   if (e.parameter.profile === 'user') {
-    const sheet = SpreadsheetApp.openByUrl(app.dbUrl).getSheetByName('Visitor')
+    const sheet = SpreadsheetApp.openById(app.dbId).getSheetByName('Visitor')
     const range = sheet.getRange(sheet.getLastRow()+1, 1, 1, 1)
 
     range.setValue(DateTimeLib.getDate())
   }
 
-  const html = HtmlService.createTemplateFromFile('_frame_View')
+  const html = HtmlService.createTemplateFromFile('frame')
   html.profile = (e.parameters.profile) ? e.parameters.profile : ''
   html.version = app.version
 
@@ -22,28 +27,4 @@ function doGet (e) {
     .setTitle('Tilikirja')
     .setFaviconUrl('https://cdn.icon-icons.com/icons2/1385/PNG/512/eur-crypto-cryptocurrency-cryptocurrencies-cash-money-bank-payment_95510.png')
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL)
-}
-
-const interface = {
-  ackCharges:             (args) => model.ackCharges(args[0], args[1]),
-  exportYearlyEvents:     (args) => model.printYearlyEventsOnSpreadsheet(args[0]),
-  getAccounts:            (args) => model.getAccounts(),
-  getCurrentWaterPrice:   (args) => model.getCurrentWaterPrice(),
-  getCurrentYear:         (args) => model.getCurrentYear(),
-  getEvents:              (args) => model.getEvents(),
-  getWaterReadings:       (args) => model.getWaterReadings(),
-  getYears:               (args) => model.getYears(),
-  insertEvent:            (args) => model.insertEvent(args[0]),
-  insertReading:          (args) => model.insertReading(args[0]),
-  setChargingStatus:      (args) => model.setChargingStatus(args[0], args[1]),
-  updateEvent:            (args) => model.updateEvent(args[0]),
-}
-
-function apiCall (apiName, args) {
-  return interface[apiName](args)
-}
-
-
-function include (filename) {
-  return HtmlService.createHtmlOutputFromFile(filename).getContent()
 }

@@ -1,12 +1,8 @@
 app.version = 'DEV'
-app.dbUrl = 'https://docs.google.com/spreadsheets/d/1gs-h1ZPX2VWCZ4za2r8IGHVNu9WBRjnKihBfIvqCxZE/edit#gid=0'
-
-function testInfo() {
-  TestFrame.getInfo()
-}
+app.dbId = '1gs-h1ZPX2VWCZ4za2r8IGHVNu9WBRjnKihBfIvqCxZE'
 
 function resumeTable(sheetName) {
-  const ss = SpreadsheetApp.openByUrl(app.dbUrl)
+  const ss = SpreadsheetApp.openById(app.dbId)
   const sheetReplica = ss.getSheetByName(`${sheetName}_repl`)
   const sheetOrig = ss.getSheetByName(sheetName)      
   if (sheetOrig) {
@@ -21,8 +17,8 @@ function test_Events () {
 
   t.test('Events Module tests', () => {
 
-  const model = new Model()
-  const ss = SpreadsheetApp.openByUrl(app.dbUrl)
+  const model = new Model(db)
+  const ss = SpreadsheetApp.openById(app.dbId)
 
   t.beforeEach( () => {
 
@@ -154,7 +150,7 @@ function test_Water() {
   const t = TestFrame.getTestFrame()
 
   t.test('Water Module tests', () => {
-    const model = new Model()
+    const model = new Model(db)
 
     t.beforeEach( () => {
 
@@ -207,7 +203,7 @@ function singleTest() {
   })
 
   t.test('Single Test', () => {
-    const model = new Model()
+    const model = new Model(db)
     
   t.run('Model.getEvents', () => {
 
@@ -220,6 +216,6 @@ function singleTest() {
 }
 
 function test_PrintSummary() {
-  const model = new Model()
-  model.printYearlyEventsOnSpreadsheet('2021')
+  const model = new Model(db)
+  model.printYearlyEventsOnSpreadsheet(2021)
 }

@@ -1,0 +1,20 @@
+<script>
+
+class ReportsController {
+
+  static changeYear(year) {
+    Common.setCurrentYear(year)
+    this.openReportsPage()
+  }
+
+  static openReportsPage() {
+    const accounts    = Common.getAccounts()
+    const years       = Common.getYears()
+    const currentYear = Common.getCurrentYear()
+    const report      = ReportsModel.getReport(currentYear)
+    
+    ReportsView.controller = this
+    ReportsView.render(report, accounts, years, currentYear)
+  }
+}
+</script>

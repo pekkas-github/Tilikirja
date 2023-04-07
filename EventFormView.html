@@ -1,18 +1,15 @@
 <script>
 class EventFormView {
 
-  constructor(controller, event) {
-    this.controller   = controller
-    this.event        = event
-    this.dateDisabled = (event.id === 0) ? '' : 'disabled'    // enable date only if new record
-  }
+  static controller;
+  static event;
 
-  render(accounts, years) {
+  static render(accounts, years) {
     this.renderContent(accounts, years)
     this.setEventListeners()
   }
 
-  renderContent(accounts, years) {
+  static renderContent(accounts, years) {
 
     // Create drop downs
     let accountOptions = ''
@@ -28,6 +25,8 @@ class EventFormView {
     }
 
     // Create content
+    const dateDisabled = (this.event.id === 0) ? '' : 'disabled'    // enable date only if new record
+
     let popupContent = `
       <span id="btn-popup-close">&times;</span>
 
@@ -38,7 +37,7 @@ class EventFormView {
         </tr>
         <tr>
           <td class="label">Päiväys:</td>
-          <td class="empty"><input id="txt-day" type="date" value="${this.event.date}" ${this.dateDisabled} required></td>
+          <td class="empty"><input id="txt-day" type="date" value="${this.event.date}" ${dateDisabled} required></td>
         </tr>
         <tr>
           <td class="label">Tapahtuma:</td>
@@ -88,12 +87,13 @@ class EventFormView {
     app.popup.on()
   }
 
-  setEventListeners() {
+  static setEventListeners() {
     const self = this
+    const ctrl = this.controller
 
     $('#btn-popup-save').on('click', function() {
       if (self.isValid(self.event)) {
-        self.controller.saveEvent(self.event)
+        ctrl.saveEvent(self.event)
       }
     })
 
@@ -109,7 +109,7 @@ class EventFormView {
     })
   }
 
-  isValid (event) {
+  static isValid (event) {
     // Read input
     event.number = parseInt($('#txt-nbr').val())
     event.date = $('#txt-day').val()
