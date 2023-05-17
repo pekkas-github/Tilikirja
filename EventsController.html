@@ -43,7 +43,7 @@ class EventsController {
   static openEventsPage() {
     const years       = Common.getYears()
     const currentYear = Common.getCurrentYear()
-    const events      = Events.getEvents(currentYear)
+    const events      = Events.getEventsOfYear(currentYear)
 
     EventsView.controller = this
     EventsView.render(events, years, currentYear)

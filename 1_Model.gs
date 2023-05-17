@@ -4,10 +4,12 @@ class Model {
     this.db = db
   }
 
+/*
   getAccounts () {
     return this.db.getTable('Accounts').getRecords()
   }
-  
+*/
+
   getCurrentWaterPrice () {
     // Return current water price record with calculated base price and total usage price
     const price = this.db.getTable('Water_Prices2').getRecords().where('current_value', 'x')[0]
@@ -17,14 +19,15 @@ class Model {
     return price
   }
 
+/*
   getCurrentYear () {    
     const years = this.db.getTable('Years').getRecords().where('current', 'x')
     return years[0].year
   }
-
+*/
   getEvents () {
     const events = this.db.getTable('events').getRecords()
-    const accounts = this.getAccounts()
+    const accounts = this.db.getTable('accounts').getRecords()
 
     //Add account_name field with account name values
     events.forEach( (event) => {
@@ -39,6 +42,7 @@ class Model {
     return events
   }
 
+/*
   //private
   getNewEventNumber(newEvent) {
     const eventYear = newEvent.date.substring(0,4)
@@ -60,6 +64,7 @@ class Model {
     }    
     return eventYearEvents[0].number + 1
   }
+*/
 
   //private - return consumption of a-dept.
   getWaterConsumption () {
@@ -74,6 +79,7 @@ class Model {
     return this.db.getTable('Water_readings').getRecords()
   }
 
+/*
   getYears () {
     return this.db.getTable('Years').getRecords()
   }
@@ -84,7 +90,7 @@ class Model {
 
     return newEvent
   }
-
+*/
 
   insertReading (reading) {
     // Save water reading record and set its id
@@ -139,6 +145,7 @@ class Model {
     sheet.getRange(4, 1, listToPrint.length, 7).setValues(listToPrint)
   }
 
+/*
   setChargingStatus (id, status) {
     try {
       const table = this.db.getTable('events')
@@ -158,6 +165,7 @@ class Model {
       throw new Error(`Sheets taulukon päivityksessä virhe.`)
     }
   }
+*/
 
   updateChargingSheet() {
     const events   = db.getTable('events').getRecords().where('cleared', '').where('charging', 'x')
@@ -189,6 +197,7 @@ class Model {
     sheet.getRange(5, 2, values.length, 5).setValues(values)
   }
 
+/*
   updateEvent (event) {
     this.db.getTable('GL_events').updateRecord(event)
   }
@@ -196,4 +205,5 @@ class Model {
   updateEvents(events) {
     this.db.getTable('GL_events').updateRecords(events)
   }
+*/
 }
