@@ -10,6 +10,7 @@ class Model {
   }
 */
 
+/*
   getCurrentWaterPrice () {
     // Return current water price record with calculated base price and total usage price
     const price = this.db.getTable('Water_Prices2').getRecords().where('current_value', 'x')[0]
@@ -18,6 +19,7 @@ class Model {
     price.usage = price.water_price + price.waste_price
     return price
   }
+*/
 
 /*
   getCurrentYear () {    
@@ -66,6 +68,7 @@ class Model {
   }
 */
 
+/*
   //private - return consumption of a-dept.
   getWaterConsumption () {
     // Sort last reading first [0]. Previous reading is the next one [1].
@@ -79,7 +82,6 @@ class Model {
     return this.db.getTable('Water_readings').getRecords()
   }
 
-/*
   getYears () {
     return this.db.getTable('Years').getRecords()
   }
@@ -92,6 +94,7 @@ class Model {
   }
 */
 
+/*
   insertReading (reading) {
     // Save water reading record and set its id
     reading.id = this.db.getTable('Water_readings').insertRecord(reading)
@@ -119,6 +122,7 @@ class Model {
       newEvent: newEvent
     }
   }
+*/
 
   printYearlyEventsOnSpreadsheet(year) {
     const events = this.getEvents()

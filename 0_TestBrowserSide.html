@@ -13,6 +13,7 @@
   <?!= app.include('EventsView') ?>
   <?!= app.include('EventFormView') ?>
   <?!= app.include('EventCommentView') ?>
+  <?!= app.include('ReadingsModel') ?>
   <?!= app.include('CommonModel') ?>
   <?!= app.include('globals') ?>
 
@@ -20,18 +21,16 @@
   <script>
 
     function startTest() {
-      Db.init().then(() => {
-        EventsController.openEventsPage()
+//      Db.init().then(() => {
 //        Common.setCurrentYear(Db.getRecords('years').where('current', 'x')[0].year)
-//        let event = {id:333, number:999, date:'2021-05-06', event:'Huihai', a_share:10, account_id:1, comment:'psa', fiscal_year:2021, charging:''}
-
-      })
+//        console.table(ReadingsModel.getReadings())
+//      })
     }
 
   // Refresh remote tables
   google.script.run
   .withSuccessHandler(startTest)
-  .resumeTable('events')
+  .resumeTable(['events', 'water'])
     
   </script>
 
