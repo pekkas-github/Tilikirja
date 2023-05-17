@@ -5,6 +5,10 @@ function api(methodName, arg1, arg2, arg3) {
   return model[methodName](arg1, arg2, arg3)
 }
 
+function dbApi(methodName, arg1, arg2, arg3) {
+  return db[methodName](arg1, arg2, arg3)
+}
+
 function doGet (e) {
   if (e.parameters.test) {
     console.log(e.parameters.test)

@@ -113,7 +113,7 @@ class EventsView {
 
       $('.charge-status').show()
       $('.charge-status').on('click', function() {
-        ctrl.setEventStatus(parseInt($(this).parent().attr('id')))})
+        ctrl.toggleEventStatus(parseInt($(this).parent().attr('id')))})
 
       $('.is-payed').show()
     }

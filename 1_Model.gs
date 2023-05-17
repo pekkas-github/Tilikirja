@@ -23,7 +23,7 @@ class Model {
   }
 
   getEvents () {
-    const events = this.db.getTable('GL_events').getRecords()
+    const events = this.db.getTable('events').getRecords()
     const accounts = this.getAccounts()
 
     //Add account_name field with account name values
@@ -141,7 +141,7 @@ class Model {
 
   setChargingStatus (id, status) {
     try {
-      const table = this.db.getTable('GL_events')
+      const table = this.db.getTable('events')
       const record = table.getRecords().where('id', id)
 
       record[0].charging = status
@@ -160,8 +160,8 @@ class Model {
   }
 
   updateChargingSheet() {
-    const events   = db.getTable('GL_events').getRecords().where('cleared', '').where('charging', 'x')
-    const accounts = db.getTable('Accounts').getRecords()
+    const events   = db.getTable('events').getRecords().where('cleared', '').where('charging', 'x')
+    const accounts = db.getTable('accounts').getRecords()
     const sheet    = SpreadsheetApp.openById(app.printingSheet).getSheetByName('Summary')
     const values   = []
 

@@ -7,7 +7,7 @@
       {
         "userSymbol": "DbLib2",
         "libraryId": "1tLekUn3aO2KDlv8GLsoHK4gXLKnuUpqReCu98iRY_Fwntbgu-hZv6XIa",
-        "version": "13"
+        "version": "16"
       },
       {
         "userSymbol": "TestFrame",
@@ -22,8 +22,8 @@
       },
       {
         "userSymbol": "BrowserLibraries",
-        "version": "0",
         "libraryId": "11QJoksiAC6GkPzLD-VHz65IuAWkhLVcgaEMB3ZEliRyCKla8pLH96vyS",
+        "version": "0",
         "developmentMode": true
       }
     ]

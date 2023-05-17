@@ -1,0 +1,83 @@
+<script>
+class Events {
+
+  static async ackCharges(date) {
+    const events = Db.getRecords('events').where('cleared', '').where('charging', 'x')
+
+    for (const event of events) {
+      event.cleared = date
+    }
+
+    await Db.updateRecords('events', events)
+      Server.api('updateChargingSheet')
+  }
+
+
+  static addEvent(newEvent) {
+    const eventsOfYear = this.getEventsOfYear(newEvent.date.substring(0,4))
+    
+    // Järjestä toistenumerot laskevaan järjestykseen
+    eventsOfYear.sort((a, b) => {return b.number - a.number})
+
+    // Tosite numero on 1 tai seuraava
+    if (eventsOfYear.length === 0) {
+      newEvent.number = 1
+    }else{
+      newEvent.number = eventsOfYear[0].number + 1
+    }
+
+    Db.insertRecord('events', newEvent)
+  }
+
+
+  static getEvent(id) {
+    return Db.getRecord('events', id)
+  }
+
+
+  static getEventsOfYear(year) {
+    const events = Db.getRecords('events')
+    const pattern = new RegExp(`${year}`)
+    
+    const eventsOfYear = events.filter( event => {
+      if (pattern.test(event.date)) {
+        return event
+      }
+    })
+    
+    return eventsOfYear
+  }
+
+
+  static getEventsToBeCharged() {
+    return Db.getRecords('events').where('cleared', '').where('charging', 'x')
+  }
+
+
+  static getNewEvent() {
+    const event = Db.getNewRecord('events')
+    event.id          = 0
+    event.total       = 0
+    event.a_share     = 0
+    event.account_id  = 1
+    event.fiscal_year = Common.getCurrentYear
+
+    return event
+  }
+
+
+  static toggleEventStatus(id) {
+    const event = Db.getRecord('events', id)
+
+    if (event.cleared === '') {
+      event.charging = (event.charging === 'x') ? '' : 'x'
+      Db.updateRecord('events', event)
+    }
+  }
+  
+
+  static async updateEvent(event) {
+    Db.updateRecord('events', event)
+  }
+}
+</script>

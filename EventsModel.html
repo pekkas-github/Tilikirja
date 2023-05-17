@@ -24,6 +24,7 @@ class EventsModel {
       Db.insertRecord('events', newEvent)
   }
 
+  // TODO: Siirrä Common luokkaan
   static async exportYearlyEvents(year) {
     await Server.api('printYearlyEventsOnSpreadsheet', year)
   }
