@@ -94,6 +94,7 @@ class EventFormView {
     $('#btn-popup-save').on('click', function() {
       if (self.isValid(self.event)) {
         ctrl.saveEvent(self.event)
+        app.popup.off()
       }
     })
 

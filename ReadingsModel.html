@@ -2,32 +2,69 @@
   
 class ReadingsModel {
 
-  static async addReading(reading) {
+  static async addReading_old(reading) {
     const result = await Server.api('insertReading', reading)
       Db.insertRecord('water', result.newReading)
       Db.insertRecord('events', result.newEvent)
   }
 
-  static getCurrentWaterPrice() {
-    return Db.currentWaterPrice
+  static addReading(reading) {
+    Db.insertRecord('water', reading)
+
+    // Laske A:n kulutus ja määritä hinta
+    const consumptionA  = this.calculateConsumption()
+    const currentPrice  = this.getCurrentWaterPrice()
+
+    const a_share = Math.floor(((consumptionA * currentPrice.usage + 3 * currentPrice.ground / 2)*100+0.5))/100 
+
+    // Muodosta tilitapahtuma
+    const newEvent = Db.getNewRecord('events')
+
+    newEvent.date        = reading.date
+    newEvent.event       = `Vesimaksu (lukeman mukaan ${consumptionA} m2)`
+    newEvent.total       = 0
+    newEvent.a_share     = a_share
+    newEvent.account_id  = 6
+    newEvent.fiscal_year = reading.fiscal_year
+
+    // Lisää tapahtuma
+    EventsModel.addEvent(newEvent)
   }
 
-  static getReadings(count) {
+
+  static calculateConsumption() {
     const readings = Db.getRecords('water')
-    const len      = readings.length
-    const deltas   = []
+    const last     = readings[readings.length - 1]
+    const prev     = readings[readings.length - 2]
 
-    for (let i = len - count; i < len; i++) {
-      const actual   = {...readings[i]} // Clone reading object
-      const previous = readings[i-1]
+    // A-kulutus: talon kulutus - B-kulutus
+    return (last.master_reading - prev.master_reading) - (last.b_reading - prev.b_reading)
+  }
 
-      const tot        = actual.master_reading - previous.master_reading
-      actual.totDelta  = (tot < 0) ? actual.master_reading : tot
-      actual.aDelta    = actual.a_reading - previous.a_reading
-      actual.bDelta    = actual.b_reading - previous.b_reading 
-      deltas.push(actual)
+
+  static getCurrentWaterPrice() {
+    const price  = Db.getRecords('waterprice').where('current_value', 'x')[0]
+
+    price.usage  = price.water_price + price.waste_price
+    price.ground = Math.floor(100 * (price.factor * price.area * price.base_price + 0.005))/100
+
+    return price
+  }
+
+
+  static getReadings() {
+    const readings = Db.getRecords('water').sortDesc('id')
+
+    for (let i = 0; i < readings.length - 1; i++) {
+      const rdng = readings[i]
+      const prev = readings[i+1]
+      const dTot = rdng.master_reading - prev.master_reading
+
+      rdng.totDelta = (dTot < 0) ? rdng.master_reading : dTot
+      rdng.aDelta   = rdng.a_reading - prev.a_reading
+      rdng.bDelta   = rdng.b_reading - prev.b_reading
     }
-    return deltas
+    return readings
   }
 }
 </script>

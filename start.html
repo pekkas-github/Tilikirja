@@ -1,30 +1,13 @@
 <script>
+
   // Show info page
   InfoView.render()
 
   // Start late data import
   app.spinner.on()
-  fetchData()
+  Db.init().then(() => {
+    Common.setCurrentYear(Db.getRecords('years').where('current', 'x')[0].year)
+    app.spinner.off()
+  })
 
-  // Parallel data import from server
-  function fetchData() {
-    const promise1 = Server.api('getEvents')
-    const promise2 = Server.api('getWaterReadings')
-    const promise3 = Server.api('getYears')
-    const promise4 = Server.api('getAccounts')
-    const promise5 = Server.api('getCurrentYear')
-    const promise6 = Server.api('getCurrentWaterPrice')
-
-    Promise.all([promise1, promise2, promise3, promise4, promise5, promise6])
-    .then(arrValues => {
-      Db.events  = arrValues[0]
-      Db.water  = arrValues[1]
-      Db.years  = arrValues[2]
-      Db.accounts = arrValues[3]
-      Db.currentYear  = arrValues[4]
-      Db.currentWaterPrice  = arrValues[5]
-      // Done - clear spinner
-      app.spinner.off()
-    })
-  }
 </script>

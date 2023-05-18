@@ -1,53 +1,74 @@
 <script>
-
 class EventsModel {
 
   static async ackCharges(date) {
-    const events = this.getEventsToBeCharged()
+    const events = Db.getRecords('events').where('cleared', '').where('charging', 'x')
 
-    // Local update
     for (const event of events) {
       event.cleared = date
-      Db.updateRecord('events', event)
     }
 
-    // Server updates
-    await Server.api('updateEvents', events)
+    await Db.updateRecords('events', events)
       Server.api('updateChargingSheet')
   }
 
-  static async addEvent(event) {
-    // Server insert
-    const newEvent = await Server.api('insertEvent', event)
-      // Local insert
-      console.log(newEvent)
-      Db.insertRecord('events', newEvent)
+
+  static addEvent(newEvent) {
+    const eventsOfYear = this.getEventsOfYear(newEvent.date.substring(0,4))
+    
+    // Järjestä toistenumerot laskevaan järjestykseen
+    eventsOfYear.sort((a, b) => {return b.number - a.number})
+
+    // Tosite numero on 1 tai seuraava
+    if (eventsOfYear.length === 0) {
+      newEvent.number = 1
+    }else{
+      newEvent.number = eventsOfYear[0].number + 1
+    }
+
+    Db.insertRecord('events', newEvent)
   }
 
-  static async exportYearlyEvents(year) {
-    await Server.api('printYearlyEventsOnSpreadsheet', year)
-  }
 
   static getEvent(id) {
     return Db.getRecord('events', id)
   }
 
-  static getEvents(year) {
-    const events = Db.getRecords('events')
+
+  static getEventsOfYear(year) {
+    const events   = Db.getRecords('events')
+    const accounts = Db.getRecords('accounts')
+    const pattern  = new RegExp(`${year}`)
     
-    const eventsPerYear = events.filter( event => {
-       if (event.date.substring(0, 4) == year) {   // String compared with Number
-         return event
-       }
-     })
+    // Poimi vuoden tapahtumat ja lisää tilin nimi
+    const eventsOfYear = events.filter( event => {
+      if (pattern.test(event.date)) {
+        for (const account of accounts) {
+          if (event.account_id === account.id) {
+            event.account_name = account.name
+          }
+        }
+        return event
+      }
+    })
     
-    return eventsPerYear
+    return eventsOfYear
   }
 
+
   static getEventsToBeCharged() {
+    const accounts = Db.getRecords('accounts')
     const events = Db.getRecords('events').where('cleared', '').where('charging', 'x')
-    return events.slice(0, events.length)  // Drop function defs from the array
+
+    for (const event of events) {
+      for (const account of accounts) {
+        if (event.account_id === account.id) event.account_name = account.name
+      }
+    }
+
+    return events
   }
+
 
   static getNewEvent() {
     const event = Db.getNewRecord('events')
@@ -55,29 +76,26 @@ class EventsModel {
     event.total       = 0
     event.a_share     = 0
     event.account_id  = 1
-    event.fiscal_year = Db.currentYear
+    event.fiscal_year = Common.getCurrentYear()
 
     return event
   }
 
-  static setEventStatus(id) {
+
+  static async toggleEventStatus(id) {
     const event = Db.getRecord('events', id)
-    // if change is allowed
+
     if (event.cleared === '') {
-      const status = (event.charging === 'x') ? '' : 'x'
-      // change locally
-      event.charging = status
-      Db.updateRecord('events', event)
-      // change on server
-      Server.api('setChargingStatus', id, status)
+      event.charging = (event.charging === 'x') ? '' : 'x'
+      await Db.updateRecord('events', event)
+      Server.api('updateChargingSheet')
     }
+
   }
   
+
   static async updateEvent(event) {
-    // Update local Db
     Db.updateRecord('events', event)
-    // Update server Db
-    await Server.api('updateEvent', event)
   }
 }
 </script>

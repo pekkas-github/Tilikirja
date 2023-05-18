@@ -4,18 +4,34 @@
     <base target="_top">
   </head>
   <body>
-    Test Tilikirja
+    Integration Test Tilikirja
   <?!= TestFrame.getTestFrameScript() ?>
+  <?!= BrowserLibraries.importLib('DBMS') ?>
+  <?!= BrowserLibraries.importLib('ServerAccess') ?>
+  <?!= app.include('Events') ?>
+  <?!= app.include('EventsController') ?>
+  <?!= app.include('EventsView') ?>
+  <?!= app.include('EventFormView') ?>
+  <?!= app.include('EventCommentView') ?>
+  <?!= app.include('ReadingsModel') ?>
+  <?!= app.include('CommonModel') ?>
+  <?!= app.include('globals') ?>
 
-  <?!= include('AppGlobals') ?>
-  <?!= include('0_ServerMockup') ?>
 
   <script>
-    const server = new Server()
 
-    server.apiCall('changeEventStatus', 0, 'x')
-    .then(res => console.log(res))
-    .catch(err => console.log(err.message))
+    function startTest() {
+//      Db.init().then(() => {
+//        Common.setCurrentYear(Db.getRecords('years').where('current', 'x')[0].year)
+//        console.table(ReadingsModel.getReadings())
+//      })
+    }
+
+  // Refresh remote tables
+  google.script.run
+  .withSuccessHandler(startTest)
+  .resumeTable(['events', 'water'])
+    
   </script>
 
   </body>

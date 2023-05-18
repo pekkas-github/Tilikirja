@@ -3,7 +3,7 @@
 class EventsController {
 
   static addNewEvent() {
-    const event = EventsModel.getNewEvent()
+    const event    = EventsModel.getNewEvent()
     const accounts = Common.getAccounts()
     const years    = Common.getYears()
 
@@ -12,8 +12,8 @@ class EventsController {
     EventFormView.render(accounts, years)
   }
      
-  static setEventStatus(id) {
-    EventsModel.setEventStatus(id)
+  static toggleEventStatus(id) {
+    EventsModel.toggleEventStatus(id)
     this.openEventsPage()
   }
 
@@ -43,7 +43,7 @@ class EventsController {
   static openEventsPage() {
     const years       = Common.getYears()
     const currentYear = Common.getCurrentYear()
-    const events      = EventsModel.getEvents(currentYear)
+    const events      = EventsModel.getEventsOfYear(currentYear)
 
     EventsView.controller = this
     EventsView.render(events, years, currentYear)
@@ -51,23 +51,19 @@ class EventsController {
 
 
   static async exportYearlyEvents(year) {
-    await EventsModel.exportYearlyEvents(year)
+    await Common.exportYearlyEvents(year)
     alert(`Vuoden ${year} tapahtumat talletettu taulukkoon.`)
   }
 
   static async saveEvent(event) {
     if (event.id === 0) {
       //insert
-      app.spinner.on()
-      await EventsModel.addEvent(event)
-        this.openEventsPage()
-        app.spinner.off()
-        app.popup.off()
+      EventsModel.addEvent(event)
+      this.openEventsPage()
     } else {
       //update
       EventsModel.updateEvent(event)
       this.openEventsPage()
-      app.popup.off()
     }
   }
 }

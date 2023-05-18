@@ -1,12 +1,16 @@
 <script>
 class Common {
 
+  static async exportYearlyEvents(year) {
+    await Server.api('printYearlyEventsOnSpreadsheet', year)
+  }
+
   static getAccounts() {
     return Db.getRecords('accounts')
   }
 
   static getCurrentYear() {
-    return Db.currentYear
+    return app.currentYear
   }
 
   static getYears() {
@@ -14,7 +18,7 @@ class Common {
   }
   
   static setCurrentYear(year) {
-    Db.currentYear = year
+    app.currentYear = year
   }
 }
 </script>
