@@ -66,6 +66,7 @@ class ReadingFormView {
       const reading = self.getReading()
       if (self.isValid(reading)) {
         ctrl.addReading(reading)
+        app.popup.off()
       }
     })
 

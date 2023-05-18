@@ -1,7 +1,8 @@
 app.version = 'DEV'
 app.dbId = '1gs-h1ZPX2VWCZ4za2r8IGHVNu9WBRjnKihBfIvqCxZE'
 
-function resumeTable(sheetName) {
+function resumeTable(sheetNames) {
+  for (const sheetName of sheetNames) {
   const ss = SpreadsheetApp.openById(app.dbId)
   const sheetReplica = ss.getSheetByName(`${sheetName}_repl`)
   const sheetOrig = ss.getSheetByName(sheetName)      
@@ -9,7 +10,7 @@ function resumeTable(sheetName) {
     ss.deleteSheet(sheetOrig)
   }
   sheetReplica.copyTo(ss).setName(sheetName)
-
+  }
 }
 
 function test_Events () {
