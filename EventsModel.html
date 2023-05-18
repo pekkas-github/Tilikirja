@@ -1,5 +1,5 @@
 <script>
-class Events {
+class EventsModel {
 
   static async ackCharges(date) {
     const events = Db.getRecords('events').where('cleared', '').where('charging', 'x')
@@ -57,7 +57,16 @@ class Events {
 
 
   static getEventsToBeCharged() {
-    return Db.getRecords('events').where('cleared', '').where('charging', 'x')
+    const accounts = Db.getRecords('accounts')
+    const events = Db.getRecords('events').where('cleared', '').where('charging', 'x')
+
+    for (const event of events) {
+      for (const account of accounts) {
+        if (event.account_id === account.id) event.account_name = account.name
+      }
+    }
+
+    return events
   }
 
 
@@ -73,13 +82,15 @@ class Events {
   }
 
 
-  static toggleEventStatus(id) {
+  static async toggleEventStatus(id) {
     const event = Db.getRecord('events', id)
 
     if (event.cleared === '') {
       event.charging = (event.charging === 'x') ? '' : 'x'
-      Db.updateRecord('events', event)
+      await Db.updateRecord('events', event)
+      Server.api('updateChargingSheet')
     }
+
   }
   
 

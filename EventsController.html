@@ -3,7 +3,7 @@
 class EventsController {
 
   static addNewEvent() {
-    const event    = Events.getNewEvent()
+    const event    = EventsModel.getNewEvent()
     const accounts = Common.getAccounts()
     const years    = Common.getYears()
 
@@ -13,7 +13,7 @@ class EventsController {
   }
      
   static toggleEventStatus(id) {
-    Events.toggleEventStatus(id)
+    EventsModel.toggleEventStatus(id)
     this.openEventsPage()
   }
 
@@ -24,7 +24,7 @@ class EventsController {
   }
     
   static modifyEvent(id) {
-    const event    = Events.getEvent(id)
+    const event    = EventsModel.getEvent(id)
     const accounts = Common.getAccounts()
     const years    = Common.getYears()
 
@@ -34,7 +34,7 @@ class EventsController {
   }
 
   static openEventComment(id) {
-    const event = Events.getEvent(id)
+    const event = EventsModel.getEvent(id)
     if (event.comment != '') {
       EventCommentView.render(event)
     }
@@ -43,7 +43,7 @@ class EventsController {
   static openEventsPage() {
     const years       = Common.getYears()
     const currentYear = Common.getCurrentYear()
-    const events      = Events.getEventsOfYear(currentYear)
+    const events      = EventsModel.getEventsOfYear(currentYear)
 
     EventsView.controller = this
     EventsView.render(events, years, currentYear)
@@ -58,11 +58,11 @@ class EventsController {
   static async saveEvent(event) {
     if (event.id === 0) {
       //insert
-      Events.addEvent(event)
+      EventsModel.addEvent(event)
       this.openEventsPage()
     } else {
       //update
-      Events.updateEvent(event)
+      EventsModel.updateEvent(event)
       this.openEventsPage()
     }
   }
