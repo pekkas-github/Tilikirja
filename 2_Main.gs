@@ -1,12 +1,25 @@
 const db    = DbLib2.getDataAccess(app.dbId)
 const model = new Model(db)
 
+
 function api(methodName, arg1, arg2, arg3) {
-  return model[methodName](arg1, arg2, arg3)
+  const lock = LockService.getScriptLock()
+  const locked = lock.tryLock(15000)
+
+  if(locked) {
+    return model[methodName](arg1, arg2, arg3)
+  }
+  throw new Error('Tietokantaoperaation timeout ylittyi.')
 }
 
 function dbApi(methodName, arg1, arg2, arg3) {
-  return db[methodName](arg1, arg2, arg3)
+  const lock = LockService.getScriptLock()
+  const locked = lock.tryLock(15000)
+
+  if(locked) {
+    return db[methodName](arg1, arg2, arg3)
+  }
+  throw new Error('Tietokantaoperaation timeout ylittyi.')
 }
 
 function doGet (e) {
