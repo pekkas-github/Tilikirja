@@ -8,7 +8,7 @@
   <?!= TestFrame.getTestFrameScript() ?>
   <?!= BrowserLibraries.importLib('DBMS') ?>
   <?!= BrowserLibraries.importLib('ServerAccess') ?>
-  <?!= app.include('Events') ?>
+  <?!= app.include('EventsModel') ?>
   <?!= app.include('EventsController') ?>
   <?!= app.include('EventsView') ?>
   <?!= app.include('EventFormView') ?>
@@ -21,10 +21,10 @@
   <script>
 
     function startTest() {
-//      Db.init().then(() => {
-//        Common.setCurrentYear(Db.getRecords('years').where('current', 'x')[0].year)
-//        console.table(ReadingsModel.getReadings())
-//      })
+      Db.init().then(() => {
+        const events = Server.api('getEvents')
+        console.table(events)
+      })
     }
 
   // Refresh remote tables
