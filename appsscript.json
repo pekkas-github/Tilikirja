@@ -23,8 +23,8 @@
       {
         "userSymbol": "BrowserLibraries",
         "libraryId": "11QJoksiAC6GkPzLD-VHz65IuAWkhLVcgaEMB3ZEliRyCKla8pLH96vyS",
-        "version": "0",
-        "developmentMode": true
+        "version": "2",
+        "developmentMode": false
       }
     ]
   },
