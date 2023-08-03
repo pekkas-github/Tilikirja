@@ -196,21 +196,24 @@ function test_Water() {
 }
 
 function singleTest() {
-  const t = TestFrame.getTestFrame()
+  const t = TestFrame.getTestFrame(app.dbId)
 
   t.beforeEach( () => {
-    resumeTable('GL_events')
-    resumeTable('Water_readings')
+    t.resumeTable('events')
   })
 
   t.test('Single Test', () => {
     const model = new Model(db)
     
-  t.run('Model.getEvents', () => {
+  t.run('Model.insertEvent', () => {
 
-    const response = model.getEvents()
+    const event = db.newRecord('events')
 
-    t.isEqual(response.length, 62, 'Tietueiden lukumäärä')
+    event.date = '2023-08-03'
+    event.comment = 'huihai'
+    const newEvent = model.addEvent(event)
+    console.log(newEvent)
+
   })
 
   })
