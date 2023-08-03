@@ -22,8 +22,10 @@
 
     function startTest() {
       Db.init().then(() => {
-        const events = Server.api('getEvents')
-        console.table(events)
+        const event = {id:0, number:0, date:'2020-08-03', comment:'Testing'}
+        EventsModel.addEvent(event).then(() => {
+        console.table(Db.events)
+        })
       })
     }
 
