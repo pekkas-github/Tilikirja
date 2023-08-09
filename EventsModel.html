@@ -13,20 +13,17 @@ class EventsModel {
   }
 
 
-  static addEvent(newEvent) {
-    const eventsOfYear = this.getEventsOfYear(newEvent.date.substring(0,4))
-    
-    // Järjestä toistenumerot laskevaan järjestykseen
-    eventsOfYear.sort((a, b) => {return b.number - a.number})
+  static async addEvent(newEvent) {
+    // Talleta heti paikalliseen tauluun (id=0, number=0)
+    Db.events.push(newEvent)
 
-    // Tosite numero on 1 tai seuraava
-    if (eventsOfYear.length === 0) {
-      newEvent.number = 1
-    }else{
-      newEvent.number = eventsOfYear[0].number + 1
-    }
-
-    Db.insertRecord('events', newEvent)
+    // Päivitä paikallinen taulu serveriltä tuleella tiedolla
+    const updatedEvent = await Server.api('addEvent', newEvent)
+      const events = Db.getRecords('events')
+      const index = events.findIndex( event => {
+        return event.id === 0
+      })
+      Db.events[index] = updatedEvent
   }
 
 
