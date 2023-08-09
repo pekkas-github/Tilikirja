@@ -2,6 +2,7 @@
 <html>
   <head>
     <base target="_top">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   </head>
   <body>
     Integration Test Tilikirja
@@ -14,6 +15,8 @@
   <?!= app.include('EventFormView') ?>
   <?!= app.include('EventCommentView') ?>
   <?!= app.include('ReadingsModel') ?>
+  <?!= app.include('ReadingsController') ?>
+  <?!= app.include('ReadingsView') ?>
   <?!= app.include('CommonModel') ?>
   <?!= app.include('globals') ?>
 
@@ -22,9 +25,9 @@
 
     function startTest() {
       Db.init().then(() => {
-        const event = {id:0, number:0, date:'2020-08-03', comment:'Testing'}
-        EventsModel.addEvent(event).then(() => {
-        console.table(Db.events)
+        const reading = {id:0, date:'2023-08-07', master_reading:500, a_reading:4820, b_reading:5280, comment:'Testing', fiscal_year:2023}
+        ReadingsModel.addReading(reading).then(() => {
+          console.table(Db.water)
         })
       })
     }

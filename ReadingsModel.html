@@ -8,11 +8,10 @@ class ReadingsModel {
       Db.insertRecord('events', result.newEvent)
   }
 
-  static addReading(reading) {
-    Db.insertRecord('water', reading)
+  static async addReading(reading) {
 
     // Laske A:n kulutus ja määritä hinta
-    const consumptionA  = this.calculateConsumption()
+    const consumptionA  = this.calculateConsumption(reading)
     const currentPrice  = this.getCurrentWaterPrice()
 
     const a_share = Math.floor(((consumptionA * currentPrice.usage + 3 * currentPrice.ground / 2)*100+0.5))/100 
@@ -29,16 +28,17 @@ class ReadingsModel {
 
     // Lisää tapahtuma
     EventsModel.addEvent(newEvent)
+
+    await Db.insertRecord('water', reading)
   }
 
 
-  static calculateConsumption() {
+  static calculateConsumption(reading) {
     const readings = Db.getRecords('water')
     const last     = readings[readings.length - 1]
-    const prev     = readings[readings.length - 2]
 
     // A-kulutus: talon kulutus - B-kulutus
-    return (last.master_reading - prev.master_reading) - (last.b_reading - prev.b_reading)
+    return (reading.master_reading - last.master_reading) - (reading.b_reading - last.b_reading)
   }
 
 

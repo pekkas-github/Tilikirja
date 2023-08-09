@@ -17,7 +17,7 @@ class Model {
       event.number = eventsOfYear[0].number + 1
     }
 
-    event.id = this.db.getTable('events').insertRecord(event)
+    event.id = this.db.getTable('events').insertRecord(event).id
     return event
   }
 
