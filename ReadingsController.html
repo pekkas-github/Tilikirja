@@ -2,8 +2,8 @@
 
 class ReadingsController {
 
-  static addReading(reading) {
-    ReadingsModel.addReading(reading)
+  static async addReading(reading) {
+    await ReadingsModel.addReading(reading)
     this.openReadingsPage()
   }
 

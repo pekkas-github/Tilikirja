@@ -4,6 +4,34 @@ class Model {
     this.db = db
   }
 
+  addEvent(event) {
+    const eventsOfYear = this.getEventsOfYear(event.date.substring(0,4))
+    
+    // Järjestä vuoden toistenumerot laskevaan järjestykseen
+    eventsOfYear.sort((a, b) => {return b.number - a.number})
+
+    // Vuoden tositenumero on 1 tai seuraava
+    if (eventsOfYear.length === 0) {
+      event.number = 1
+    }else{
+      event.number = eventsOfYear[0].number + 1
+    }
+
+    event.id = this.db.getTable('events').insertRecord(event).id
+    return event
+  }
+
+  getEventsOfYear(year) {
+    const events = db.getTable('events').getRecords()
+    const eventsOfYear = events.filter( event => {
+      if (event.date.substr(0,4) === year) {
+        return event
+      }
+    })
+
+    return eventsOfYear
+  }
+
   getEvents () {
     const events = this.db.getTable('events').getRecords()
     const accounts = this.db.getTable('accounts').getRecords()

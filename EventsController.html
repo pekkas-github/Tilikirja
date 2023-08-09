@@ -58,7 +58,9 @@ class EventsController {
   static async saveEvent(event) {
     if (event.id === 0) {
       //insert
-      EventsModel.addEvent(event)
+      EventsModel.addEvent(event).then(() => {
+        this.openEventsPage()
+      })
       this.openEventsPage()
     } else {
       //update
