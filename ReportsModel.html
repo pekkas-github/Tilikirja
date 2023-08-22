@@ -4,7 +4,7 @@ class ReportsModel {
 
   static getReport(year) {
     const summaryByAccount = {} 
-    const eventsByYear = Db.getRecords('events').where('fiscal_year', year)
+    const eventsByYear = Db.getRecords('events').filter(Db.where('fiscal_year', year))
 
     //Calculate summation per account
     eventsByYear.forEach( (event) => {
