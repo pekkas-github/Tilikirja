@@ -6,7 +6,8 @@
   // Start late data import
   app.spinner.on()
   Db.init().then(() => {
-    Common.setCurrentYear(Db.getRecords('years').where('current', 'x')[0].year)
+    const currentYear = Db.getRecords('years').filter(Db.where('current', 'x'))[0].year
+    Common.setCurrentYear(currentYear)
     app.spinner.off()
   })
 
