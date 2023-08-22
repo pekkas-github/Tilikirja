@@ -4,8 +4,8 @@
     <base target="_top">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
-    <?!= app.include('styles') ?>
-    <?!= app.include('globals') ?>
+    <?!= include('styles') ?>
+    <?!= include('globals') ?>
     <?!= BrowserLibraries.importLib('DBMS') ?>
     <?!= BrowserLibraries.importLib('ServerAccess') ?>
   </head>
@@ -78,7 +78,7 @@
     </script>
 
     <!-- APPLICATION CODE MODULES -->
-    <?!= app.include('modules') ?>
+    <?!= include('modules') ?>
     
   </body>
 </html>

@@ -5,20 +5,15 @@
   "dependencies": {
     "libraries": [
       {
-        "userSymbol": "DbLib2",
+        "userSymbol": "ServerDBMS",
         "libraryId": "1tLekUn3aO2KDlv8GLsoHK4gXLKnuUpqReCu98iRY_Fwntbgu-hZv6XIa",
-        "version": "17"
+        "version": "18"
       },
       {
         "userSymbol": "TestFrame",
         "libraryId": "11l_SrvKPA_rofg5jyxFRny19812HA6VutAEAciI6blNAxr0BgcuVYFfv",
         "version": "0",
         "developmentMode": true
-      },
-      {
-        "userSymbol": "DateTimeLib",
-        "libraryId": "1X3JOOljUnTjcPCV6Qc1XRBopOmartGl3-5OsPyLuGg4ta6SaspVK0S5W",
-        "version": "2"
       },
       {
         "userSymbol": "BrowserLibraries",
