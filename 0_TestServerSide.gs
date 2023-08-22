@@ -53,7 +53,7 @@ function test_Events () {
 
 
 function singleTest() {
-  const t = TestFrame.getTestFrame(app.dbId)
+  const t = TestFrame.getServerTestFrame(app.dbId)
 
   t.beforeEach( () => {
     t.resumeTable('events')

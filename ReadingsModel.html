@@ -2,12 +2,6 @@
   
 class ReadingsModel {
 
-  static async addReading_old(reading) {
-    const result = await Server.api('insertReading', reading)
-      Db.insertRecord('water', result.newReading)
-      Db.insertRecord('events', result.newEvent)
-  }
-
   static async addReading(reading) {
 
     // Laske A:n kulutus ja määritä hinta
@@ -43,7 +37,7 @@ class ReadingsModel {
 
 
   static getCurrentWaterPrice() {
-    const price  = Db.getRecords('waterprice').where('current_value', 'x')[0]
+    const price  = Db.getRecords('waterprice').filter(Db.where('current_value', 'x'))[0]
 
     price.usage  = price.water_price + price.waste_price
     price.ground = Math.floor(100 * (price.factor * price.area * price.base_price + 0.005))/100
@@ -53,7 +47,7 @@ class ReadingsModel {
 
 
   static getReadings() {
-    const readings = Db.getRecords('water').sortDesc('id')
+    const readings = Db.getRecords('water').sort(Db.desc('id'))
 
     for (let i = 0; i < readings.length - 1; i++) {
       const rdng = readings[i]
