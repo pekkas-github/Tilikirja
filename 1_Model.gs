@@ -51,8 +51,9 @@ class Model {
 
   printYearlyEventsOnSpreadsheet(year) {
     const events = this.getEvents()
+    const accounts = this.db.getTable('accounts').getRecords()
     const listToPrint = []
-    console.log(events)
+
     for (const event of events) {
       const line = []
       if (parseInt(event.date.substring(0, 4)) === year) {
@@ -70,8 +71,44 @@ class Model {
     const sheet = SpreadsheetApp.openById(app.printEventsSheet).getSheetByName('EventsList')
 
     sheet.getRange(1, 2, 1, 1).setValue(year)
-    sheet.getRange(4, 1, 100, 7).clearContent();
+    sheet.getRange(4, 1, 100, 20).clearContent();
     sheet.getRange(4, 1, listToPrint.length, 7).setValues(listToPrint)
+
+    // LISÄYS
+    const summaryByAccount = {} 
+
+    //Calculate summation per account
+    events.forEach( (event) => {
+      if (summaryByAccount[event.account_name]) {
+        summaryByAccount[event.account_name].tot += event.total
+        summaryByAccount[event.account_name].a += event.a_share
+        summaryByAccount[event.account_name].b += event.total - event.a_share
+      }else{
+        summaryByAccount[event.account_name] = {tot:event.total, a:event.a_share, b:(event.total - event.a_share)}
+      }
+    })
+
+    //Calculate total per party
+    const sums = {tot:0, a:0, b:0}
+    for (const key in summaryByAccount) {
+      sums.tot += summaryByAccount[key].tot
+      sums.a += summaryByAccount[key].a
+      sums.b += summaryByAccount[key].b
+    }
+    summaryByAccount.Yhteensä = sums
+
+    // Change into Sheets array format
+    const summary = []
+    for (const key in summaryByAccount) {
+      const line = []
+      line.push(key)
+      line.push(summaryByAccount[key].tot)
+      line.push(summaryByAccount[key].a)
+      line.push(summaryByAccount[key].b)
+      summary.push(line)
+    }
+    
+    sheet.getRange(4, 9, summary.length, 4).setValues(summary)
   }
 
 
