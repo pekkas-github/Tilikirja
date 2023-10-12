@@ -53,33 +53,32 @@ function test_Events () {
 
 
 function singleTest() {
-  const t = TestFrame.getServerTestFrame(app.dbId)
-
+  const t = TestFrame.getTestFrame(app.dbId)
+  const db = ServerDBMS.getDataAccess(app.dbId)
+  
   t.beforeEach( () => {
     t.resumeTable('events')
   })
 
   t.test('Single Test', () => {
-    const model = new Model(db)
+    const model = getModel(db)
     
-  t.run('Model.insertEvent', () => {
-    //SETUP
-    const event = db.newRecord('events')
-    event.date = '2023-08-03'
-    event.comment = 'huihai'
-    //EXEC
-    const newEvent = model.addEvent(event)
-    //ASSERT
-    t.isEqual(typeof(newEvent.id), 'number', 'Event-id:n tyyppi')
-    t.isEqual(typeof(newEvent.number), 'number', 'Tapahtuma-id:n tyyppi')
-    t.notEqual(newEvent.id, 0, 'Uuden eventin-id')
-    t.notEqual(newEvent.number, 0, 'Uuden tietueen tapahtuma-id')
+  t.run('Model.addEvent - uuden tapahtuman lisäys', () => {
+    /* SETUP */
+    const record = {id:0, number:0, date:'2020-04-10', event:'Testing', total:100, a_share:50, account:'Sähkö', comment:'Huihai', fiscal_year:2021}
+
+    /* EXECUTE */
+    const res = model.addEvent(record)
+
+    /* ASSERT */
+    t.isEqual(res.id, 335, 'Tietueen id')
+    t.isEqual(res.number, 28, 'Tapahtuman numero')
   })
 
   })
 }
 
 function test_PrintSummary() {
-  const model = new Model(db)
+  const model = getModel(db)
   model.printYearlyEventsOnSpreadsheet(2020)
 }
