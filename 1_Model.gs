@@ -70,21 +70,25 @@ class Model {
     }
     const sheet = SpreadsheetApp.openById(app.printEventsSheet).getSheetByName('EventsList')
 
-    sheet.getRange(1, 2, 1, 1).setValue(year)
+    sheet.getRange(1, 3, 1, 1).setValue(year)
     sheet.getRange(4, 1, 100, 20).clearContent();
-    sheet.getRange(4, 1, listToPrint.length, 7).setValues(listToPrint)
 
-    // LISÄYS
+    if (listToPrint.length > 0) {
+      sheet.getRange(4, 1, listToPrint.length, 7).setValues(listToPrint)
+    }
+
     const summaryByAccount = {} 
 
-    //Calculate summation per account
+    //Calculate summation per account per fiscal year
     events.forEach( (event) => {
-      if (summaryByAccount[event.account_name]) {
-        summaryByAccount[event.account_name].tot += event.total
-        summaryByAccount[event.account_name].a += event.a_share
-        summaryByAccount[event.account_name].b += event.total - event.a_share
-      }else{
-        summaryByAccount[event.account_name] = {tot:event.total, a:event.a_share, b:(event.total - event.a_share)}
+      if (event.fiscal_year === year) {
+        if (summaryByAccount[event.account_name]) {
+          summaryByAccount[event.account_name].tot += event.total
+          summaryByAccount[event.account_name].a += event.a_share
+          summaryByAccount[event.account_name].b += event.total - event.a_share
+        }else{
+          summaryByAccount[event.account_name] = {tot:event.total, a:event.a_share, b:(event.total - event.a_share)}
+        }
       }
     })
 
@@ -95,7 +99,7 @@ class Model {
       sums.a += summaryByAccount[key].a
       sums.b += summaryByAccount[key].b
     }
-    summaryByAccount.Yhteensä = sums
+    const total = sums
 
     // Change into Sheets array format
     const summary = []
@@ -108,7 +112,12 @@ class Model {
       summary.push(line)
     }
     
-    sheet.getRange(4, 9, summary.length, 4).setValues(summary)
+    const totalLine = [['Yhteensä', total.tot, total.a, total.b]]
+    
+    if (summary.length > 0) {
+      sheet.getRange(4, 9, summary.length, 4).setValues(summary)
+    }
+    sheet.getRange(10, 9, 1, 4).setValues(totalLine)
   }
 
 

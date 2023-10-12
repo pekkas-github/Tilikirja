@@ -81,5 +81,5 @@ function singleTest() {
 
 function test_PrintSummary() {
   const model = new Model(db)
-  model.printYearlyEventsOnSpreadsheet(2021)
+  model.printYearlyEventsOnSpreadsheet(2020)
 }
