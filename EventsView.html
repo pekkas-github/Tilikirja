@@ -52,7 +52,7 @@ class EventsView {
 
       $('#btn-export').show()
       $('#btn-export').on('click', function() {
-        ctrl.exportYearlyEvents(parseInt($('#cbo-years').val()))
+        ctrl.exportYearlyEvents($('#cbo-years').val())
       })
     }
   }
