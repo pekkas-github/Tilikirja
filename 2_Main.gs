@@ -1,5 +1,6 @@
 const db    = ServerDBMS.getDataAccess(app.dbId)
-const model = new Model(db)
+//const model = new Model(db)
+model       = getModel(db)
 
 function api(methodName, arg1, arg2, arg3) {
   const lock = LockService.getScriptLock()
