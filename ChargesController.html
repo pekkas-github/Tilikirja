@@ -13,5 +13,9 @@ class ChargesController {
     ChargesView.controller = this
     ChargesView.render(eventsToBeCharged)
   }
+
+  static onPrintChargingSheet() {
+    ChargesModel.printChargingSheet()
+  }
 }
 </script> 
