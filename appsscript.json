@@ -7,14 +7,7 @@
       {
         "userSymbol": "ServerDBMS",
         "libraryId": "1tLekUn3aO2KDlv8GLsoHK4gXLKnuUpqReCu98iRY_Fwntbgu-hZv6XIa",
-        "version": "20",
-        "developmentMode": false
-      },
-      {
-        "userSymbol": "TestFrame",
-        "libraryId": "11l_SrvKPA_rofg5jyxFRny19812HA6VutAEAciI6blNAxr0BgcuVYFfv",
-        "version": "0",
-        "developmentMode": true
+        "version": "20"
       },
       {
         "userSymbol": "ClientDBMS",
