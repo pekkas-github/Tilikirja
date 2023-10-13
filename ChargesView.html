@@ -13,8 +13,10 @@ class ChargesView {
   static renderControls() {
 
     const controls = `
-        <input id="txt-day" type="date" hidden>
-        <button class="btn" id="btn-submit" hidden>Kuittaa maksetuksi</button>`
+      <input id="txt-day" type="date" hidden>
+      <button class="btn" id="btn-submit" hidden> Kuittaa maksetuksi </button>
+      <button class="btn" id="btn-print" hidden> Tulosta </button>
+    `
     $('.controls').html(controls)
   }
 
@@ -31,9 +33,14 @@ class ChargesView {
       ctrl.ackCharges(date)
     })
 
+    $('#btn-print').on('click', () => {
+      ctrl.onPrintChargingSheet()
+    })
+
     if (profile === 'admin') {
       $('#txt-day').show()
       $('#btn-submit').show()
+      $('#btn-print').show()
     }
   }
 

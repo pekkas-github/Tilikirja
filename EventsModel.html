@@ -87,9 +87,7 @@ class EventsModel {
     if (event.cleared === '') {
       event.charging = (event.charging === 'x') ? '' : 'x'
       await Db.updateRecord('events', event)
-      Server.api('updateChargingSheet')
     }
-
   }
   
 
