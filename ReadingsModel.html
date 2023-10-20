@@ -14,7 +14,7 @@ class ReadingsModel {
     const newEvent = Db.getNewRecord('events')
 
     newEvent.date        = reading.date
-    newEvent.event       = `Vesimaksu (lukeman mukaan ${consumptionA} m2)`
+    newEvent.event       = `Vesimaksu (lukeman mukaan ${consumptionA} m3)`
     newEvent.total       = 0
     newEvent.a_share     = a_share
     newEvent.account_id  = 6

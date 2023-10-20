@@ -92,7 +92,7 @@ class EventsModel {
   
 
   static async updateEvent(event) {
-    Db.updateRecord('events', event)
+    await Db.updateRecord('events', event)
   }
 }
 </script>
