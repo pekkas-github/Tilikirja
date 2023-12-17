@@ -1,4 +1,4 @@
-const db    = ServerDBMS.getDataAccess(app.dbId)
+const db    = ServerDBMS.openDatabase(app.dbName)
 model       = getModel(db)
 
 function api(methodName, arg1, arg2, arg3) {
@@ -33,9 +33,18 @@ function doGet (e) {
     range.setValue(date)
   }
 
-  const html = HtmlService.createTemplateFromFile('frame')
-  html.profile = (e.parameters.profile) ? e.parameters.profile : ''
-  html.version = app.version
+  const args = {}
+  args.myLibraries = include('app_Libraries')
+  args.myScripts   = include('app_Scripts')
+  args.myStyles    = include('app_Styles')
+  args.callParams  = e.parameter
+  args.color       = 'blue'
+
+  const html = FramePages.getFrame1(args)
+
+//  const html = HtmlService.createTemplateFromFile('frame')
+//  html.profile = (e.parameters.profile) ? e.parameters.profile : ''
+//  html.version = app.version
 
   return html
     .evaluate()

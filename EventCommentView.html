@@ -2,16 +2,10 @@
 class EventCommentView {
 
   static render(event) {
-    let popupContent = `
-      <span id="btn-popup-close">&times;</span>
-      <h3>Kommentti</h3>
-      <div>${event.comment}</div>
-    `
+    frame.popupHeader.html('<h3>Kommentti</h3>')
+    frame.popupContent.html(event.comment)
 
-    $('.popup-content').html(popupContent)
-    $('#btn-popup-close').on('click', app.popup.off)
-
-    app.popup.on()
+    frame.popup.show()
   }
 
 }

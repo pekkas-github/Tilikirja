@@ -2,71 +2,66 @@
 
 class EventsController {
 
-  static addNewEvent() {
+  static openPage() {
+    const years       = Common.getYears()
+    const currentYear = Common.getCurrentYear()
+    const events      = EventsModel.getEventsOfYear(currentYear)
+
+    EventsView.render(this, events, years, currentYear)
+  }
+
+  static onAddNewEvent() {
     const event    = EventsModel.getNewEvent()
     const accounts = Common.getAccounts()
     const years    = Common.getYears()
 
-    EventFormView.controller = this
     EventFormView.event      = event
-    EventFormView.render(accounts, years)
+    EventFormView.render(this, accounts, years)
   }
      
-  static toggleEventStatus(id) {
-    EventsModel.toggleEventStatus(id)
-    this.openEventsPage()
-  }
-
-
-  static setCurrentYear(year) {
+  static onChangeYear(year) {
     Common.setCurrentYear(year)
-    this.openEventsPage()
+    this.openPage()
   }
     
-  static modifyEvent(id) {
+  static async onExportEventsOnSheet(year) {
+    await Common.exportYearlyEvents(year)
+    alert(`Vuoden ${year} tapahtumat talletettu taulukkoon.`)
+  }
+
+  static onModifyEvent(id) {
     const event    = EventsModel.getEvent(id)
     const accounts = Common.getAccounts()
     const years    = Common.getYears()
 
-    EventFormView.controller = this
     EventFormView.event      = event
-    EventFormView.render(accounts, years)
+    EventFormView.render(this, accounts, years)
   }
 
-  static openEventComment(id) {
+  static onOpenComment(id) {
     const event = EventsModel.getEvent(id)
     if (event.comment != '') {
       EventCommentView.render(event)
     }
   }
 
-  static openEventsPage() {
-    const years       = Common.getYears()
-    const currentYear = Common.getCurrentYear()
-    const events      = EventsModel.getEventsOfYear(currentYear)
-
-    EventsView.controller = this
-    EventsView.render(events, years, currentYear)
-  }
-
-
-  static async exportYearlyEvents(year) {
-    await Common.exportYearlyEvents(year)
-    alert(`Vuoden ${year} tapahtumat talletettu taulukkoon.`)
-  }
-
-  static async saveEvent(event) {
+  static async onSaveEvent(event) {
     if (event.id === 0) {
       //insert
       EventsModel.addEvent(event).then(() => {
-        this.openEventsPage()
+        this.openPage()
       })
-      this.openEventsPage()
+      this.openPage()
     } else {
       //update
       EventsModel.updateEvent(event)
-      this.openEventsPage()
+      this.openPage()
     }
+  }
+
+  static onToggleEventStatus(id) {
+    EventsModel.toggleEventStatus(id)
+    this.openPage()
   }
 }
 
