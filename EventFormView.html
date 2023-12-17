@@ -11,6 +11,8 @@ class EventFormView {
 
   static renderContent(accounts, years) {
 
+    frame.popupHeader.html('<h3>Tapahtuman tiedot</h3>'
+    )
     // Create drop downs
     let accountOptions = ''
     for (const account of accounts) {

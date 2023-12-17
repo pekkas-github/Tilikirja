@@ -2,27 +2,25 @@
 
 class ReadingsController {
 
-  static async addReading(reading) {
-    await ReadingsModel.addReading(reading)
-    this.openReadingsPage()
-  }
-
-  static openReadingsPage() {
+  static openPage() {
     const readings = ReadingsModel.getReadings()
     
-    ReadingsView.controller = this
-    ReadingsView.render(readings)
+    ReadingsView.render(this, readings)
   }
 
-  static openReadingForm() {
+  static async onAddReading(reading) {
+    await ReadingsModel.addReading(reading)
+    this.openPage()
+  }
+
+  static onOpenReadingForm() {
     const years       = Common.getYears()
     const currentYear = Common.getCurrentYear()
     
-    ReadingFormView.controller = this
-    ReadingFormView.render(years, currentYear)
+    ReadingFormView.render(this, years, currentYear)
   }
 
-  static openWaterPriceForm() {
+  static onOpenWaterPriceForm() {
     WaterPriceFormView.render(ReadingsModel.getCurrentWaterPrice())
   }
 }

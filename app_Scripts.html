@@ -32,15 +32,16 @@ frame.footerRight.text('<?= app.version ?>')
 frame.footerLeft.text(app.params.profile)
 frame.addNavBarItem('Etusivu', InfoView.render)
 frame.addNavBarItem('Tapahtumat', () => {EventsController.openPage()})
-frame.addNavBarItem('Veden kulutus', () => {ReadingsController.openReadingsPage()})
+frame.addNavBarItem('Veden kulutus', () => {ReadingsController.openPage()})
 frame.addNavBarItem('Tuloslaskelmat', () => {ReportsController.openReportsPage()})
 frame.addNavBarItem('Neljännesveloitus', () => {ChargesController.openChargesPage()})
 
 frame.spinner.show()
+InfoView.render()
+
 Db.init().then(() => {
   const currentYear = Db.getRecords('years').filter(Db.where('current', 'x'))[0].year
   Common.setCurrentYear(currentYear)
-  InfoView.render()
   frame.spinner.hide()
 })
 
