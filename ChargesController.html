@@ -2,20 +2,20 @@
 
 class ChargesController {
 
-  static ackCharges(date) {
-    EventsModel.ackCharges(date)
-    this.openChargesPage()
-  }
-
-  static openChargesPage() {
+  static openPage() {
     const eventsToBeCharged = EventsModel.getEventsToBeCharged()
     
-    ChargesView.controller = this
-    ChargesView.render(eventsToBeCharged)
+    ChargesView.render(this, eventsToBeCharged)
   }
 
-  static onPrintChargingSheet() {
-    ChargesModel.printChargingSheet()
+  static onAckCharges(date) {
+    EventsModel.ackCharges(date)
+    this.openPage()
+  }
+
+  static async onPrintChargingSheet() {
+    await ChargesModel.printChargingSheet()
+    alert('Veloitustaulukko on päivitetty.')
   }
 }
 </script> 
