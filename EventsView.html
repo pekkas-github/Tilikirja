@@ -1,13 +1,11 @@
 <script>
 class EventsView { 
 
-  static controller;
+  static render(controller, events, years, currentYear) {
 
-  static render(events, years, currentYear) {
     this.renderControls(years, currentYear)
-    this.setControlsEventListeners()
     this.renderContent(events)
-    this.setContentEventListeners()
+    this.setEventListeners(controller)
   }
 
   static renderControls(years, currentYear) {
@@ -17,9 +15,9 @@ class EventsView {
       options += `
         <option>
           ${year.year}
-        </option>
-      `
+        </option>`
     }
+
     const select = `
       <select class="cbo" id="cbo-years" name="years">
         ${options}
@@ -29,32 +27,12 @@ class EventsView {
       <button class="btn" id="btn-add" hidden>Lisää...</button>
       <button class="btn" id="btn-export" hidden>Vie taulukkoon</button> 
     `
-    const controls = `
+    frame.controls.html(`
       ${select}
-      ${buttons}
-    `
-    $('.controls').html(controls)
+      ${buttons}`
+    )
+
     $('#cbo-years').val(currentYear)
-  }
-
-  static setControlsEventListeners() {
-
-    const ctrl = this.controller
-
-    $('#cbo-years').on('change', function() {
-        ctrl.setCurrentYear(parseInt($('#cbo-years').val()))
-      })
-
-    if (profile === 'admin') {
-      $('#btn-add').show()
-      $('#btn-add').on('click', function() {
-        ctrl.addNewEvent()})
-
-      $('#btn-export').show()
-      $('#btn-export').on('click', function() {
-        ctrl.exportYearlyEvents($('#cbo-years').val())
-      })
-    }
   }
 
   static renderContent(events) {
@@ -90,33 +68,44 @@ class EventsView {
         </tr>
       `
     }
-    const content = `
+
+    frame.content.html(`
       <table id="tbl-events">
         ${headerLine}
         ${table}
-      </table>
-    `
-    $('.content').html(content)
+      </table>`
+    )
   }
 
-  static setContentEventListeners() {
+  static setEventListeners(ctrl) {
 
-    const ctrl = this.controller
+    if (app.params.profile === 'admin') {
+      $('#btn-add').show()
+      $('#btn-add').on('click', function() {
+        ctrl.onAddNewEvent()})
 
-    $('.comment').on('click', function() {
-      ctrl.openEventComment(parseInt($(this).parent().attr('id')))
-    })
-
-    if (profile === 'admin') {
-      $('td').on('dblclick', function() {
-        ctrl.modifyEvent(parseInt($(this).parent().attr('id')))})
+      $('#btn-export').show()
+      $('#btn-export').on('click', function() {
+        ctrl.onExportEventsOnSheet($('#cbo-years').val())
+      })
 
       $('.charge-status').show()
       $('.charge-status').on('click', function() {
-        ctrl.toggleEventStatus(parseInt($(this).parent().attr('id')))})
+        ctrl.onToggleEventStatus(parseInt($(this).parent().attr('id')))})
 
+      $('td').on('dblclick', function() {
+        ctrl.onModifyEvent(parseInt($(this).parent().attr('id')))})
+      
       $('.is-payed').show()
     }
+
+    $('#cbo-years').on('change', function() {
+        ctrl.onChangeYear(parseInt($('#cbo-years').val()))
+      })
+
+    $('.comment').on('click', function() {
+      ctrl.onOpenComment(parseInt($(this).parent().attr('id')))
+    })
   }  
 }
 </script>

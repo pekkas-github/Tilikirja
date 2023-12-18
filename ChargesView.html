@@ -2,46 +2,19 @@
 
 class ChargesView {
 
-  static controller;
-
-  static render(eventsToBeCharged) {
+  static render(controller, eventsToBeCharged) {
     this.renderControls()
-    this.setControlsEventListeners()
     this.renderContent(eventsToBeCharged)
+    this.setEventListeners(controller)
   }
   
   static renderControls() {
 
-    const controls = `
+    frame.controls.html(`
       <input id="txt-day" type="date" hidden>
       <button class="btn" id="btn-submit" hidden> Kuittaa maksetuksi </button>
-      <button class="btn" id="btn-print" hidden> Tulosta </button>
-    `
-    $('.controls').html(controls)
-  }
-
-  static setControlsEventListeners() {
-
-    const ctrl = this.controller
-
-    $('#btn-submit').on('click', () => {
-      const date = $('#txt-day').val()
-      if ( date === '') {
-        alert('Tarkista päiväys')
-        return
-      }
-      ctrl.ackCharges(date)
-    })
-
-    $('#btn-print').on('click', () => {
-      ctrl.onPrintChargingSheet()
-    })
-
-    if (profile === 'admin') {
-      $('#txt-day').show()
-      $('#btn-submit').show()
-      $('#btn-print').show()
-    }
+      <button class="btn" id="btn-print" hidden> Tulosta </button>`
+    )
   }
 
   static renderContent(eventsToBeCharged) {
@@ -80,7 +53,29 @@ class ChargesView {
         </tr>
       </table>`
 
-    $('.content').html(content)
+    frame.content.html(content)
+  }
+
+  static setEventListeners(ctrl) {
+
+    if (app.params.profile === 'admin') {
+      $('#txt-day').show()
+      $('#btn-submit').show()
+      $('#btn-print').show()
+    }
+
+    $('#btn-submit').on('click', () => {
+      const date = $('#txt-day').val()
+      if ( date === '') {
+        alert('Tarkista päiväys')
+        return
+      }
+      ctrl.onAckCharges(date)
+    })
+
+    $('#btn-print').on('click', () => {
+      ctrl.onPrintChargingSheet()
+    })
   }
 }
 </script>

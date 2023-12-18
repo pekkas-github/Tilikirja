@@ -4,9 +4,9 @@ class InfoView {
 
   static render() {
 
-    $('.controls').html('')
+    frame.controls.html('')
 
-    const content = `
+    frame.content.html(`
       <table id="tbl-front">
         <tr>
           <td colspan="2"><h2>As Oy Tukkitie 6</h2></td>
@@ -32,11 +32,7 @@ class InfoView {
           <td>050 556 0013</td>
         </tr>
       </table>`
-
-    $('.content').html(content)
-
-    $('#page0').css('background-color', '#333385')
-    $('#page0').css('font-weight', 'bold')
+    )
 
   }
 }

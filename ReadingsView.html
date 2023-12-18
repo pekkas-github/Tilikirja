@@ -2,23 +2,22 @@
 
 class ReadingsView {
 
-  static controller;
-
-  static render(readings) {
+  static render(controller, readings) {
     this.renderControls()
-    this.setControlsEventListeners()
     this.renderContent(readings)
+    this.setEventListeners(controller)
   }
 
   static renderControls() {
-    const controls = `
+
+    frame.controls.html(`
       <button class="btn" id="btn-add" hidden>Lisää...</button>
-      <span id="lnk-price"> Veden hinta</span>
-    `
-    $('.controls').html(controls)
+      <span id="lnk-price"> Veden hinta</span>`
+    )
   }
 
   static renderContent(readings) {
+
     const headerLines = `
       <tr>
         <th></th>
@@ -54,29 +53,27 @@ class ReadingsView {
       `
     }
 
-    const content = `
+    frame.content.html(`
       <table id="tbl-readings"> 
         ${headerLines}
         ${tableContent}
-      </table>
-    `
-    $('.content').html(content)
+      </table>`
+    )
   }
 
-  static setControlsEventListeners() {
-    const ctrl = this.controller
+  static setEventListeners(ctrl) {
+
+    if (app.params.profile === 'admin') {
+      $('#btn-add').show()
+    }
 
     $('#lnk-price').on('click', () => {
-      ctrl.openWaterPriceForm()
+      ctrl.onOpenWaterPriceForm()
     })
   
     $('#btn-add').on('click', () => {
-      ctrl.openReadingForm()
+      ctrl.onOpenReadingForm()
     })
-
-    if (profile === 'admin') {
-      $('#btn-add').show()
-    }
   }
 }
 </script>
