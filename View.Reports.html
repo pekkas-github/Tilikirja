@@ -1,14 +1,15 @@
 <script>
 
-class ReportsView {
+View.Reports =(function() {
+  const public = {}
 
-  static render(controller, summaryByAccount, accounts, years, currentYear) {
-    this.renderControls(years, currentYear)
-    this.renderContent(summaryByAccount, accounts)
-    this.setEventListeners(controller)
+  public.render = (controller, summaryByAccount, accounts, years, currentYear) => {
+    renderControls(years, currentYear)
+    renderContent(summaryByAccount, accounts)
+    setEventListeners(controller)
   }
 
-  static renderControls(years, currentYear) {
+  function renderControls(years, currentYear) {
 
     let options = ''
     for(const year of years) {
@@ -27,7 +28,7 @@ class ReportsView {
     )
   }
 
-  static renderContent(summaryByAccount, accounts) {
+  function renderContent(summaryByAccount, accounts) {
     
     let content = `
       <table id="tbl-reports">
@@ -63,10 +64,12 @@ class ReportsView {
 
   }
 
-  static setEventListeners(ctrl) {
+  function setEventListeners(ctrl) {
     
     $('#cbo-years').on('change', () => {
       ctrl.onChangeYear(parseInt($('#cbo-years').val()))})
   }
-}
+
+  return public
+})()
 </script>

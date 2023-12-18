@@ -1,8 +1,9 @@
 <script>
 
-class InfoView {
+View.Info = (function() {
+  const public = {}
 
-  static render() {
+  public.render = () => {
 
     frame.controls.html('')
 
@@ -33,8 +34,9 @@ class InfoView {
         </tr>
       </table>`
     )
-
   }
-}
+
+  return public
+})()
 
 </script>

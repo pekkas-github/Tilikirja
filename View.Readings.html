@@ -1,14 +1,15 @@
 <script>
 
-class ReadingsView {
+View.Readings = (function() {
+  const public = {}
 
-  static render(controller, readings) {
-    this.renderControls()
-    this.renderContent(readings)
-    this.setEventListeners(controller)
+  public.render = (controller, readings) => {
+    renderControls()
+    renderContent(readings)
+    setEventListeners(controller)
   }
 
-  static renderControls() {
+  function renderControls() {
 
     frame.controls.html(`
       <button class="btn" id="btn-add" hidden>Lisää...</button>
@@ -16,7 +17,7 @@ class ReadingsView {
     )
   }
 
-  static renderContent(readings) {
+  function renderContent(readings) {
 
     const headerLines = `
       <tr>
@@ -61,7 +62,7 @@ class ReadingsView {
     )
   }
 
-  static setEventListeners(ctrl) {
+  function setEventListeners(ctrl) {
 
     if (app.params.profile === 'admin') {
       $('#btn-add').show()
@@ -75,5 +76,7 @@ class ReadingsView {
       ctrl.onOpenReadingForm()
     })
   }
-}
+
+  return public
+})()
 </script>

@@ -1,0 +1,69 @@
+<script>
+
+Controller.Events = (function() {
+  const public = {}
+
+  public.openPage = () => {
+    const years       = Model.Common.getYears()
+    const currentYear = Model.Common.getCurrentYear()
+    const events      = Model.Events.getEventsOfYear(currentYear)
+
+    View.Events.render(public, events, years, currentYear)
+  }
+
+  public.onAddNewEvent = () => {
+    const event    = Model.Events.getNewEvent()
+    const accounts = Model.Common.getAccounts()
+    const years    = Model.Common.getYears()
+
+    View.EventForm.render(public, event, accounts, years)
+  }
+     
+  public.onChangeYear = (year) => {
+    Model.Common.setCurrentYear(year)
+    public.openPage()
+  }
+    
+  public.onExportEventsOnSheet = async (year) => {
+    await Model.Common.exportYearlyEvents(year)
+    alert(`Vuoden ${year} tapahtumat talletettu taulukkoon.`)
+  }
+
+  public.onModifyEvent = (id) => {
+    const event    = Model.Events.getEvent(id)
+    const accounts = Model.Common.getAccounts()
+    const years    = Model.Common.getYears()
+
+    View.EventForm.render(public, event, accounts, years)
+  }
+
+  public.onOpenComment = (id) => {
+    const event = Model.Events.getEvent(id)
+    if (event.comment != '') {
+      View.EventComment.render(event)
+    }
+  }
+
+  public.onSaveEvent = async (event) => {
+    if (event.id === 0) {
+      //insert
+      Model.Events.addEvent(event).then(() => {
+        public.openPage()
+      })
+      public.openPage()
+    } else {
+      //update
+      Model.Events.updateEvent(event)
+      public.openPage()
+    }
+  }
+
+  public.onToggleEventStatus = (id) => {
+    Model.Events.toggleEventStatus(id)
+    public.openPage()
+  }
+
+  return public
+})()
+
+</script>

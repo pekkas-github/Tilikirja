@@ -1,8 +1,9 @@
 <script>
 
-class ReportsModel {
+Model.Reports = (function() {
+  const public = {}
 
-  static getReport(year) {
+  public.getReport = (year) => {
     const summaryByAccount = {} 
     const eventsByYear = Db.getRecords('events').filter(Db.where('fiscal_year', year))
 
@@ -28,5 +29,7 @@ class ReportsModel {
 
     return summaryByAccount
   }
-}
+
+  return public
+})()
 </script>

@@ -1,0 +1,12 @@
+<script>
+
+Model.Charges = (function() {
+  const public = {}
+
+  public.printChargingSheet = async () => {
+    await Server.api('updateChargingSheet')
+  }
+
+  return public
+})()
+</script>

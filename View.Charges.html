@@ -1,14 +1,15 @@
 <script>
 
-class ChargesView {
+View.Charges = (function () {
+  const public = {}
 
-  static render(controller, eventsToBeCharged) {
-    this.renderControls()
-    this.renderContent(eventsToBeCharged)
-    this.setEventListeners(controller)
+  public.render = (controller, eventsToBeCharged) => {
+    renderControls()
+    renderContent(eventsToBeCharged)
+    setEventListeners(controller)
   }
   
-  static renderControls() {
+  function renderControls() {
 
     frame.controls.html(`
       <input id="txt-day" type="date" hidden>
@@ -17,7 +18,7 @@ class ChargesView {
     )
   }
 
-  static renderContent(eventsToBeCharged) {
+  function renderContent(eventsToBeCharged) {
 
     let content = `
       <table id="tbl-charges">
@@ -56,7 +57,7 @@ class ChargesView {
     frame.content.html(content)
   }
 
-  static setEventListeners(ctrl) {
+  function setEventListeners(ctrl) {
 
     if (app.params.profile === 'admin') {
       $('#txt-day').show()
@@ -77,5 +78,7 @@ class ChargesView {
       ctrl.onPrintChargingSheet()
     })
   }
-}
+
+  return public
+})()
 </script>

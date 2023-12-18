@@ -1,12 +1,13 @@
 <script>
   
-class ReadingsModel {
+Model.Readings = (function() {
+  const public = {}
 
-  static async addReading(reading) {
+  public.addReading = async (reading) => {
 
     // Laske A:n kulutus ja määritä hinta
-    const consumptionA  = this.calculateConsumption(reading)
-    const currentPrice  = this.getCurrentWaterPrice()
+    const consumptionA  = calculateConsumption(reading)
+    const currentPrice  = public.getCurrentWaterPrice()
 
     const a_share = Math.floor(((consumptionA * currentPrice.usage + 3 * currentPrice.ground / 2)*100+0.5))/100 
 
@@ -21,13 +22,13 @@ class ReadingsModel {
     newEvent.fiscal_year = reading.fiscal_year
 
     // Lisää tapahtuma
-    EventsModel.addEvent(newEvent)
+    Model.Events.addEvent(newEvent)
 
     await Db.insertRecord('water', reading)
   }
 
 
-  static calculateConsumption(reading) {
+  function calculateConsumption(reading) {
     const readings = Db.getRecords('water')
     const last     = readings[readings.length - 1]
 
@@ -36,7 +37,7 @@ class ReadingsModel {
   }
 
 
-  static getCurrentWaterPrice() {
+  public.getCurrentWaterPrice = () => {
     const price  = Db.getRecords('waterprice').filter(Db.where('current_value', 'x'))[0]
 
     price.usage  = price.water_price + price.waste_price
@@ -46,7 +47,7 @@ class ReadingsModel {
   }
 
 
-  static getReadings() {
+  public.getReadings = () => {
     const readings = Db.getRecords('water').sort(Db.desc('id'))
 
     for (let i = 0; i < readings.length - 1; i++) {
@@ -60,5 +61,7 @@ class ReadingsModel {
     }
     return readings
   }
-}
+
+  return public
+})()
 </script>

@@ -1,7 +1,9 @@
 <script>
-class WaterPriceFormView {
 
-  static render(waterPrice) {
+View.WaterPriceForm = (function() {
+  const public = {}
+
+  public.render = (waterPrice) => {
 
     frame.popupHeader.html('<h3>Veden hinta</h3>')
     
@@ -69,5 +71,7 @@ class WaterPriceFormView {
 
     frame.popup.show()
   }
-}
+
+  return public
+})()
 </script>
