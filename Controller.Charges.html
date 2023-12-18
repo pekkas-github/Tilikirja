@@ -1,0 +1,24 @@
+<script>
+
+Controller.Charges = (function() {
+  const public = {}
+
+  public.openPage = () => {
+    const eventsToBeCharged = Model.Events.getEventsToBeCharged()
+    
+    View.Charges.render(public, eventsToBeCharged)
+  }
+
+  public.onAckCharges = (date) => {
+    Model.Events.ackCharges(date)
+    public.openPage()
+  }
+
+  public.onPrintChargingSheet = async () => {
+    await Model.Charges.printChargingSheet()
+    alert('Veloitustaulukko on päivitetty.')
+  }
+
+  return public
+})()
+</script> 

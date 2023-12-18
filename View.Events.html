@@ -1,14 +1,15 @@
 <script>
-class EventsView { 
+View.Events = (function() { 
+  const public = {}
 
-  static render(controller, events, years, currentYear) {
+  public.render = (controller, events, years, currentYear) => {
 
-    this.renderControls(years, currentYear)
-    this.renderContent(events)
-    this.setEventListeners(controller)
+    renderControls(years, currentYear)
+    renderContent(events)
+    setEventListeners(controller)
   }
 
-  static renderControls(years, currentYear) {
+  function renderControls(years, currentYear) {
 
     let options = ''
     for(const year of years) {
@@ -35,7 +36,7 @@ class EventsView {
     $('#cbo-years').val(currentYear)
   }
 
-  static renderContent(events) {
+  function renderContent(events) {
 
     const headerLine = `
       <tr>
@@ -77,7 +78,7 @@ class EventsView {
     )
   }
 
-  static setEventListeners(ctrl) {
+  function setEventListeners(ctrl) {
 
     if (app.params.profile === 'admin') {
       $('#btn-add').show()
@@ -106,6 +107,8 @@ class EventsView {
     $('.comment').on('click', function() {
       ctrl.onOpenComment(parseInt($(this).parent().attr('id')))
     })
-  }  
-}
+  }
+
+  return public  
+})()
 </script>

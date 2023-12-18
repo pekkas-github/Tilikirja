@@ -1,24 +1,28 @@
 <script>
-class Common {
 
-  static async exportYearlyEvents(year) {
+Model.Common = (function() {
+  const public = {}
+
+  public.exportYearlyEvents = async (year) => {
     await Server.api('printYearResumeOnSheet', year)
   }
 
-  static getAccounts() {
+  public.getAccounts = () => {
     return Db.getRecords('accounts')
   }
 
-  static getCurrentYear() {
+  public.getCurrentYear = () => {
     return app.currentYear
   }
 
-  static getYears() {
+  public.getYears = () => {
     return Db.getRecords('years')
   }
   
-  static setCurrentYear(year) {
+  public.setCurrentYear = (year) => {
     app.currentYear = year
   }
-}
+
+  return public
+})()
 </script>

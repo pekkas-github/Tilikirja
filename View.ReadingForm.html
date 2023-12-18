@@ -1,13 +1,14 @@
 <script>
 
-class ReadingFormView {
+View.ReadingForm = (function() {
+  const public = {}
 
-  static render(controller, years, currentYear) {
-    this.renderContent(years, currentYear)
-    this.setEventListeners(controller)
+  public.render = (controller, years, currentYear) => {
+    renderContent(years, currentYear)
+    setEventListeners(controller)
   }
 
-  static renderContent(years, currentYear) {
+  function renderContent(years, currentYear) {
 
     frame.popupHeader.html('<h3>Uudet mittarilukemat</h3>')
 
@@ -55,19 +56,18 @@ class ReadingFormView {
     frame.popup.show()
   }
 
-  static setEventListeners(ctrl) {
-    const self = this
+  function setEventListeners(ctrl) {
 
     $('#btn-popup-save').on('click', () => {
-      const reading = self.getReading()
-      if (self.isValid(reading)) {
+      const reading = getReading()
+      if (isValid(reading)) {
         ctrl.onAddReading(reading)
         frame.popup.hide()
       }
     })
   }
 
-  static getReading() {
+  function getReading() {
     const reading = {}
     reading.id = 0
     reading.date = $('#txt-date').val()
@@ -80,7 +80,7 @@ class ReadingFormView {
     return reading
   }
 
-  static isValid(reading) {
+  function isValid(reading) {
     try {
       if (reading.date === '') {throw('Päiväys puuttuu')}      
       if (reading.master_reading === '' || isNaN(reading.master_reading)) {throw('Tarkista kokonaismäärä')}    
@@ -93,6 +93,8 @@ class ReadingFormView {
       return false
     }
   }
-}
+
+  return public
+})()
 
 </script>
