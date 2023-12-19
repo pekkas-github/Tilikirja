@@ -1,56 +1,56 @@
 <script>
-class EventFormView {
 
-  static controller;
-  static event;
+View.EventForm = (function() {
+  const public = {}
 
-  static render(accounts, years) {
-    this.renderContent(accounts, years)
-    this.setEventListeners()
+  public.render = (controller, event, accounts, years) => {
+
+    renderContent(event, accounts, years)
+    setEventListeners(controller, event)
   }
 
-  static renderContent(accounts, years) {
+  function renderContent(thisEvent, accounts, years) {
 
+    frame.popupHeader.html('<h3>Tapahtuman tiedot</h3>'
+    )
     // Create drop downs
     let accountOptions = ''
     for (const account of accounts) {
-      const selected = (account.id === this.event.account_id) ? 'selected' : ''
+      const selected = (account.id === thisEvent.account_id) ? 'selected' : ''
       accountOptions += `<option value="${account.id}" ${selected}> ${account.name} </option>`
     }
 
     let fiscalYearOptions = ''
     for (const year of years) {
-      const selected = (year.year === this.event.fiscal_year) ? 'selected' : ''
+      const selected = (year.year === thisEvent.fiscal_year) ? 'selected' : ''
       fiscalYearOptions += `<option ${selected}> ${year.year} </option>`
     }
 
     // Create content
-    const dateDisabled = (this.event.id === 0) ? '' : 'disabled'    // enable date only if new record
+    const dateDisabled = (thisEvent.id === 0) ? '' : 'disabled'    // enable date only if new record
 
-    let popupContent = `
-      <span id="btn-popup-close">&times;</span>
-
+    frame.popupContent.html(`
       <table class="empty" id="event-form">
         <tr>
           <td class="label">Tosite:</td>
-          <td class="empty"><input id="txt-nbr" type="text" value="${this.event.number}" size="1" disabled></td>
+          <td class="empty"><input id="txt-nbr" type="text" value="${thisEvent.number}" size="1" disabled></td>
         </tr>
         <tr>
           <td class="label">Päiväys:</td>
-          <td class="empty"><input id="txt-day" type="date" value="${this.event.date}" ${dateDisabled} required></td>
+          <td class="empty"><input id="txt-day" type="date" value="${thisEvent.date}" ${dateDisabled} required></td>
         </tr>
         <tr>
           <td class="label">Tapahtuma:</td>
-          <td class="empty"><input id="txt-event" type="text" value="${this.event.event}" size="50" required></td>
+          <td class="empty"><input id="txt-event" type="text" value="${thisEvent.event}" size="50" required></td>
         </tr>
         <tr>
           <td class="label">Summa:</td>
-          <td class="empty"><input id="txt-total" type="text" value="${this.event.total.toFixed(2)}" size="5" required></td>
+          <td class="empty"><input id="txt-total" type="text" value="${thisEvent.total.toFixed(2)}" size="5" required></td>
         </tr>
         <tr>
           <td class="label">A-osuus:</td>
           <td class="empty">
-            <input id="txt-share" type="text" value="${this.event.a_share.toFixed(2)}" size="5" required>
+            <input id="txt-share" type="text" value="${thisEvent.a_share.toFixed(2)}" size="5" required>
             <select id="cbo-percent">
               <option value="0">Vapaa</option>
               <option value="0.385">38.5</option>
@@ -77,28 +77,24 @@ class EventFormView {
         </tr>
         <tr>
           <td class="label">Kommentti:</td>
-          <td class="empty"><input id="txt-comment" type="text" value="${this.event.comment}" size="50"></td>
+          <td class="empty"><input id="txt-comment" type="text" value="${thisEvent.comment}" size="50"></td>
         </tr>
       </table>
 
       <button class="btn" id="btn-popup-save">Talleta</button>`
+    )
 
-    $('.popup-content').html(popupContent)
-    app.popup.on()
+    frame.popup.show()
   }
 
-  static setEventListeners() {
-    const self = this
-    const ctrl = this.controller
+  function setEventListeners(ctrl, thisEvent) {
 
     $('#btn-popup-save').on('click', function() {
-      if (self.isValid(self.event)) {
-        ctrl.saveEvent(self.event)
-        app.popup.off()
+      if (isValid(thisEvent)) {
+        ctrl.onSaveEvent(thisEvent)
+        frame.popup.hide()
       }
     })
-
-    $('#btn-popup-close').on('click', app.popup.off)
 
     $('#cbo-percent').on('change', function() {
       const total = $('#txt-total').val()
@@ -110,7 +106,7 @@ class EventFormView {
     })
   }
 
-  static isValid (event) {
+  function isValid(event) {
     // Read input
     event.number = parseInt($('#txt-nbr').val())
     event.date = $('#txt-day').val()
@@ -137,5 +133,8 @@ class EventFormView {
       return false
     }
   }
-}
+
+  return public
+})()
+
 </script>

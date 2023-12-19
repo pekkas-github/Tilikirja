@@ -1,50 +1,24 @@
 <script>
 
-class ChargesView {
+View.Charges = (function () {
+  const public = {}
 
-  static controller;
-
-  static render(eventsToBeCharged) {
-    this.renderControls()
-    this.setControlsEventListeners()
-    this.renderContent(eventsToBeCharged)
+  public.render = (controller, eventsToBeCharged) => {
+    renderControls()
+    renderContent(eventsToBeCharged)
+    setEventListeners(controller)
   }
   
-  static renderControls() {
+  function renderControls() {
 
-    const controls = `
+    frame.controls.html(`
       <input id="txt-day" type="date" hidden>
       <button class="btn" id="btn-submit" hidden> Kuittaa maksetuksi </button>
-      <button class="btn" id="btn-print" hidden> Tulosta </button>
-    `
-    $('.controls').html(controls)
+      <button class="btn" id="btn-print" hidden> Tulosta </button>`
+    )
   }
 
-  static setControlsEventListeners() {
-
-    const ctrl = this.controller
-
-    $('#btn-submit').on('click', () => {
-      const date = $('#txt-day').val()
-      if ( date === '') {
-        alert('Tarkista päiväys')
-        return
-      }
-      ctrl.ackCharges(date)
-    })
-
-    $('#btn-print').on('click', () => {
-      ctrl.onPrintChargingSheet()
-    })
-
-    if (profile === 'admin') {
-      $('#txt-day').show()
-      $('#btn-submit').show()
-      $('#btn-print').show()
-    }
-  }
-
-  static renderContent(eventsToBeCharged) {
+  function renderContent(eventsToBeCharged) {
 
     let content = `
       <table id="tbl-charges">
@@ -80,7 +54,31 @@ class ChargesView {
         </tr>
       </table>`
 
-    $('.content').html(content)
+    frame.content.html(content)
   }
-}
+
+  function setEventListeners(ctrl) {
+
+    if (app.params.profile === 'admin') {
+      $('#txt-day').show()
+      $('#btn-submit').show()
+      $('#btn-print').show()
+    }
+
+    $('#btn-submit').on('click', () => {
+      const date = $('#txt-day').val()
+      if ( date === '') {
+        alert('Tarkista päiväys')
+        return
+      }
+      ctrl.onAckCharges(date)
+    })
+
+    $('#btn-print').on('click', () => {
+      ctrl.onPrintChargingSheet()
+    })
+  }
+
+  return public
+})()
 </script>

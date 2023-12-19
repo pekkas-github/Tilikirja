@@ -1,0 +1,28 @@
+<script>
+
+Model.Common = (function() {
+  const public = {}
+
+  public.exportYearlyEvents = async (year) => {
+    await Server.api('printYearResumeOnSheet', year)
+  }
+
+  public.getAccounts = () => {
+    return Db.getRecords('accounts')
+  }
+
+  public.getCurrentYear = () => {
+    return app.currentYear
+  }
+
+  public.getYears = () => {
+    return Db.getRecords('years')
+  }
+  
+  public.setCurrentYear = (year) => {
+    app.currentYear = year
+  }
+
+  return public
+})()
+</script>

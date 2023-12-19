@@ -1,16 +1,15 @@
 <script>
 
-class ReportsView {
+View.Reports =(function() {
+  const public = {}
 
-  static controller;
-
-  static render(summaryByAccount, accounts, years, currentYear) {
-    this.renderControls(years, currentYear)
-    this.setControlsEventListeners()
-    this.renderContent(summaryByAccount, accounts)
+  public.render = (controller, summaryByAccount, accounts, years, currentYear) => {
+    renderControls(years, currentYear)
+    renderContent(summaryByAccount, accounts)
+    setEventListeners(controller)
   }
 
-  static renderControls(years, currentYear) {
+  function renderControls(years, currentYear) {
 
     let options = ''
     for(const year of years) {
@@ -21,22 +20,15 @@ class ReportsView {
         </option>
       `
     }
-    const controls = `
+
+    frame.controls.html(`
       <select class="cbo" id="cbo-years" name="years">
         ${options}
-      </select>  
-    `
-    $('.controls').html(controls)
+      </select>  `
+    )
   }
 
-  static setControlsEventListeners() {
-    
-    const ctrl = this.controller
-    $('#cbo-years').on('change', () => {
-      ctrl.changeYear(parseInt($('#cbo-years').val()))})
-  }
-
-  static renderContent(summaryByAccount, accounts) {
+  function renderContent(summaryByAccount, accounts) {
     
     let content = `
       <table id="tbl-reports">
@@ -67,8 +59,17 @@ class ReportsView {
       <th class="total"> ${ summaryByAccount.Totals.b.toFixed(2) } </th>
     </tr>
     </table>`
-    $('.content').html(content)
+
+    frame.content.html(content)
 
   }
-}
+
+  function setEventListeners(ctrl) {
+    
+    $('#cbo-years').on('change', () => {
+      ctrl.onChangeYear(parseInt($('#cbo-years').val()))})
+  }
+
+  return public
+})()
 </script>

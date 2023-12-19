@@ -1,0 +1,31 @@
+<script>
+
+Controller.Readings = (function() {
+  const public = {}
+
+  public.openPage = () => {
+    const readings = Model.Readings.getReadings()
+    
+    View.Readings.render(public, readings)
+  }
+
+  public.onAddReading = async (reading) => {
+    await Model.Readings.addReading(reading)
+    public.openPage()
+  }
+
+  public.onOpenReadingForm = () => {
+    const years       = Model.Common.getYears()
+    const currentYear = Model.Common.getCurrentYear()
+    
+    View.ReadingForm.render(public, years, currentYear)
+  }
+
+  public.onOpenWaterPriceForm = () => {
+    View.WaterPriceForm.render(Model.Readings.getCurrentWaterPrice())
+  }
+
+  return public
+})()
+
+</script>

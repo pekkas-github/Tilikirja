@@ -1,0 +1,48 @@
+<script>
+
+const Model      = {}
+const Controller = {}
+const View       = {}
+
+</script>
+
+<?!= include('Model.Common') ?>
+<?!= include('Model.Charges') ?>
+<?!= include('Model.Events') ?>
+<?!= include('Model.Readings') ?>
+<?!= include('Model.Reports') ?>
+<?!= include('Controller.Events') ?>
+<?!= include('Controller.Readings') ?>
+<?!= include('Controller.Reports') ?>
+<?!= include('Controller.Charges') ?>
+<?!= include('View.Info') ?>
+<?!= include('View.Events') ?>
+<?!= include('View.EventForm') ?>
+<?!= include('View.EventComment') ?>
+<?!= include('View.Readings') ?>
+<?!= include('View.ReadingForm') ?>
+<?!= include('View.Reports') ?>
+<?!= include('View.Charges') ?>
+<?!= include('View.WaterPriceForm') ?>
+
+<script>
+
+frame.header.text('Tilikirja')
+frame.footerRight.text('<?= app.version ?>')
+frame.footerLeft.text(app.params.profile)
+frame.addNavBarItem('Etusivu', View.Info.render)
+frame.addNavBarItem('Tapahtumat', () => {Controller.Events.openPage()})
+frame.addNavBarItem('Veden kulutus', () => {Controller.Readings.openPage()})
+frame.addNavBarItem('Tuloslaskelmat', () => {Controller.Reports.openPage()})
+frame.addNavBarItem('Neljännesveloitus', () => {Controller.Charges.openPage()})
+
+frame.spinner.show()
+View.Info.render()
+
+Db.init().then(() => {
+  const currentYear = Db.getRecords('years').filter(Db.where('current', 'x'))[0].year
+  Model.Common.setCurrentYear(currentYear)
+  frame.spinner.hide()
+})
+
+</script>

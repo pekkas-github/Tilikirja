@@ -1,12 +1,13 @@
 <script>
-class WaterPriceFormView {
 
-  static render(waterPrice) {
+View.WaterPriceForm = (function() {
+  const public = {}
 
-    let popupContent = `
-      <p id="btn-popup-close">&times;</p>
-      <h3>Veden hinta</h3>
-      
+  public.render = (waterPrice) => {
+
+    frame.popupHeader.html('<h3>Veden hinta</h3>')
+    
+    frame.popupContent.html(`
       <table class="tbl-water-price">
         <tr>
           <td colspan="3"><h3>Hinnoittelun parametrit</h3></td>
@@ -66,13 +67,11 @@ class WaterPriceFormView {
         <p>A-asunnon lukema määritetään kaavasta "Talon lukema - B-asunnon lukema."</p>
         <p>Perusmaksuosuus jaetaan tasan asuntojen kesken.</p>
       </div>`
+    )
 
-    
-    $('.popup-content').html(popupContent)
-
-    $('#btn-popup-close').on('click', app.popup.off)
-
-    app.popup.on()
+    frame.popup.show()
   }
-}
+
+  return public
+})()
 </script>

@@ -1,0 +1,16 @@
+<script>
+
+View.EventComment = (function() {
+  const public = {}
+
+  public.render = (event) => {
+    frame.popupHeader.html('<h3>Kommentti</h3>')
+    frame.popupContent.html(event.comment)
+
+    frame.popup.show()
+  }
+
+  return public
+})()
+
+</script>

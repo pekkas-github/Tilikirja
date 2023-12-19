@@ -1,15 +1,16 @@
 <script>
 
-class ReadingFormView {
+View.ReadingForm = (function() {
+  const public = {}
 
-  static controller;
-
-  static render(years, currentYear) {
-    this.renderContent(years, currentYear)
-    this.setEventListeners()
+  public.render = (controller, years, currentYear) => {
+    renderContent(years, currentYear)
+    setEventListeners(controller)
   }
 
-  static renderContent(years, currentYear) {
+  function renderContent(years, currentYear) {
+
+    frame.popupHeader.html('<h3>Uudet mittarilukemat</h3>')
 
     let options = ''
     for (const year of years) {
@@ -17,9 +18,7 @@ class ReadingFormView {
       options += `<option ${selected}> ${year.year} </option>`
     }  
     
-    const popupContent = `
-      <span id="btn-popup-close">&times;</span>
-
+    frame.popupContent.html(`
       <table class="empty">
         <tr>
           <td class="label">Lukemispäivä:</td>
@@ -51,29 +50,24 @@ class ReadingFormView {
         </tr>
       </table>
 
-      <button class="btn" id="btn-popup-save">Talleta</button>
-    `
+      <button class="btn" id="btn-popup-save">Talleta</button>`
+    )
 
-    $('.popup-content').html(popupContent)
-    app.popup.on()
+    frame.popup.show()
   }
 
-  static setEventListeners() {
-    const self = this
-    const ctrl = this.controller
+  function setEventListeners(ctrl) {
 
     $('#btn-popup-save').on('click', () => {
-      const reading = self.getReading()
-      if (self.isValid(reading)) {
-        ctrl.addReading(reading)
-        app.popup.off()
+      const reading = getReading()
+      if (isValid(reading)) {
+        ctrl.onAddReading(reading)
+        frame.popup.hide()
       }
     })
-
-    $('#btn-popup-close').on('click', app.popup.off)
   }
 
-  static getReading() {
+  function getReading() {
     const reading = {}
     reading.id = 0
     reading.date = $('#txt-date').val()
@@ -86,7 +80,7 @@ class ReadingFormView {
     return reading
   }
 
-  static isValid(reading) {
+  function isValid(reading) {
     try {
       if (reading.date === '') {throw('Päiväys puuttuu')}      
       if (reading.master_reading === '' || isNaN(reading.master_reading)) {throw('Tarkista kokonaismäärä')}    
@@ -99,6 +93,8 @@ class ReadingFormView {
       return false
     }
   }
-}
+
+  return public
+})()
 
 </script>

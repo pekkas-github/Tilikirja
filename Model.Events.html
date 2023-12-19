@@ -1,7 +1,9 @@
 <script>
-class EventsModel {
 
-  static async ackCharges(date) {
+Model.Events = (function() {
+  const public = {}
+
+  public.ackCharges = async (date) => {
     const events = Db.getRecords('events').filter(Db.where('cleared', '')).filter(Db.where('charging', 'x'))
 
     for (const event of events) {
@@ -13,7 +15,7 @@ class EventsModel {
   }
 
 
-  static async addEvent(newEvent) {
+  public.addEvent = async (newEvent) => {
     // Talleta heti paikalliseen tauluun (id=0, number=0)
     Db.events.push(newEvent)
 
@@ -27,12 +29,12 @@ class EventsModel {
   }
 
 
-  static getEvent(id) {
+  public.getEvent = (id) => {
     return Db.getRecord('events', id)
   }
 
 
-  static getEventsOfYear(year) {
+  public.getEventsOfYear = (year) => {
     const events   = Db.getRecords('events')
     const accounts = Db.getRecords('accounts')
     const pattern  = new RegExp(`${year}`)
@@ -53,7 +55,7 @@ class EventsModel {
   }
 
 
-  static getEventsToBeCharged() {
+  public.getEventsToBeCharged = () => {
     const accounts = Db.getRecords('accounts')
     const events = Db.getRecords('events')
       .filter(Db.where('cleared', ''))
@@ -69,19 +71,19 @@ class EventsModel {
   }
 
 
-  static getNewEvent() {
+  public.getNewEvent = () => {
     const event = Db.getNewRecord('events')
     event.id          = 0
     event.total       = 0
     event.a_share     = 0
     event.account_id  = 1
-    event.fiscal_year = Common.getCurrentYear()
+    event.fiscal_year = Model.Common.getCurrentYear()
 
     return event
   }
 
 
-  static async toggleEventStatus(id) {
+  public.toggleEventStatus = async (id) => {
     const event = Db.getRecord('events', id)
 
     if (event.cleared === '') {
@@ -91,8 +93,11 @@ class EventsModel {
   }
   
 
-  static async updateEvent(event) {
+  public.updateEvent = async (event) => {
     await Db.updateRecord('events', event)
   }
-}
+
+  return public
+})()
+
 </script>
