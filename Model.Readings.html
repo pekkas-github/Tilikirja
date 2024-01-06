@@ -9,7 +9,7 @@ Model.Readings = (function() {
     const consumptionA  = calculateConsumption(reading)
     const currentPrice  = public.getCurrentWaterPrice()
 
-    const a_share = Math.floor(((consumptionA * currentPrice.usage + 3 * currentPrice.ground / 2)*100+0.5))/100 
+    const a_share = Math.floor(((consumptionA * currentPrice.waterA + currentPrice.baseA)*100+0.5))/100
 
     // Muodosta tilitapahtuma
     const newEvent = Db.getNewRecord('events')
@@ -36,16 +36,9 @@ Model.Readings = (function() {
     return (reading.master_reading - last.master_reading) - (reading.b_reading - last.b_reading)
   }
 
-
   public.getCurrentWaterPrice = () => {
-    const price  = Db.getRecords('waterprice').filter(Db.where('current_value', 'x'))[0]
-
-    price.usage  = price.water_price + price.waste_price
-    price.ground = Math.floor(100 * (price.factor * price.area * price.base_price + 0.005))/100
-
-    return price
+    return Db.getRecords('waterprice').filter(Db.where('current_value', 'x'))[0]
   }
-
 
   public.getReadings = () => {
     const readings = Db.getRecords('water').sort(Db.desc('id'))

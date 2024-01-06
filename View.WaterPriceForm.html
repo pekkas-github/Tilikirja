@@ -10,7 +10,7 @@ View.WaterPriceForm = (function() {
     frame.popupContent.html(`
       <table class="tbl-water-price">
         <tr>
-          <td colspan="3"><h3>Hinnoittelun parametrit</h3></td>
+          <td colspan="3"><h3>Veden hinta</h3></td>
         </tr>
         <tr>
           <td class="td-right">Alkaen:</td>
@@ -18,31 +18,8 @@ View.WaterPriceForm = (function() {
           <td></td>
         </tr>
         <tr>
-          <td class="td-right">Kiinteistökerroin:</td>
-          <td class="number">${waterPrice.factor}</td>
-          <td></td>
-        </tr>
-        <tr>
-          <td class="td-right">Pinta-alaperuste:</td>
-          <td class="number">${waterPrice.area}</td>
-          <td>m2</td>
-        </tr>
-        <tr>
           <td class="td-right">Perusmaksu:</td>
-          <td class="number">${waterPrice.base_price}</td>
-          <td>€/kk/m2</td>
-        </tr>
-        <tr>
-          <td class="td-right">Arvioitu vuosikulutus:</td>
-          <td class="number">${waterPrice.consumption}</td>
-          <td>m3/vuosi</td>
-        </tr>
-        <tr>
-          <td colspan="3"><h3>Veden hinta</h3></td>
-        </tr>
-        <tr>
-          <td class="td-right">Perusmaksuosuus:</td>
-          <td class="number">${waterPrice.ground.toFixed(2)}</td>
+          <td class="number">${waterPrice.base_price.toFixed(2)}</td>
           <td>€/kk</td>
         </tr>
         <tr>
@@ -57,14 +34,9 @@ View.WaterPriceForm = (function() {
         </tr>
         <tr>
       </table>
-
-      <div class="popup-info">
-        <p>Perusmaksuosuus = Kiinteistökerroin x Kerrosala x Perusmaksu</p>
-        <p>Vesimaksuosuus = Käyttövesimaksu + Jätevesimaksu</p>
-      </div>
       
       <div class="popup-info">
-        <p>A-asunnon lukema määritetään kaavasta "Talon lukema - B-asunnon lukema."</p>
+        <p>A-asunnon lukema = Talon lukema - B-asunnon lukema</p>
         <p>Perusmaksuosuus jaetaan tasan asuntojen kesken.</p>
       </div>`
     )
