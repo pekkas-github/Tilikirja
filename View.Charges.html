@@ -3,9 +3,9 @@
 View.Charges = (function () {
   const public = {}
 
-  public.render = (controller, eventsToBeCharged) => {
+  public.render = (controller, eventsToBeCharged, chargeHistory) => {
     renderControls()
-    renderContent(eventsToBeCharged)
+    renderContent(eventsToBeCharged,chargeHistory)
     setEventListeners(controller)
   }
   
@@ -18,9 +18,33 @@ View.Charges = (function () {
     )
   }
 
-  function renderContent(eventsToBeCharged) {
+  function renderContent(eventsToBeCharged, chargeHistory) {
+    let content = getHtml(eventsToBeCharged, 'Kuluva neljännes')
+    let quarter = chargeHistory[0].cleared
+    let chargedEvents = []
+    content += `
+      <p id="txt-previous-charges">Aikaisemmat veloitukset</p>
+      <div id="previous-charges" hidden>`
+      
+    chargeHistory.forEach( event => {
+      if (event.cleared === quarter) {
+        chargedEvents.push(event)
+      }
+      else {
+        content += getHtml(chargedEvents, quarter)
+        quarter = event.cleared
+        chargedEvents = []
+        chargedEvents.push(event)
+      }
+    })
 
-    let content = `
+    content += `</div>`
+    frame.content.html(content)
+  }
+
+  function getHtml(events, quarter) {
+    let content = `<h3> ${quarter} </h3>`
+    content += `
       <table id="tbl-charges">
         <tr>
           <th>Päiväys</th>
@@ -32,7 +56,7 @@ View.Charges = (function () {
 
     let a_Total = 0
 
-    eventsToBeCharged.forEach( (event) => {
+    events.forEach( (event) => {
       a_Total += event.a_share
       content += `
         <tr>
@@ -54,8 +78,9 @@ View.Charges = (function () {
         </tr>
       </table>`
 
-    frame.content.html(content)
+    return content
   }
+  
 
   function setEventListeners(ctrl) {
 
@@ -64,6 +89,10 @@ View.Charges = (function () {
       $('#btn-submit').show()
       $('#btn-print').show()
     }
+
+    $('#txt-previous-charges').on('click', () => {
+      $('#previous-charges').show()
+    })
 
     $('#btn-submit').on('click', () => {
       const date = $('#txt-day').val()

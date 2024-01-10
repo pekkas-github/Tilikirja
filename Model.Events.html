@@ -55,21 +55,6 @@ Model.Events = (function() {
   }
 
 
-  public.getEventsToBeCharged = () => {
-    const accounts = Db.getRecords('accounts')
-    const events = Db.getRecords('events')
-      .filter(Db.where('cleared', ''))
-      .filter(Db.where('charging', 'x'))
-
-    for (const event of events) {
-      for (const account of accounts) {
-        if (event.account_id === account.id) event.account_name = account.name
-      }
-    }
-
-    return events
-  }
-
 
   public.getNewEvent = () => {
     const event = Db.getNewRecord('events')
