@@ -4,9 +4,9 @@ Controller.Charges = (function() {
   const public = {}
 
   public.openPage = () => {
-    const eventsToBeCharged = Model.Events.getEventsToBeCharged()
-    
-    View.Charges.render(public, eventsToBeCharged)
+    const eventsToBeCharged = Model.Charges.getEventsToBeCharged()
+    const chargeHistory = Model.Charges.getChargeHistory()
+    View.Charges.render(public, eventsToBeCharged, chargeHistory)
   }
 
   public.onAckCharges = (date) => {

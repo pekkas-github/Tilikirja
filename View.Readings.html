@@ -13,7 +13,7 @@ View.Readings = (function() {
 
     frame.controls.html(`
       <button class="btn" id="btn-add" hidden>Lisää...</button>
-      <span id="lnk-price"> Veden hinta</span>`
+      <span id="lnk-extension"> Veden hinta</span>`
     )
   }
 
@@ -68,7 +68,7 @@ View.Readings = (function() {
       $('#btn-add').show()
     }
 
-    $('#lnk-price').on('click', () => {
+    $('#lnk-extension').on('click', () => {
       ctrl.onOpenWaterPriceForm()
     })
   
