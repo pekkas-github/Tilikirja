@@ -12,13 +12,12 @@
       {
         "userSymbol": "ClientDBMS",
         "libraryId": "1eznaqLAguqobUHt20mggWpBxNSXEBh976aeRPK0O7Cne-BwJ3Fqnqga5",
-        "version": "6"
+        "version": "8"
       },
       {
         "userSymbol": "FramePages",
         "libraryId": "1BNcO0k--8vg6oVha2xpBCe1negBh5qKZMekNh1O-b21y4k6C-gFndqqM",
-        "version": "10",
-        "developmentMode": false
+        "version": "10"
       }
     ]
   },

@@ -33,20 +33,22 @@ Model.Events = (function() {
     return Db.getRecord('events', id)
   }
 
+  // Palauta kaikki tapahtumat täydennettynä tilien nimillä
+  public.getEvents = () => {
+    const events = Db.getRecords('events')
+    for (const event of events) {    
+      event.account_name = Db.getRecord('accounts', event.account_id).name
+    }
+    return events
+  }
 
   public.getEventsOfYear = (year) => {
-    const events   = Db.getRecords('events')
-    const accounts = Db.getRecords('accounts')
     const pattern  = new RegExp(`${year}`)
-    
+    const events = public.getEvents()
+
     // Poimi vuoden tapahtumat ja lisää tilin nimi
     const eventsOfYear = events.filter( event => {
       if (pattern.test(event.date)) {
-        for (const account of accounts) {
-          if (event.account_id === account.id) {
-            event.account_name = account.name
-          }
-        }
         return event
       }
     })

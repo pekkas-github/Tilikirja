@@ -4,20 +4,13 @@ Model.Charges = (function() {
   const public = {}
 
   public.getChargeHistory = () => {
-    return Db.getRecords('events').sort(Db.desc('cleared'))
+    return Model.Events.getEvents().sort(Db.desc('cleared'))
   }
 
   public.getEventsToBeCharged = () => {
-    const accounts = Db.getRecords('accounts')
-    const events = Db.getRecords('events')
+      const events = Model.Events.getEvents()
       .filter(Db.where('cleared', ''))
       .filter(Db.where('charging', 'x'))
-
-    for (const event of events) {
-      for (const account of accounts) {
-        if (event.account_id === account.id) event.account_name = account.name
-      }
-    }
 
     return events
   }

@@ -6,7 +6,6 @@ Controller.Charges = (function() {
   public.openPage = () => {
     const eventsToBeCharged = Model.Charges.getEventsToBeCharged()
     const chargeHistory = Model.Charges.getChargeHistory()
-    
     View.Charges.render(public, eventsToBeCharged, chargeHistory)
   }
 
