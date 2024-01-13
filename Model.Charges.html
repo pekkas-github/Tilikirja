@@ -3,6 +3,18 @@
 Model.Charges = (function() {
   const public = {}
 
+  public.getChargeHistory = () => {
+    return Model.Events.getEvents().sort(Db.desc('cleared'))
+  }
+
+  public.getEventsToBeCharged = () => {
+      const events = Model.Events.getEvents()
+      .filter(Db.where('cleared', ''))
+      .filter(Db.where('charging', 'x'))
+
+    return events
+  }
+
   public.printChargingSheet = async () => {
     await Server.api('updateChargingSheet')
   }

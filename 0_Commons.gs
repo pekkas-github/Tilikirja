@@ -1,8 +1,8 @@
 const app = {}
 
-  app.version = '24'
+  app.version = 'ver 29'
   app.dbName  = 'Tilikirja'
-  //app.version = '23 beta'
+  //app.version = '28 beta'
   //app.dbName  = 'Tilikirja_testing'
 
   app.printingSheet = '1lVYY_7hIzs6LV3cliD9CzUudKmHgoLcKtGb_JD8sacA'

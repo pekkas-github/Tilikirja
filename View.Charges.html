@@ -3,9 +3,9 @@
 View.Charges = (function () {
   const public = {}
 
-  public.render = (controller, eventsToBeCharged) => {
+  public.render = (controller, eventsToBeCharged, chargeHistory) => {
     renderControls()
-    renderContent(eventsToBeCharged)
+    renderContent(eventsToBeCharged,chargeHistory)
     setEventListeners(controller)
   }
   
@@ -14,25 +14,49 @@ View.Charges = (function () {
     frame.controls.html(`
       <input id="txt-day" type="date" hidden>
       <button class="btn" id="btn-submit" hidden> Kuittaa maksetuksi </button>
-      <button class="btn" id="btn-print" hidden> Tulosta </button>`
+      <button class="btn" id="btn-print" hidden> Tulosta </button>
+      <span id="lnk-extension">Aikaisemmat veloitukset</span>`
     )
   }
 
-  function renderContent(eventsToBeCharged) {
+  function renderContent(eventsToBeCharged, chargeHistory) {
+    let content = getHtml(eventsToBeCharged, 'Kuluva neljännes')
+    let quarter = chargeHistory[0].cleared
+    let chargedEvents = []
+    content += `
+      <div id="previous-charges" hidden>`
+      
+    chargeHistory.forEach( event => {
+      if (event.cleared === quarter) {
+        chargedEvents.push(event)
+      }
+      else {
+        content += getHtml(chargedEvents, quarter)
+        quarter = event.cleared
+        chargedEvents = []
+        chargedEvents.push(event)
+      }
+    })
 
-    let content = `
+    content += `</div>`
+    frame.content.html(content)
+  }
+
+  function getHtml(events, quarter) {
+    let content = `<h3> ${quarter} </h3>`
+    content += `
       <table id="tbl-charges">
         <tr>
-          <th>Päiväys</th>
-          <th>Tapahtuma</th>
-          <th>Koko summa</th>
-          <th>A-asunto</th>
-          <th>Tili</th>
+          <th style="width:150px;">Päiväys</th>
+          <th style="width:600px;">Tapahtuma</th>
+          <th style="width:150px;">Koko summa</th>
+          <th style="width:150px;">A-asunto</th>
+          <th style="width:150px;">Tili</th>
         </tr>`
 
     let a_Total = 0
 
-    eventsToBeCharged.forEach( (event) => {
+    events.forEach( (event) => {
       a_Total += event.a_share
       content += `
         <tr>
@@ -54,8 +78,9 @@ View.Charges = (function () {
         </tr>
       </table>`
 
-    frame.content.html(content)
+    return content
   }
+  
 
   function setEventListeners(ctrl) {
 
@@ -64,6 +89,10 @@ View.Charges = (function () {
       $('#btn-submit').show()
       $('#btn-print').show()
     }
+
+    $('#lnk-extension').on('click', () => {
+      $('#previous-charges').show()
+    })
 
     $('#btn-submit').on('click', () => {
       const date = $('#txt-day').val()
