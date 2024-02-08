@@ -56,11 +56,10 @@ View.Events = (function() {
     let table =''
     let number
     for (const event of events) {
-      if (event.invoice === '') {
+      if (event.invoice_link === '') {
         number = event.number 
-      }
-      else {
-        number = `<a href="${event.invoice}" target="_blank"> ${event.number} </a>`
+      } else {
+        number = `<a href="${event.invoice_link}" target="_blank"> ${event.number} </a>`
       }
 
       table += `
