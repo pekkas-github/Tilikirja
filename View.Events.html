@@ -52,11 +52,20 @@ View.Events = (function() {
         <th class="is-payed" hidden>Ok</th>
       </tr>
     `
+
     let table =''
+    let number
     for (const event of events) {
+      if (event.invoice === '') {
+        number = event.number 
+      }
+      else {
+        number = `<a href="${event.invoice}" target="_blank"> ${event.number} </a>`
+      }
+
       table += `
         <tr id="${event.id}">
-          <td> ${event.number}</td>
+          <td> ${number} </td>
           <td> ${event.date}</td>
           <td> ${event.event}</td>
           <td class="number"> ${event.total.toFixed(2)}</td>
