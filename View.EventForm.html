@@ -76,6 +76,10 @@ View.EventForm = (function() {
           </td>
         </tr>
         <tr>
+          <td class="label">Tositelinkki:</td>
+          <td class="empty"><input id="txt-invoice-link" type="text" value="${thisEvent.invoice_link}" size="50"></td>
+        </tr>
+        <tr>
           <td class="label">Kommentti:</td>
           <td class="empty"><input id="txt-comment" type="text" value="${thisEvent.comment}" size="50"></td>
         </tr>
@@ -114,6 +118,7 @@ View.EventForm = (function() {
     event.total = Number($('#txt-total').val())
     event.a_share = Number($('#txt-share').val())
     event.account_id = parseInt($('#cbo-account').val())
+    event.invoice_link = $('#txt-invoice-link').val()
     event.comment = $('#txt-comment').val()
     event.fiscal_year = parseInt($('#cbo-year').val())
     event.account_name = $('#cbo-account option:selected').text()
