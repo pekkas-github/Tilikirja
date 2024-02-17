@@ -63,12 +63,12 @@ View.Charges = (function () {
       if (event.invoice_link === '') {
         number = ''
       } else {
-        number = `<a href="${event.invoice_link}" target="_blank">tosite</a>`
+        number = `<a href="${event.invoice_link}" target="_blank">${event.number}</a>`
       }
 
       content += `
         <tr>
-          <td>${number}</td>
+          <td class="td-center">${number}</td>
           <td>${event.date}</td>
           <td>${event.event}</td>
           <td class="number">${event.total.toFixed(2)}</td>
