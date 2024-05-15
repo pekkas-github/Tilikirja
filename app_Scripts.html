@@ -1,8 +1,8 @@
-<script>
+  <script>
 
 const Model      = {}
-const Controller = {}
 const View       = {}
+const Controller = {}
 
 </script>
 
@@ -27,9 +27,9 @@ const View       = {}
 
 <script>
 
-frame.header.text('Tilikirja')
-frame.footerRight.text('<?= app.version ?>')
-frame.footerLeft.text(app.params.profile)
+frame.setHeader('Tilikirja')
+frame.setRightFooter('<?= app.version ?>')
+frame.setLeftFooter(app.params.profile)
 frame.addNavBarItem('Etusivu', View.Info.render)
 frame.addNavBarItem('Tapahtumat', () => {Controller.Events.openPage()})
 frame.addNavBarItem('Veden kulutus', () => {Controller.Readings.openPage()})
@@ -37,13 +37,13 @@ frame.addNavBarItem('Tuloslaskelmat', () => {Controller.Reports.openPage()})
 frame.addNavBarItem('Neljännesveloitus', () => {Controller.Charges.openPage()})
 frame.addNavBarItem('Tositteet', () => {window.open('https://drive.google.com/drive/folders/1NTGe56zEUrH4WHpDQdj6we4UYUfQHR30?usp=drive_link')})
 
-frame.spinner.show()
+frame.spinner.on()
 View.Info.render()
 
 Db.init().then(() => {
   const currentYear = Db.getRecords('years').filter(Db.where('current', 'x'))[0].year
   Model.Common.setCurrentYear(currentYear)
-  frame.spinner.hide()
+  frame.spinner.off()
 })
 
 </script>

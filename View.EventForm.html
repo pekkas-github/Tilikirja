@@ -4,53 +4,58 @@ View.EventForm = (function() {
   const public = {}
 
   public.render = (controller, event, accounts, years) => {
+    
+    // CONTROL BAR
+    frame.popup.clearButtons()
+    frame.popup.addButton('Talleta', function() {
+      if (isValid(event)) {
+        controller.onSaveEvent(event)
+        frame.popup.hide()
+      }
+    })
 
-    renderContent(event, accounts, years)
-    setEventListeners(controller, event)
-  }
+    // HEADER
+    frame.popup.setHeader('Tapahtuman tiedot')
 
-  function renderContent(thisEvent, accounts, years) {
-
-    frame.popupHeader.html('<h3>Tapahtuman tiedot</h3>'
-    )
+    // POPUP CONTENT
     // Create drop downs
     let accountOptions = ''
     for (const account of accounts) {
-      const selected = (account.id === thisEvent.account_id) ? 'selected' : ''
+      const selected = (account.id === event.account_id) ? 'selected' : ''
       accountOptions += `<option value="${account.id}" ${selected}> ${account.name} </option>`
     }
 
     let fiscalYearOptions = ''
     for (const year of years) {
-      const selected = (year.year === thisEvent.fiscal_year) ? 'selected' : ''
+      const selected = (year.year === event.fiscal_year) ? 'selected' : ''
       fiscalYearOptions += `<option ${selected}> ${year.year} </option>`
     }
 
     // Create content
-    const dateDisabled = (thisEvent.id === 0) ? '' : 'disabled'    // enable date only if new record
+    const dateDisabled = (event.id === 0) ? '' : 'disabled'    // enable date only if new record
 
-    frame.popupContent.html(`
+    frame.popup.setContent(`
       <table class="empty" id="event-form">
         <tr>
           <td class="label">Tosite:</td>
-          <td class="empty"><input id="txt-nbr" type="text" value="${thisEvent.number}" size="1" disabled></td>
+          <td class="empty"><input id="txt-nbr" type="text" value="${event.number}" size="1" disabled></td>
         </tr>
         <tr>
           <td class="label">Päiväys:</td>
-          <td class="empty"><input id="txt-day" type="date" value="${thisEvent.date}" ${dateDisabled} required></td>
+          <td class="empty"><input id="txt-day" type="date" value="${event.date}" ${dateDisabled} required></td>
         </tr>
         <tr>
           <td class="label">Tapahtuma:</td>
-          <td class="empty"><input id="txt-event" type="text" value="${thisEvent.event}" size="50" required></td>
+          <td class="empty"><input id="txt-event" type="text" value="${event.event}" size="50" required></td>
         </tr>
         <tr>
           <td class="label">Summa:</td>
-          <td class="empty"><input id="txt-total" type="text" value="${thisEvent.total.toFixed(2)}" size="5" required></td>
+          <td class="empty"><input id="txt-total" type="text" value="${event.total.toFixed(2)}" size="5" required></td>
         </tr>
         <tr>
           <td class="label">A-osuus:</td>
           <td class="empty">
-            <input id="txt-share" type="text" value="${thisEvent.a_share.toFixed(2)}" size="5" required>
+            <input id="txt-share" type="text" value="${event.a_share.toFixed(2)}" size="5" required>
             <select id="cbo-percent">
               <option value="0">Vapaa</option>
               <option value="0.385">38.5</option>
@@ -77,29 +82,18 @@ View.EventForm = (function() {
         </tr>
         <tr>
           <td class="label">Tositelinkki:</td>
-          <td class="empty"><input id="txt-invoice-link" type="text" value="${thisEvent.invoice_link}" size="50"></td>
+          <td class="empty"><input id="txt-invoice-link" type="text" value="${event.invoice_link}" size="50"></td>
         </tr>
         <tr>
           <td class="label">Kommentti:</td>
-          <td class="empty"><input id="txt-comment" type="text" value="${thisEvent.comment}" size="50"></td>
+          <td class="empty"><input id="txt-comment" type="text" value="${event.comment}" size="50"></td>
         </tr>
       </table>
-
-      <button class="btn" id="btn-popup-save">Talleta</button>`
-    )
-
+      
+    `)
     frame.popup.show()
-  }
 
-  function setEventListeners(ctrl, thisEvent) {
-
-    $('#btn-popup-save').on('click', function() {
-      if (isValid(thisEvent)) {
-        ctrl.onSaveEvent(thisEvent)
-        frame.popup.hide()
-      }
-    })
-
+    // EVENT HANDLERS
     $('#cbo-percent').on('change', function() {
       const total = $('#txt-total').val()
       const per = $('#cbo-percent').val()
@@ -110,6 +104,8 @@ View.EventForm = (function() {
     })
   }
 
+
+  // PRIVATE FUNCTIONS
   function isValid(event) {
     // Read input
     event.number = parseInt($('#txt-nbr').val())

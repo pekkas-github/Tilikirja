@@ -25,6 +25,7 @@ function getModel(Db) {
   // Kirjoita valitun vuoden tapahtumat ja tilikohtainen yhteenveto
   // Sheets-tauluun tulostamista varten.
   public.printYearResumeOnSheet = (year) => {
+
     printEvents(year)
     printSummary(year)
   }
