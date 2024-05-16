@@ -11,9 +11,11 @@ View.Charges = (function () {
     
     // Admin-käyttäjälle näytettävät kontrollit
     if (app.params.profile === 'admin') {
-      frame.addControlInput('date', '', function() {
-        frame.date = $(this).val()
-      })
+      frame.addControlInput(
+        'date',
+        function() {
+          frame.date = $(this).val()
+        })
 
       frame.addControlButton('Kuittaa maksetuksi', function() {
         if (!frame.date) {
