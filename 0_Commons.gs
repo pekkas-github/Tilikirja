@@ -1,12 +1,18 @@
 const app = {}
 
-  app.version = 'ver 32'
-  //app.version = '30 beta'
-  app.dbName  = 'Tilikirja'
-  //app.dbName  = 'Tilikirja_testing'
+app.version          = 'ver 33'
+app.dbName           = 'Tilikirja'
+app.printingSheet    = '1lVYY_7hIzs6LV3cliD9CzUudKmHgoLcKtGb_JD8sacA'
+app.printEventsSheet = '1ny7uTACEAderhT7oza956uhsHIsgd3nNoFH8FuhMIDk'
+app.test             = false
 
-  app.printingSheet = '1lVYY_7hIzs6LV3cliD9CzUudKmHgoLcKtGb_JD8sacA'
-  app.printEventsSheet = '1ny7uTACEAderhT7oza956uhsHIsgd3nNoFH8FuhMIDk'
+if (app.test) {
+  app.dbName         = 'Tilikirja_testing'
+  app.version        = `** DB = ${app.dbName} **`
+}
+
+const db             = ServerDBMS.openDatabase(app.dbName)
+
 
 function include(filename) {
   return HtmlService.createTemplateFromFile(filename).evaluate().getContent()

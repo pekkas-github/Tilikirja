@@ -4,21 +4,22 @@ View.Readings = (function() {
   const public = {}
 
   public.render = (controller, readings) => {
-    renderControls()
-    renderContent(readings)
-    setEventListeners(controller)
-  }
 
-  function renderControls() {
+    // CONTROL BAR
+    frame.clearControls()
+    
+    if (app.params.profile === 'admin') {
+      frame.addControlButton('Lisää...', function() {
+        controller.onOpenReadingForm()
+      })
+    }
 
-    frame.controls.html(`
-      <button class="btn" id="btn-add" hidden>Lisää...</button>
-      <span id="lnk-extension"> Veden hinta</span>`
-    )
-  }
+    frame.addControlText('Veden hinta', function() {
+      controller.onOpenWaterPriceForm()
+    })
+  
 
-  function renderContent(readings) {
-
+    // MAIN CONTENT
     const headerLines = `
       <tr>
         <th></th>
@@ -54,27 +55,12 @@ View.Readings = (function() {
       `
     }
 
-    frame.content.html(`
+    frame.setContent(`
       <table id="tbl-readings"> 
         ${headerLines}
         ${tableContent}
       </table>`
     )
-  }
-
-  function setEventListeners(ctrl) {
-
-    if (app.params.profile === 'admin') {
-      $('#btn-add').show()
-    }
-
-    $('#lnk-extension').on('click', () => {
-      ctrl.onOpenWaterPriceForm()
-    })
-  
-    $('#btn-add').on('click', () => {
-      ctrl.onOpenReadingForm()
-    })
   }
 
   return public

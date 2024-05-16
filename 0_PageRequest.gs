@@ -1,4 +1,3 @@
-const db    = ServerDBMS.openDatabase(app.dbName)
 model       = getModel(db)
 
 function doGet (e) {
@@ -10,7 +9,7 @@ function doGet (e) {
   args.callParams  = e.parameter
   args.color       = 'blue'
 
-  const html = FramePages.getFrame1(args)
+  const html = FramePages.getFrame(args)
 
   return html
     .evaluate()

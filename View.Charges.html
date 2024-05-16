@@ -4,45 +4,72 @@ View.Charges = (function () {
   const public = {}
 
   public.render = (controller, eventsToBeCharged, chargeHistory) => {
-    renderControls()
-    renderContent(eventsToBeCharged,chargeHistory)
-    setEventListeners(controller)
-  }
+
+  // CONTROL BAR
+
+    frame.clearControls()
+    
+    // Admin-käyttäjälle näytettävät kontrollit
+    if (app.params.profile === 'admin') {
+      frame.addControlInput(
+        'date',
+        function() {
+          frame.date = $(this).val()
+        })
+
+      frame.addControlButton('Kuittaa maksetuksi', function() {
+        if (!frame.date) {
+          alert('Tarkista päiväys')
+          return
+        }
+        controller.onAckCharges(frame.date)
+      })
+
+      frame.addControlButton('Tulosta', function () {
+        controller.onPrintChargingSheet()
+      })
+    }
+
+    // Kaikille näkyvät kontrollit
+    frame.addControlText('Aikaisemmat veloitukset', function() {
+      $('#previous-charges').show()
+    })
   
-  function renderControls() {
 
-    frame.controls.html(`
-      <input id="txt-day" type="date" hidden>
-      <button class="btn" id="btn-submit" hidden> Kuittaa maksetuksi </button>
-      <button class="btn" id="btn-print" hidden> Tulosta </button>
-      <span id="lnk-extension">Aikaisemmat veloitukset</span>`
-    )
-  }
+  // MAIN CONTENT
 
-  function renderContent(eventsToBeCharged, chargeHistory) {
-    let content = getHtml(eventsToBeCharged, 'Kuluva neljännes')
+    // Hae kuluvan neljänneksen veloitustaulukko
+    let htmlCurrentCharges = getHtml(eventsToBeCharged, 'Kuluva neljännes')
+
+    // Hae aikaisempien veloitusten taulukot (piilotettuina)
     let quarter = chargeHistory[0].cleared
     let chargedEvents = []
-    content += `
-      <div id="previous-charges" hidden>`
-      
+    let htmlPreviousCharges = ''
+
     chargeHistory.forEach( event => {
       if (event.cleared === quarter) {
         chargedEvents.push(event)
       }
       else {
-        content += getHtml(chargedEvents, quarter)
+        htmlPreviousCharges += getHtml(chargedEvents, quarter)
         quarter = event.cleared
         chargedEvents = []
         chargedEvents.push(event)
       }
     })
 
-    content += `</div>`
-    frame.content.html(content)
+
+    frame.setContent(`
+      ${htmlCurrentCharges}
+      <div id="previous-charges" hidden>
+        ${htmlPreviousCharges}
+      </div>
+    `)
   }
 
   function getHtml(events, quarter) {
+
+    // Muodosta ja palauta annetun neljänneksen veloitustaulukko
     let content = `<h3> ${quarter} </h3>`
     content += `
       <table id="tbl-charges">
@@ -91,33 +118,6 @@ View.Charges = (function () {
     return content
   }
   
-
-  function setEventListeners(ctrl) {
-
-    if (app.params.profile === 'admin') {
-      $('#txt-day').show()
-      $('#btn-submit').show()
-      $('#btn-print').show()
-    }
-
-    $('#lnk-extension').on('click', () => {
-      $('#previous-charges').show()
-    })
-
-    $('#btn-submit').on('click', () => {
-      const date = $('#txt-day').val()
-      if ( date === '') {
-        alert('Tarkista päiväys')
-        return
-      }
-      ctrl.onAckCharges(date)
-    })
-
-    $('#btn-print').on('click', () => {
-      ctrl.onPrintChargingSheet()
-    })
-  }
-
   return public
 })()
 </script>

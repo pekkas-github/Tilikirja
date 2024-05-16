@@ -4,32 +4,22 @@ View.Reports =(function() {
   const public = {}
 
   public.render = (controller, summaryByAccount, accounts, years, currentYear) => {
-    renderControls(years, currentYear)
-    renderContent(summaryByAccount, accounts)
-    setEventListeners(controller)
-  }
+ 
+    // CONTROL BAR
+    frame.clearControls()
 
-  function renderControls(years, currentYear) {
-
-    let options = ''
+    let options = {}
     for(const year of years) {
-      const selected = (year.year === currentYear) ? 'selected' : ''
-      options += `
-        <option ${selected}>
-          ${year.year}
-        </option>
-      `
+      options[year.year] = year.year
     }
 
-    frame.controls.html(`
-      <select class="cbo" id="cbo-years" name="years">
-        ${options}
-      </select>  `
+    frame.addControlSelect(
+      options,
+      function() {controller.onChangeYear(parseInt(event.target.value))},
+      `${currentYear}`
     )
-  }
 
-  function renderContent(summaryByAccount, accounts) {
-    
+    // MAIN CONTENT
     let content = `
       <table id="tbl-reports">
       <tr>
@@ -60,14 +50,7 @@ View.Reports =(function() {
     </tr>
     </table>`
 
-    frame.content.html(content)
-
-  }
-
-  function setEventListeners(ctrl) {
-    
-    $('#cbo-years').on('change', () => {
-      ctrl.onChangeYear(parseInt($('#cbo-years').val()))})
+    frame.setContent(content)
   }
 
   return public

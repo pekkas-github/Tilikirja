@@ -4,7 +4,7 @@ Model.Events = (function() {
   const public = {}
 
   public.ackCharges = async (date) => {
-    const events = Db.getRecords('events').filter(Db.where('cleared', '')).filter(Db.where('charging', 'x'))
+    const events = Db.getRecords('events').where('cleared', '').where('charging', 'x')
 
     for (const event of events) {
       event.cleared = date

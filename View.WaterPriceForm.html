@@ -5,9 +5,9 @@ View.WaterPriceForm = (function() {
 
   public.render = (waterPrice) => {
 
-    frame.popupHeader.html('<h3>Veden hinta</h3>')
+    frame.popup.setHeader('Veden hinta')
     
-    frame.popupContent.html(`
+    frame.popup.setContent(`
       <table class="tbl-water-price">
         <tr>
           <td colspan="3"><h3>Veden hinta</h3></td>

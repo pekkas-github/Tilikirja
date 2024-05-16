@@ -4,21 +4,18 @@ View.ReadingForm = (function() {
   const public = {}
 
   public.render = (controller, years, currentYear) => {
-    renderContent(years, currentYear)
-    setEventListeners(controller)
-  }
 
-  function renderContent(years, currentYear) {
+    // POPUP HEADER
+    frame.popup.setHeader('Uudet mittarilukemat')
 
-    frame.popupHeader.html('<h3>Uudet mittarilukemat</h3>')
-
+    // POPUP CONTENT
     let options = ''
     for (const year of years) {
       const selected = (year.year === currentYear) ? 'selected' : ''
       options += `<option ${selected}> ${year.year} </option>`
     }  
     
-    frame.popupContent.html(`
+    frame.popup.setContent(`
       <table class="empty">
         <tr>
           <td class="label">Lukemispäivä:</td>
@@ -49,24 +46,23 @@ View.ReadingForm = (function() {
           <td class="empty"><input id="txt-comment" type="text" size="50"></td>
         </tr>
       </table>
-
-      <button class="btn" id="btn-popup-save">Talleta</button>`
-    )
+    `)
 
     frame.popup.show()
-  }
 
-  function setEventListeners(ctrl) {
 
-    $('#btn-popup-save').on('click', () => {
+    // POPUP EVENT HANDLERS
+    frame.popup.clearButtons()
+    frame.popup.addButton('Talleta', function() {
       const reading = getReading()
       if (isValid(reading)) {
-        ctrl.onAddReading(reading)
+        controller.onAddReading(reading)
         frame.popup.hide()
       }
     })
   }
 
+  // PRIVATE FUNCTIONS
   function getReading() {
     const reading = {}
     reading.id = 0
