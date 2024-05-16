@@ -4,13 +4,11 @@ Model.Charges = (function() {
   const public = {}
 
   public.getChargeHistory = () => {
-    return Model.Events.getEvents().sort(Db.desc('cleared'))
+    return Model.Events.getEvents().desc('cleared')
   }
 
   public.getEventsToBeCharged = () => {
-      const events = Model.Events.getEvents()
-      .filter(Db.where('cleared', ''))
-      .filter(Db.where('charging', 'x'))
+    const events = Model.Events.getEvents().where('cleared', '').where('charging', 'x')
 
     return events
   }

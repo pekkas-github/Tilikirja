@@ -41,7 +41,7 @@ frame.spinner.on()
 View.Info.render()
 
 Db.init().then(() => {
-  const currentYear = Db.getRecords('years').filter(Db.where('current', 'x'))[0].year
+  const currentYear = Db.getRecords('years').where('current', 'x')[0].year
   Model.Common.setCurrentYear(currentYear)
   frame.spinner.off()
 })
