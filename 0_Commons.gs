@@ -1,6 +1,6 @@
 const app = {}
 
-app.version          = 'ver 33'
+app.version          = 'DB = Live'
 app.dbName           = 'Tilikirja'
 app.printingSheet    = '1lVYY_7hIzs6LV3cliD9CzUudKmHgoLcKtGb_JD8sacA'
 app.printEventsSheet = '1ny7uTACEAderhT7oza956uhsHIsgd3nNoFH8FuhMIDk'
