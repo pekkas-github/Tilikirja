@@ -8,7 +8,7 @@ View.Readings = (function() {
     // CONTROL BAR
     frame.clearControls()
     
-    if (app.params.profile === 'admin') {
+    if (frame.params.profile === 'admin') {
       frame.addControlButton('Lisää...', function() {
         controller.onOpenReadingForm()
       })

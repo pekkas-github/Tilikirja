@@ -33,7 +33,8 @@ function getModel(Db) {
   // Kirjoita veloitettavat tapahtumat ja veloitettava summa
   // Sheets-tauluun tulostamista varten
   public.updateChargingSheet = () => {
-    const events   = db.getTable('events').getRecords().filter(db.where('cleared', '')).filter(db.where('charging', 'x'))
+//    const events   = db.getTable('events').getRecords().filter(db.where('cleared', '')).filter(db.where('charging', 'x'))
+    const events   = db.getTable('events').getRecords().where('cleared', '').where('charging', 'x')
     const accounts = db.getTable('accounts').getRecords()
     const sheet    = SpreadsheetApp.openById(app.printingSheet).getSheetByName('Summary')
     const values   = []

@@ -21,7 +21,7 @@ View.Events = (function() {
       `${currentYear}`
     )
 
-    if (app.params.profile === 'admin') {
+    if (frame.params.profile === 'admin') {
 
       frame.addControlButton('Lisää...', function() {
         controller.onAddNewEvent()}
@@ -82,7 +82,7 @@ View.Events = (function() {
     )
   
     // EVENT HANDLERS
-    if (app.params.profile === 'admin') {
+    if (frame.params.profile === 'admin') {
       $('.charge-status').show()
       $('.charge-status').on('click', function() {
         controller.onToggleEventStatus(parseInt($(this).parent().attr('id')))})

@@ -10,7 +10,7 @@ View.Charges = (function () {
     frame.clearControls()
     
     // Admin-käyttäjälle näytettävät kontrollit
-    if (app.params.profile === 'admin') {
+    if (frame.params.profile === 'admin') {
       frame.addControlInput(
         'date',
         function() {

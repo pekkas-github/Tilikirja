@@ -3,9 +3,11 @@
 const Model      = {}
 const View       = {}
 const Controller = {}
-
+const app = {}
 </script>
 
+<?!= include('ControllerFactory') ?>
+<?!= include('C_Info') ?>
 <?!= include('Model.Common') ?>
 <?!= include('Model.Charges') ?>
 <?!= include('Model.Events') ?>
@@ -27,10 +29,12 @@ const Controller = {}
 
 <script>
 
+const c_Info = Controllers.getInfo()
+
 frame.setHeader('Tilikirja')
 frame.setRightFooter('<?= app.version ?>')
-frame.setLeftFooter(app.params.profile)
-frame.addNavBarItem('Etusivu', View.Info.render)
+frame.setLeftFooter(frame.params.profile)
+frame.addNavBarItem('Etusivu', () => {Controllers.getInfo().openPage()}) //View.Info.render)
 frame.addNavBarItem('Tapahtumat', () => {Controller.Events.openPage()})
 frame.addNavBarItem('Veden kulutus', () => {Controller.Readings.openPage()})
 frame.addNavBarItem('Tuloslaskelmat', () => {Controller.Reports.openPage()})
@@ -38,7 +42,9 @@ frame.addNavBarItem('Neljännesveloitus', () => {Controller.Charges.openPage()})
 frame.addNavBarItem('Tositteet', () => {window.open('https://drive.google.com/drive/folders/1NTGe56zEUrH4WHpDQdj6we4UYUfQHR30?usp=drive_link')})
 
 frame.spinner.on()
-View.Info.render()
+
+c_Info.openPage()
+
 
 Db.init().then(() => {
   const currentYear = Db.getRecords('years').where('current', 'x')[0].year
