@@ -8,6 +8,7 @@ const app = {}
 
 <?!= include('ControllerFactory') ?>
 <?!= include('C_Info') ?>
+<?!= include('V_Info') ?>
 <?!= include('Model.Common') ?>
 <?!= include('Model.Charges') ?>
 <?!= include('Model.Events') ?>
@@ -34,7 +35,7 @@ const c_Info = Controllers.getInfo()
 frame.setHeader('Tilikirja')
 frame.setRightFooter('<?= app.version ?>')
 frame.setLeftFooter(frame.params.profile)
-frame.addNavBarItem('Etusivu', () => {Controllers.getInfo().openPage()}) //View.Info.render)
+frame.addNavBarItem('Etusivu', () => {Controllers.getInfoView().openPage()})
 frame.addNavBarItem('Tapahtumat', () => {Controller.Events.openPage()})
 frame.addNavBarItem('Veden kulutus', () => {Controller.Readings.openPage()})
 frame.addNavBarItem('Tuloslaskelmat', () => {Controller.Reports.openPage()})
@@ -43,7 +44,7 @@ frame.addNavBarItem('Tositteet', () => {window.open('https://drive.google.com/dr
 
 frame.spinner.on()
 
-c_Info.openPage()
+Controllers.getInfoView().openPage()
 
 
 Db.init().then(() => {
