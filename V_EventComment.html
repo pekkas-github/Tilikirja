@@ -1,17 +1,15 @@
 <script>
 
-View.EventComment = (function() {
-  const public = {}
+class V_EventComment {
 
-  public.render = (event) => {
+  render (event) {
+    
     frame.popup.clearButtons()
     frame.popup.setHeader('Kommentti')
     frame.popup.setContent(event.comment)
 
     frame.popup.show()
   }
-
-  return public
-})()
+}
 
 </script>

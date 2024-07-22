@@ -1,13 +1,36 @@
 <script>
   
-Model.Readings = (function() {
-  const public = {}
+class M_Readings {
 
-  public.addReading = async (reading) => {
+  async addReading (reading) {
+
+    await Db.insertRecord('water', reading)
+  }
+
+  #calculateConsumption (reading) {
+
+    const readings = Db.getRecords('water')
+    const last     = readings[readings.length - 1]
+
+    // A-kulutus: talon kulutus - B-kulutus
+    return (reading.master_reading - last.master_reading) - (reading.b_reading - last.b_reading)
+  }
+
+  getCurrentWaterPrice () {
+
+    return Db.getRecords('waterprice').where('current_value', 'x')[0]
+  }
+
+  getNewReading () {
+
+    return Db.getNewRecord('water')
+  }
+  
+  getReadingEvent (reading) {
 
     // Laske A:n kulutus ja määritä hinta
-    const consumptionA  = calculateConsumption(reading)
-    const currentPrice  = public.getCurrentWaterPrice()
+    const consumptionA  = this.#calculateConsumption(reading)
+    const currentPrice  = this.getCurrentWaterPrice()
 
     const a_share = Math.floor(((consumptionA * currentPrice.waterA + currentPrice.baseA)*100+0.5))/100
 
@@ -21,26 +44,11 @@ Model.Readings = (function() {
     newEvent.account_id  = 6
     newEvent.fiscal_year = reading.fiscal_year
 
-    // Lisää tapahtuma
-    Model.Events.addEvent(newEvent)
-
-    await Db.insertRecord('water', reading)
+    return newEvent
   }
 
+  getReadings () {
 
-  function calculateConsumption(reading) {
-    const readings = Db.getRecords('water')
-    const last     = readings[readings.length - 1]
-
-    // A-kulutus: talon kulutus - B-kulutus
-    return (reading.master_reading - last.master_reading) - (reading.b_reading - last.b_reading)
-  }
-
-  public.getCurrentWaterPrice = () => {
-    return Db.getRecords('waterprice').where('current_value', 'x')[0]
-  }
-
-  public.getReadings = () => {
     const readings = Db.getRecords('water').desc('id')
 
     for (let i = 0; i < readings.length - 1; i++) {
@@ -54,7 +62,5 @@ Model.Readings = (function() {
     }
     return readings
   }
-
-  return public
-})()
+}
 </script>

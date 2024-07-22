@@ -1,24 +1,33 @@
 <script>
-View.Events = (function() { 
-  const public = {}
+class V_EventList {
 
-  public.render = (controller, events, years, currentYear) => {
+  render (controller, events, years, currentYear) {
 
-    // CONTROL BAR
-    frame.clearControls()
-    let selectedYear = currentYear
+    this.#setFrameControls(controller, years, currentYear)
+    this.#setContent(events)
+    this.#setEventHandlers(controller)
+  }
+
+  #yearOptions(years) {   // Options for select drop-down
 
     const options = {}
-    for (const year of years) {
-      options[year.year] = year.year
+    for (const one of years) {
+      options[one.year] = one.year
     }
+    return options
+  }
+
+  #setFrameControls (controller, years, defaultYear) {
+
+    frame.clearControls()
+    let selectedYear = defaultYear
 
     frame.addControlSelect(
-      options,
+      this.#yearOptions(years),
       function() {
         selectedYear = event.target.value
-        controller.onChangeYear(parseInt(selectedYear))},
-      `${currentYear}`
+        controller.onChangeYear(parseInt(selectedYear)) },
+      `${defaultYear}`
     )
 
     if (frame.params.profile === 'admin') {
@@ -31,9 +40,12 @@ View.Events = (function() {
           controller.onExportEventsOnSheet(`${selectedYear}`)
         })
     }
-  
+  }
 
-    // MAIN CONTENT
+  #setContent (events) {
+
+    const content = ['<table id="tbl-events">']
+
     const headerLine = `
       <tr>
         <th>Tosite</th>
@@ -48,17 +60,19 @@ View.Events = (function() {
         <th class="is-payed" hidden>Ok</th>
       </tr>
     `
+    content.push(headerLine)
 
-    let table =''
     let number
-    for (const event of events) {
+    while (events.hasNext) {
+      const event = events.next()
+
       if (event.invoice_link === '') {
         number = event.number 
       } else {
         number = `<a href="${event.invoice_link}" target="_blank"> ${event.number} </a>`
       }
 
-      table += `
+      const row = `
         <tr id="${event.id}">
           <td class="td-center"> ${number} </td>
           <td> ${event.date}</td>
@@ -72,32 +86,40 @@ View.Events = (function() {
           <td class="is-payed" hidden>${event.cleared}</td>
         </tr>
       `
+      content.push(row)
     }
+    content.push('</table')
 
-    frame.setContent(`
-      <table id="tbl-events">
-        ${headerLine}
-        ${table}
-      </table>`
-    )
-  
-    // EVENT HANDLERS
+    frame.setContent(content.join(''))
+  }
+
+  #setEventHandlers (controller) {
+
     if (frame.params.profile === 'admin') {
       $('.charge-status').show()
-      $('.charge-status').on('click', function() {
-        controller.onToggleEventStatus(parseInt($(this).parent().attr('id')))})
 
-      $('td').on('dblclick', function() {
-        controller.onModifyEvent(parseInt($(this).parent().attr('id')))})
-      
       $('.is-payed').show()
+
+      $('#tbl-events').on('click', function (event) {
+        const target = event.target
+
+        if (target.getAttribute('class') === 'charge-status') {
+            controller.onToggleEventStatus(parseInt(target.parentElement.getAttribute('id')))
+        }
+      })
+
+      $('#tbl-events').on('dblclick', function (event) {
+        const target = event.target
+
+        if (target.nodeName === 'TD' && target.getAttribute('class') != 'charge-status') {
+          controller.onModifyEvent(parseInt(target.parentElement.getAttribute('id')))  
+        }
+      })
     }
 
     $('.comment').on('click', function() {
       controller.onOpenComment(parseInt($(this).parent().attr('id')))
     })
   }
-
-  return public  
-})()
+}
 </script>

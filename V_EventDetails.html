@@ -1,37 +1,62 @@
 <script>
 
-View.EventForm = (function() {
-  const public = {}
+class V_EventDetails {
 
-  public.render = (controller, event, accounts, years) => {
+  #controller
+
+  render (controller, event, accounts, years) {
+
+    this.#controller = controller
+
+    frame.popup.setHeader('Tapahtuman tiedot')
+    this.#setControlButtons(event)
+    this.#setContent(event, accounts, years)
+    this.#setEventListeners()
+  }
+
+  #setControlButtons (event) {
+
+    const self = this
     
-    // CONTROL BAR
     frame.popup.clearButtons()
     frame.popup.addButton('Talleta', function() {
-      if (isValid(event)) {
-        controller.onSaveEvent(event)
+      if (self.#isValid(event)) {
+        self.#controller.onSaveEvent(event)
         frame.popup.hide()
       }
     })
+  }
 
-    // HEADER
-    frame.popup.setHeader('Tapahtuman tiedot')
+  #getAccountSelect (event, accounts) {
 
-    // POPUP CONTENT
-    // Create drop downs
-    let accountOptions = ''
-    for (const account of accounts) {
-      const selected = (account.id === event.account_id) ? 'selected' : ''
-      accountOptions += `<option value="${account.id}" ${selected}> ${account.name} </option>`
+    const select = ['<select class="cbo" id="cbo-account">']
+
+    while (accounts.hasNext) {
+        const account = accounts.next()
+        const isSelected = (account.id === event.account_id) ? 'selected' : ''
+        select.push(`<option value="${account.id}" ${isSelected}> ${account.name} </option>`)
     }
+    select.push('</select>')
 
-    let fiscalYearOptions = ''
-    for (const year of years) {
-      const selected = (year.year === event.fiscal_year) ? 'selected' : ''
-      fiscalYearOptions += `<option ${selected}> ${year.year} </option>`
+    return select.join('')
+  }
+
+  #getFiscalYearSelect (event, years) {
+
+    const select = ['<select class="cbo" id="cbo-year">']
+
+    while (years.hasNext) {
+      const year = years.next()
+      const isSelected = (year.year === event.fiscal_year) ? 'selected' : ''
+      select.push(`<option ${isSelected}> ${year.year} </option>`)
     }
+    select.push('</select>')
 
-    // Create content
+    return select.join('')
+  }
+
+  #setContent (event, accounts, years) {
+
     const dateDisabled = (event.id === 0) ? '' : 'disabled'    // enable date only if new record
 
     frame.popup.setContent(`
@@ -66,18 +91,13 @@ View.EventForm = (function() {
         <tr>
           <td class="label">Tili:</td>
           <td class="empty">
-            <select class="cbo" id="cbo-account">
-              ${accountOptions}
-            </select>
-
+            ${this.#getAccountSelect(event, accounts)}
           </td>
         </tr>
         <tr>
           <td class="label">Tilivuosi:</td>
           <td class="empty">
-            <select class="cbo" id="cbo-year">
-              ${fiscalYearOptions}
-            </select>
+            ${this.#getFiscalYearSelect(event, years)}
           </td>
         </tr>
         <tr>
@@ -92,8 +112,10 @@ View.EventForm = (function() {
       
     `)
     frame.popup.show()
+  }
 
-    // EVENT HANDLERS
+  #setEventListeners () {
+
     $('#cbo-percent').on('change', function() {
       const total = $('#txt-total').val()
       const per = $('#cbo-percent').val()
@@ -105,9 +127,10 @@ View.EventForm = (function() {
   }
 
 
-  // PRIVATE FUNCTIONS
-  function isValid(event) {
-    // Read input
+  
+  #isValid (event) {
+
+    // Read input and update event object
     event.number = parseInt($('#txt-nbr').val())
     event.date = $('#txt-day').val()
     event.event = $('#txt-event').val()
@@ -134,8 +157,6 @@ View.EventForm = (function() {
       return false
     }
   }
-
-  return public
-})()
+}
 
 </script>

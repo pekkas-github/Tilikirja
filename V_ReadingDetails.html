@@ -1,14 +1,45 @@
 <script>
 
-View.ReadingForm = (function() {
-  const public = {}
+class V_ReadingDetails {
 
-  public.render = (controller, years, currentYear) => {
+  #controller
 
-    // POPUP HEADER
+  render (controller, newReading, years, currentYear) {
+
+    this.#controller = controller
     frame.popup.setHeader('Uudet mittarilukemat')
+    this.#setControls(newReading)
+    this.#setContent(years, currentYear)
+  }
 
-    // POPUP CONTENT
+  #setControls (newReading) {
+
+    const self = this
+
+    frame.popup.clearButtons()
+    frame.popup.addButton('Talleta', function() {
+      if (self.#readValues(newReading)) {
+        self.#controller.onSaveReading(newReading)
+        frame.popup.hide()
+      }
+    })
+  }
+
+  #getYearsSelect (years, currentYear) {
+
+    const select = ['<select class="cbo" id="cbo-year">']
+
+    while (years.hasNext) {
+      const year       = years.next()
+      const isSelected = (year.year === currentYear) ? 'selected' : ''
+      const optionLine = `<option ${isSelected}> ${year.year} </option>`
+      select.push(optionLine)
+    }
+    select.push('</select>')
+    return select.join('')
+  }
+
+  #setContent (years, currentYear) {
     let options = ''
     for (const year of years) {
       const selected = (year.year === currentYear) ? 'selected' : ''
@@ -36,9 +67,7 @@ View.ReadingForm = (function() {
         <tr>
           <td class="label">Tilivuosi:</td>
           <td class="empty">
-            <select class="cbo" id="cbo-year">
-              ${options}
-            </select>
+              ${this.#getYearsSelect(years, currentYear)}
           </td>
         </tr>
         <tr>
@@ -49,39 +78,22 @@ View.ReadingForm = (function() {
     `)
 
     frame.popup.show()
-
-
-    // POPUP EVENT HANDLERS
-    frame.popup.clearButtons()
-    frame.popup.addButton('Talleta', function() {
-      const reading = getReading()
-      if (isValid(reading)) {
-        controller.onAddReading(reading)
-        frame.popup.hide()
-      }
-    })
   }
 
-  // PRIVATE FUNCTIONS
-  function getReading() {
-    const reading = {}
-    reading.id = 0
-    reading.date = $('#txt-date').val()
-    reading.master_reading = parseInt($('#txt-total').val())
-    reading.a_reading = parseInt($('#txt-a').val())
-    reading.b_reading = parseInt($('#txt-b').val())
-    reading.fiscal_year = parseInt($('#cbo-year').val())
-    reading.comment = $('#txt-comment').val()
+  #readValues (reading) {
 
-    return reading
-  }
-
-  function isValid(reading) {
     try {
+      reading.date = $('#txt-date').val()
       if (reading.date === '') {throw('Päiväys puuttuu')}      
+      reading.master_reading = parseInt($('#txt-total').val())
       if (reading.master_reading === '' || isNaN(reading.master_reading)) {throw('Tarkista kokonaismäärä')}    
+      reading.a_reading = parseInt($('#txt-a').val())
       if (reading.a_reading === '' || isNaN(reading.a_reading)) { throw('Tarkista A-osuus')}
+      reading.b_reading = parseInt($('#txt-b').val())
       if (reading.b_reading === '' || isNaN(reading.b_reading)) { throw('Tarkista B-osuus')}
+      reading.fiscal_year = parseInt($('#cbo-year').val())
+      reading.comment = $('#txt-comment').val()
+
       return true
     }
     catch(note) {
@@ -89,8 +101,6 @@ View.ReadingForm = (function() {
       return false
     }
   }
-
-  return public
-})()
+}
 
 </script>

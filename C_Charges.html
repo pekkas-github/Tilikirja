@@ -1,0 +1,37 @@
+<script>
+
+class C_Charges {
+
+  #events
+  #reports
+  #listView
+
+  constructor (deps) {
+
+    this.#events   = deps.events
+    this.#reports  = deps.reports
+    this.#listView = deps.listView
+  }
+
+  openPage () {
+    const eventsToBeCharged = this.#events.getEventsToBeCharged()
+    this.#listView.render(this, eventsToBeCharged)
+  }
+
+  onAckCharges (date) {
+    this.#events.ackCharges(date)
+    this.openPage()
+  }
+
+  onShowPreviousCharges () {
+
+    const chargeHistory     = this.#events.getChargeHistory()
+    this.#listView.renderAll(chargeHistory)
+  }
+
+  async onPrintChargingSheet () {
+    await this.#reports.printChargingSheet()
+    alert('Veloitustaulukko on päivitetty.')
+  }
+}
+</script> 

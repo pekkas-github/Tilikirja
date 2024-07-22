@@ -1,0 +1,145 @@
+<script>
+
+class V_Charges {
+
+  #controller
+  #eventsToBeCharged
+
+  render (controller, eventsToBeCharged) {
+
+    this.#controller        = controller
+    this.#eventsToBeCharged = eventsToBeCharged
+    
+    this.#setControls()
+    frame.setContent(this.#getHtml(eventsToBeCharged, 'Kuluva neljännes'))
+  }
+
+  renderAll (chargeHistory) {
+    const content = [this.#getHtml(this.#eventsToBeCharged, 'Kuluva neljännes')]
+    content.push(this.#getPreviousChargesHtml(chargeHistory))
+
+    frame.setContent(content)
+  }
+
+  #setControls () {
+
+    const self = this
+    frame.clearControls()
+    
+    // Admin-käyttäjälle näytettävät kontrollit
+    if (frame.params.profile === 'admin') {
+      frame.addControlInput(
+        'date',
+        function() {
+          frame.date = $(this).val()
+        })
+
+      frame.addControlButton('Kuittaa maksetuksi', function() {
+        if (!frame.date) {
+          alert('Tarkista päiväys')
+          return
+        }
+        self.#controller.onAckCharges(frame.date)
+      })
+
+      frame.addControlButton('Tulosta', function () {
+        self.#controller.onPrintChargingSheet()
+      })
+    }
+
+    // Kaikille näkyvät kontrollit
+    frame.addControlText('Aikaisemmat veloitukset', function() {
+      self.#controller.onShowPreviousCharges()
+    })
+  }
+
+  #getPreviousChargesHtml (chargeHistory) {
+
+    let clearingDate = chargeHistory[0].cleared
+    let grouppedEvents = []
+    let htmlPreviousCharges = []
+
+    while (chargeHistory.hasNext) {
+      const event = chargeHistory.next()
+
+      if (event.cleared === clearingDate) {
+        grouppedEvents.push(event)
+      }
+      else {
+        htmlPreviousCharges.push(this.#getHtml(grouppedEvents, clearingDate))
+        clearingDate = event.cleared
+        grouppedEvents = []
+        grouppedEvents.push(event)
+      }
+    }
+
+    return htmlPreviousCharges.join('')
+  }
+
+  #getHtml (events, clearingDate) {
+
+    // Yksittäisen veloitustaulukon muodostaminen
+    const html = [`
+      <h3> ${clearingDate} </h3>
+      <table id="tbl-charges">
+    `]
+    
+    const header = `
+      <tr>
+        <th style="width:75px;">Tosite</th>
+        <th style="width:150px;">Päiväys</th>
+        <th style="width:600px;">Tapahtuma</th>
+        <th style="width:150px;">Koko summa</th>
+        <th style="width:150px;">A-asunto</th>
+        <th style="width:150px;">Tili</th>
+      </tr>
+    `
+    html.push(header)
+
+    // Summien ja osuuksien laskenta
+    let a_Total = 0
+    let eventNumber
+
+    for (const event of events) {
+
+      // Tositelinkki
+      if (event.invoice_link === '') {
+        eventNumber = `${event.number}`
+      } 
+      else {
+        eventNumber = `<a href="${event.invoice_link}" target="_blank">${event.number}</a>`
+      }
+
+      const eventLine = `
+        <tr>
+          <td class="td-center">${eventNumber}</td>
+          <td>${event.date}</td>
+          <td>${event.event}</td>
+          <td class="number">${event.total.toFixed(2)}</td>
+          <td class="number">${event.a_share.toFixed(2)}</td>
+          <td>${event.account_name}</td>
+        </tr>
+      `
+      html.push(eventLine)
+
+      // Kokonaisveloituksen kumulointi (A)
+      a_Total += event.a_share
+    }
+
+    const totalsLine = `
+        <tr>
+          <td class="empty"></td>
+          <td class="empty"></td>
+          <td class="empty"></td>
+          <td class="total">Yhteensä</td>
+          <td class="total">${a_Total.toFixed(2)}</td>
+          <td class="empty"></td>
+        </tr>
+      `
+      html.push(totalsLine)
+      html.push(`</table>`)
+
+    return html.join('')
+  }
+}
+</script>

@@ -1,13 +1,14 @@
 <script>
 class C_Info {
 
-  constructor (view) {
-    this.v_Info = view
+  #infoView
+
+  constructor (deps) {
+    this.#infoView = deps.infoView
   }
 
   openPage () {
-
-    this.v_Info.render()
+    this.#infoView.render()
   }
 }
 </script>

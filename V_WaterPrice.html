@@ -1,9 +1,8 @@
 <script>
 
-View.WaterPriceForm = (function() {
-  const public = {}
+class V_WaterPrice {
 
-  public.render = (waterPrice) => {
+  render (waterPrice) {
 
     frame.popup.setHeader('Veden hinta')
     
@@ -14,7 +13,7 @@ View.WaterPriceForm = (function() {
         </tr>
         <tr>
           <td class="td-right">Alkaen:</td>
-          <td class="number">${waterPrice.date}</td>
+          <td class="number" style="width: 20rem">${waterPrice.date}</td>
           <td></td>
         </tr>
         <tr>
@@ -43,7 +42,5 @@ View.WaterPriceForm = (function() {
 
     frame.popup.show()
   }
-
-  return public
-})()
+}
 </script>
