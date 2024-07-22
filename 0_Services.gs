@@ -6,6 +6,7 @@ function getModel(Db) {
   // Generoi tapahtumatietueelle id sekä tositenumero ja talleta events-tauluun.
   // Palauta täydennetty tietue clientille.
   public.addEvent = (event) => {
+
     const eventsOfYear = getEventsByCalendarYear(event.date.substring(0,4))
 
     // Järjestä vuoden toistenumerot laskevaan järjestykseen
@@ -33,7 +34,8 @@ function getModel(Db) {
   // Kirjoita veloitettavat tapahtumat ja veloitettava summa
   // Sheets-tauluun tulostamista varten
   public.updateChargingSheet = () => {
-    const events   = db.getTable('events').getRecords().filter(db.where('cleared', '')).filter(db.where('charging', 'x'))
+
+    const events   = db.getTable('events').getRecords().where('cleared', '').where('charging', 'x')
     const accounts = db.getTable('accounts').getRecords()
     const sheet    = SpreadsheetApp.openById(app.printingSheet).getSheetByName('Summary')
     const values   = []
@@ -65,6 +67,7 @@ function getModel(Db) {
   // Palauta kalenterivuoden kaikki tapahtumatietueet.
   // Lisää tilien selväkieliset nimet.
   const getEventsByCalendarYear = (year) => {
+
     const events   = db.getTable('events').getRecords()
     const accounts = db.getTable('accounts').getRecords()
 
@@ -85,6 +88,7 @@ function getModel(Db) {
   // Palauta tilivuodelle kohdistuvat kaikki tapahtumat.
   // Lisää tilien selväkieliset nimet.
   const getEventsByFiscalYear =  (year) => {
+
     const events   = db.getTable('events').getRecords()
     const accounts = db.getTable('accounts').getRecords()
     const fiscalYear = parseInt(year)
@@ -105,6 +109,7 @@ function getModel(Db) {
 
   // Kirjoita kalenterivuoden tapahtumat Sheet-taulukkoon
   const printEvents = (year) => {
+
     const eventsOfCalendarYear = getEventsByCalendarYear(year)
     const listToPrint = []
     const sheet = SpreadsheetApp.openById(app.printEventsSheet).getSheetByName('EventsList')
@@ -132,6 +137,7 @@ function getModel(Db) {
 
   // Kirjoita tilivuoden yhteenveto Sheet-taulukkoon
   const printSummary = (year) => { 
+
     const eventsOfFiscalYear = getEventsByFiscalYear(year)
     const summaryByAccount = {} 
     const sheet = SpreadsheetApp.openById(app.printEventsSheet).getSheetByName('EventsList')

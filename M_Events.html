@@ -1,9 +1,9 @@
 <script>
 
-Model.Events = (function() {
-  const public = {}
+class M_Events {
 
-  public.ackCharges = async (date) => {
+  async ackCharges (date) {
+    
     const events = Db.getRecords('events').where('cleared', '').where('charging', 'x')
 
     for (const event of events) {
@@ -14,8 +14,8 @@ Model.Events = (function() {
       Server.api('updateChargingSheet')
   }
 
+  async addEvent (newEvent) {
 
-  public.addEvent = async (newEvent) => {
     // Talleta heti paikalliseen tauluun (id=0, number=0)
     Db.events.push(newEvent)
 
@@ -28,23 +28,44 @@ Model.Events = (function() {
       Db.events[index] = updatedEvent
   }
 
+  async exportYearlyEvents (year) {
 
-  public.getEvent = (id) => {
+    await Server.api('printYearResumeOnSheet', year)
+  }
+
+  getAccounts () {
+
+    return Db.getRecords('accounts')
+  }
+
+  getChargeHistory () {
+
+    return this.getEvents().desc('cleared')
+  }
+
+  getCurrentYear () {
+
+    return app.currentYear
+  }
+
+  getEvent (id) {
+
     return Db.getRecord('events', id)
   }
 
-  // Palauta kaikki tapahtumat täydennettynä tilien nimillä
-  public.getEvents = () => {
+  getEvents () {
+
     const events = Db.getRecords('events')
-    for (const event of events) {    
+    for (const event of events) {         // Lisää tilien nimet
       event.account_name = Db.getRecord('accounts', event.account_id).name
     }
     return events
   }
 
-  public.getEventsOfYear = (year) => {
+  getEventsOfYear (year) {
+
     const pattern  = new RegExp(`${year}`)
-    const events = public.getEvents()
+    const events = this.getEvents()
 
     // Poimi vuoden tapahtumat ja lisää tilin nimi
     const eventsOfYear = events.filter( event => {
@@ -56,21 +77,37 @@ Model.Events = (function() {
     return eventsOfYear
   }
 
+  getEventsToBeCharged () {
 
+    const events = this.getEvents().where('cleared', '').where('charging', 'x')
 
-  public.getNewEvent = () => {
+    return events
+  }
+
+  getNewEvent () {
+
     const event = Db.getNewRecord('events')
     event.id          = 0
     event.total       = 0
     event.a_share     = 0
     event.account_id  = 1
-    event.fiscal_year = Model.Common.getCurrentYear()
+    event.fiscal_year = this.getCurrentYear()
 
     return event
   }
 
+  getYears () {
 
-  public.toggleEventStatus = async (id) => {
+    return Db.getRecords('years')
+  }
+  
+  setCurrentYear (year) {
+
+    app.currentYear = year
+  }
+
+  async toggleEventStatus (id) {
+
     const event = Db.getRecord('events', id)
 
     if (event.cleared === '') {
@@ -79,12 +116,10 @@ Model.Events = (function() {
     }
   }
   
+  async updateEvent (event) {
 
-  public.updateEvent = async (event) => {
     await Db.updateRecord('events', event)
   }
-
-  return public
-})()
+}
 
 </script>

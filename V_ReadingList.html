@@ -1,25 +1,33 @@
 <script>
 
-View.Readings = (function() {
-  const public = {}
+class V_ReadingList {
 
-  public.render = (controller, readings) => {
+  render (controller, readings) {
 
-    // CONTROL BAR
+    this.#setControls(controller)
+    this.#setContent(readings)
+  }
+
+  #setControls (controller) {
+
     frame.clearControls()
-    
-    if (app.params.profile === 'admin') {
+
+    if (frame.params.profile === 'admin') {
       frame.addControlButton('Lisää...', function() {
-        controller.onOpenReadingForm()
+        controller.onAddReading()
       })
     }
 
     frame.addControlText('Veden hinta', function() {
       controller.onOpenWaterPriceForm()
     })
+  }
+    
   
 
-    // MAIN CONTENT
+  #setContent (readings) {
+
+    const content     = ['<table id="tbl-readings">']
     const headerLines = `
       <tr>
         <th></th>
@@ -39,9 +47,11 @@ View.Readings = (function() {
         <th>Kommentti</th>
       </tr>
     `
-    let tableContent = ''
-    for (const reading of readings) {
-      tableContent += `
+    content.push(headerLines)
+
+    while (readings.hasNext) {
+      const reading     = readings.next()
+      const readingLine = `
         <tr>
           <td> ${reading.date} </td>
           <td> ${reading.master_reading} </td>
@@ -53,16 +63,11 @@ View.Readings = (function() {
           <td> ${reading.comment} </td>
         </tr>
       `
+      content.push(readingLine)
     }
-
-    frame.setContent(`
-      <table id="tbl-readings"> 
-        ${headerLines}
-        ${tableContent}
-      </table>`
-    )
+    content.push('</table>')
+    
+    frame.setContent(content.join(''))
   }
-
-  return public
-})()
+}
 </script>

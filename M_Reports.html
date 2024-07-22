@@ -1,9 +1,9 @@
 <script>
 
-Model.Reports = (function() {
-  const public = {}
+class M_Reports {
 
-  public.getReport = (year) => {
+  getReport (year) {
+    
     const summaryByAccount = {} 
     const eventsByYear = Db.getRecords('events').where('fiscal_year', year)
 
@@ -30,6 +30,10 @@ Model.Reports = (function() {
     return summaryByAccount
   }
 
-  return public
-})()
+  async printChargingSheet () {
+
+    await Server.api('updateChargingSheet')
+  }
+
+}
 </script>

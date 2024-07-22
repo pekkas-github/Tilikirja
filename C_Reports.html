@@ -1,0 +1,29 @@
+<script>
+
+class C_Reports {
+
+  #events
+  #reports
+  #listView
+
+  constructor (deps) {
+    this.#events   = deps.events
+    this.#reports  = deps.reports
+    this.#listView = deps.listView
+  }
+
+  openPage () {
+    const accounts    = this.#events.getAccounts()
+    const years       = this.#events.getYears()
+    const currentYear = this.#events.getCurrentYear()
+    const report      = this.#reports.getReport(currentYear)
+    
+    this.#listView.render(this, report, accounts, years, currentYear)
+  }
+
+  onChangeYear (year) {
+    this.#events.setCurrentYear(year)
+    this.openPage()
+  }
+}
+</script>

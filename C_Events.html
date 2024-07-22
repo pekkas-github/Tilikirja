@@ -1,0 +1,87 @@
+<script>
+
+class C_Events {
+
+  #events
+  #listView
+  #detailsView
+  #commentView
+
+  constructor (deps) {
+    this.#events      = deps.events
+    this.#listView    = deps.listView
+    this.#detailsView = deps.detailsView
+    this.#commentView = deps.commentView
+  }
+
+  openPage () {
+
+    const years        = this.#events.getYears()
+    const currentYear  = this.#events.getCurrentYear()
+    const eventsOfYear = this.#events.getEventsOfYear(currentYear)
+
+    this.#listView.render(this, eventsOfYear, years, currentYear)
+  }
+
+  onAddNewEvent () {
+
+    const event      = this.#events.getNewEvent()
+    const accounts   = this.#events.getAccounts()
+    const years      = this.#events.getYears()
+
+    this.#detailsView.render(this, event, accounts, years)
+  }
+     
+  onChangeYear (year) {
+    
+    this.#events.setCurrentYear(year)
+    this.openPage()
+  }
+    
+  async onExportEventsOnSheet (year) {
+
+    await this.#events.exportYearlyEvents(year)
+    alert(`Vuoden ${year} tapahtumat talletettu taulukkoon.`)
+  }
+
+  onModifyEvent (id) {
+
+    const event      = this.#events.getEvent(id)
+    const accounts   = this.#events.getAccounts()
+    const years      = this.#events.getYears()
+
+    this.#detailsView.render(this, event, accounts, years)
+  }
+
+  onOpenComment (id) {
+
+    const event = this.#events.getEvent(id)
+    if (event.comment === '') { return }
+
+    this.#commentView.render(event)
+  }
+
+  async onSaveEvent (event) {
+
+    if (event.id === 0) {
+      //insert
+      this.#events.addEvent(event).then(() => {
+        this.openPage()
+      })
+      this.openPage()
+    } 
+    else {
+      //update
+      this.#events.updateEvent(event)
+      this.openPage()
+    }
+  }
+
+  onToggleEventStatus (id) {
+
+    this.#events.toggleEventStatus(id)
+    this.openPage()
+  }
+}
+
+</script>

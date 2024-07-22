@@ -1,48 +1,48 @@
   <script>
 
-const Model      = {}
-const View       = {}
-const Controller = {}
-
+const app = {}
 </script>
 
-<?!= include('Model.Common') ?>
-<?!= include('Model.Charges') ?>
-<?!= include('Model.Events') ?>
-<?!= include('Model.Readings') ?>
-<?!= include('Model.Reports') ?>
-<?!= include('Controller.Events') ?>
-<?!= include('Controller.Readings') ?>
-<?!= include('Controller.Reports') ?>
-<?!= include('Controller.Charges') ?>
-<?!= include('View.Info') ?>
-<?!= include('View.Events') ?>
-<?!= include('View.EventForm') ?>
-<?!= include('View.EventComment') ?>
-<?!= include('View.Readings') ?>
-<?!= include('View.ReadingForm') ?>
-<?!= include('View.Reports') ?>
-<?!= include('View.Charges') ?>
-<?!= include('View.WaterPriceForm') ?>
+<?!= include('ControllerFactory') ?>
+<?!= include('C_Info') ?>
+<?!= include('C_Events') ?>
+<?!= include('C_Readings') ?>
+<?!= include('C_Charges') ?>
+<?!= include('C_Reports') ?>
+<?!= include('V_Info') ?>
+<?!= include('V_EventList') ?>
+<?!= include('V_EventDetails') ?>
+<?!= include('V_EventComment') ?>
+<?!= include('V_ReadingList') ?>
+<?!= include('V_ReadingDetails') ?>
+<?!= include('V_Charges') ?>
+<?!= include('V_Reports') ?>
+<?!= include('V_WaterPrice') ?>
+<?!= include('M_Events') ?>
+<?!= include('M_Readings') ?>
+<?!= include('M_Reports') ?>
 
 <script>
 
 frame.setHeader('Tilikirja')
 frame.setRightFooter('<?= app.version ?>')
-frame.setLeftFooter(app.params.profile)
-frame.addNavBarItem('Etusivu', View.Info.render)
-frame.addNavBarItem('Tapahtumat', () => {Controller.Events.openPage()})
-frame.addNavBarItem('Veden kulutus', () => {Controller.Readings.openPage()})
-frame.addNavBarItem('Tuloslaskelmat', () => {Controller.Reports.openPage()})
-frame.addNavBarItem('Neljännesveloitus', () => {Controller.Charges.openPage()})
+frame.setLeftFooter(frame.params.profile)
+frame.addNavBarItem('Etusivu', () => {Controllers.Info().openPage()})
+frame.addNavBarItem('Tapahtumat', () => {Controllers.Events().openPage()})
+frame.addNavBarItem('Veden kulutus', () => {Controllers.Readings().openPage()})
+frame.addNavBarItem('Tuloslaskelmat', () => {Controllers.Reports().openPage()})
+frame.addNavBarItem('Neljännesveloitus', () => {Controllers.Charges().openPage()})
 frame.addNavBarItem('Tositteet', () => {window.open('https://drive.google.com/drive/folders/1NTGe56zEUrH4WHpDQdj6we4UYUfQHR30?usp=drive_link')})
 
 frame.spinner.on()
-View.Info.render()
+
+Controllers.Info().openPage()
+
 
 Db.init().then(() => {
+  const events = new M_Events()
   const currentYear = Db.getRecords('years').where('current', 'x')[0].year
-  Model.Common.setCurrentYear(currentYear)
+  events.setCurrentYear(currentYear)
   frame.spinner.off()
 })
 
