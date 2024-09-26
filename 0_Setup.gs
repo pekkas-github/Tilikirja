@@ -12,7 +12,7 @@ if (app.test) {
 }
 
 const db             = ServerDBMS.openDatabase(app.dbName)
-
+const model          = getModel(db)
 
 function include(filename) {
   return HtmlService.createTemplateFromFile(filename).evaluate().getContent()

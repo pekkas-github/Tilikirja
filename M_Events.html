@@ -11,7 +11,7 @@ class M_Events {
     }
 
     await Db.updateRecords('events', events)
-      Server.api('updateChargingSheet')
+      conn.cmdRequest('updateChargingSheet')
   }
 
   async addEvent (newEvent) {
@@ -20,7 +20,7 @@ class M_Events {
     Db.events.push(newEvent)
 
     // Päivitä paikallinen taulu serveriltä tuleella tiedolla
-    const updatedEvent = await Server.api('addEvent', newEvent)
+    const updatedEvent = await conn.cmdRequest('addEvent', newEvent)
       const events = Db.getRecords('events')
       const index = events.findIndex( event => {
         return event.id === 0
@@ -30,7 +30,7 @@ class M_Events {
 
   async exportYearlyEvents (year) {
 
-    await Server.api('printYearResumeOnSheet', year)
+    await conn.cmdRequest('printYearResumeOnSheet', year)
   }
 
   getAccounts () {

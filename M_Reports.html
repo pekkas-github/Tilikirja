@@ -32,7 +32,7 @@ class M_Reports {
 
   async printChargingSheet () {
 
-    await Server.api('updateChargingSheet')
+    await conn.cmdRequest('updateChargingSheet')
   }
 
 }

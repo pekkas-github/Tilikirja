@@ -1,5 +1,8 @@
 <script>
-const app = {}
+
+const conn = new ClientConnect()
+const Db   = new ClientDBMS(conn)
+const app  = {}
 
 frame.setHeader('Tilikirja')
 frame.setRightFooter('<?= app.version ?>')
@@ -11,8 +14,8 @@ frame.addNavBarItem('Tuloslaskelmat', () => {Controllers.Reports().openPage()})
 frame.addNavBarItem('Neljännesveloitus', () => {Controllers.Charges().openPage()})
 frame.addNavBarItem('Tositteet', () => {window.open('https://drive.google.com/drive/folders/1NTGe56zEUrH4WHpDQdj6we4UYUfQHR30?usp=drive_link')})
 
-frame.spinner.on()
 
+frame.spinner.on()
 Controllers.Info().openPage()
 
 
