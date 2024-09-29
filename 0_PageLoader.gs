@@ -1,5 +1,3 @@
-model       = getModel(db)
-
 function doGet (e) {
 
   const args = {}

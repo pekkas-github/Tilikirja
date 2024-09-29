@@ -1,9 +1,4 @@
-  <script>
-
-const app = {}
-</script>
-
-<?!= include('ControllerFactory') ?>
+<?!= include('A_ControllerFactory') ?>
 <?!= include('C_Info') ?>
 <?!= include('C_Events') ?>
 <?!= include('C_Readings') ?>
@@ -21,29 +16,4 @@ const app = {}
 <?!= include('M_Events') ?>
 <?!= include('M_Readings') ?>
 <?!= include('M_Reports') ?>
-
-<script>
-
-frame.setHeader('Tilikirja')
-frame.setRightFooter('<?= app.version ?>')
-frame.setLeftFooter(frame.params.profile)
-frame.addNavBarItem('Etusivu', () => {Controllers.Info().openPage()})
-frame.addNavBarItem('Tapahtumat', () => {Controllers.Events().openPage()})
-frame.addNavBarItem('Veden kulutus', () => {Controllers.Readings().openPage()})
-frame.addNavBarItem('Tuloslaskelmat', () => {Controllers.Reports().openPage()})
-frame.addNavBarItem('Neljännesveloitus', () => {Controllers.Charges().openPage()})
-frame.addNavBarItem('Tositteet', () => {window.open('https://drive.google.com/drive/folders/1NTGe56zEUrH4WHpDQdj6we4UYUfQHR30?usp=drive_link')})
-
-frame.spinner.on()
-
-Controllers.Info().openPage()
-
-
-Db.init().then(() => {
-  const events = new M_Events()
-  const currentYear = Db.getRecords('years').where('current', 'x')[0].year
-  events.setCurrentYear(currentYear)
-  frame.spinner.off()
-})
-
-</script>
+<?!= include('A_Setup') ?>
