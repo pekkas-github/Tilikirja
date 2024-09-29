@@ -16,8 +16,10 @@ class M_Events {
 
   async addEvent (newEvent) {
 
+    // Talletus ei mene tavallisella insertillä, koska myös toistenumero pitää päivittää palvelimella 
+
     // Talleta heti paikalliseen tauluun (id=0, number=0)
-    Db.events.push(newEvent)
+    Db.localDb.events.push(newEvent)
 
     // Päivitä paikallinen taulu serveriltä tuleella tiedolla
     const updatedEvent = await conn.cmdRequest('addEvent', newEvent)
@@ -25,7 +27,7 @@ class M_Events {
       const index = events.findIndex( event => {
         return event.id === 0
       })
-      Db.events[index] = updatedEvent
+      Db.localDb.events[index] = updatedEvent
   }
 
   async exportYearlyEvents (year) {
