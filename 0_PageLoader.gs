@@ -1,4 +1,5 @@
 function doGet (e) {
+  app.profile = e.parameter.profile  // admin-profiili näyttää kaikki kontrollit
 
   const args = {}
   args.myLibraries = include('app_Libraries')

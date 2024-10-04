@@ -26,8 +26,8 @@ class V_Charges {
     const self = this
     frame.clearControls()
     
-    // Admin-käyttäjälle näytettävät kontrollit
-    if (frame.params.profile === 'admin') {
+    <? // Admin-käyttäjälle näytettävät kontrollit
+    if (app.profile === 'admin') { ?>
       frame.addControlInput(
         'date',
         function() {
@@ -45,7 +45,7 @@ class V_Charges {
       frame.addControlButton('Tulosta', function () {
         self.#controller.onPrintChargingSheet()
       })
-    }
+    <? } ?>
 
     // Kaikille näkyvät kontrollit
     frame.addControlText('Aikaisemmat veloitukset', function() {
