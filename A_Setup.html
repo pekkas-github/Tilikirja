@@ -1,8 +1,9 @@
 <script>
 
-const conn = new ClientConnect()
-const Db   = new ClientDBMS(conn)
-const app  = {}
+const conn    = new ClientConnect()
+const Db      = new ClientDBMS(conn)
+const app     = {}
+app.periods   = ['tammi - maaliskuu', 'huhti - kesäkuu', 'heinä - syyskuu', 'loka - joulukuu']
 
 frame.setHeader('Tilikirja')
 frame.setRightFooter('<?= app.version ?>')

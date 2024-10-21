@@ -4,18 +4,20 @@ class V_Charges {
 
   #controller
   #eventsToBeCharged
+  #period
 
-  render (controller, eventsToBeCharged) {
+  render (controller, eventsToBeCharged, period) {
 
     this.#controller        = controller
     this.#eventsToBeCharged = eventsToBeCharged
-    
+    this.#period            = period
+
     this.#setControls()
-    frame.setContent(this.#getHtml(eventsToBeCharged, 'Kuluva neljännes'))
+    frame.setContent(this.#getHtml(eventsToBeCharged, app.periods[period]))
   }
 
   renderAll (chargeHistory) {
-    const content = [this.#getHtml(this.#eventsToBeCharged, 'Kuluva neljännes')]
+    const content = [this.#getHtml(this.#eventsToBeCharged, app.periods[this.#period])]
     content.push(this.#getPreviousChargesHtml(chargeHistory))
 
     frame.setContent(content)
