@@ -4,7 +4,13 @@ class M_Events {
 
   async ackCharges (date) {
     
+    // Hae veloituksessa olevat tapahtumat
     const events = Db.getRecords('events').where('cleared', '').where('charging', 'x')
+    // Määritä ja talleta uusi veloitusjakso (0 - 3)
+    const periodIndex = Math.floor(new Date().getMonth() / 3)
+    const period      = Db.getRecords('parameters').where('name', 'period')[0]
+    period.value      = periodIndex
+    Db.updateRecord('parameters', period)
 
     for (const event of events) {
       event.cleared = date
@@ -43,6 +49,12 @@ class M_Events {
   getChargeHistory () {
 
     return this.getEvents().desc('cleared')
+  }
+
+  getCurrentPeriod () {
+    
+    const period = Db.getRecords('parameters').where('name', 'period')[0]
+    return period.value
   }
 
   getCurrentYear () {

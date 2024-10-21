@@ -15,7 +15,8 @@ class C_Charges {
 
   openPage () {
     const eventsToBeCharged = this.#events.getEventsToBeCharged()
-    this.#listView.render(this, eventsToBeCharged)
+    const currentPeriod     = this.#events.getCurrentPeriod()
+    this.#listView.render(this, eventsToBeCharged, currentPeriod)
   }
 
   onAckCharges (date) {
