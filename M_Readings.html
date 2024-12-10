@@ -4,7 +4,9 @@ class M_Readings {
 
   async addReading (reading) {
 
-    await Db.insertRecord('water', reading)
+    const updatedReading = await Db.insertRecord('water', reading)
+
+    return updatedReading
   }
 
   #calculateConsumption (reading) {

@@ -7,7 +7,9 @@ class M_Reports {
     const summaryByAccount = {} 
     const eventsByYear = Db.getRecords('events').where('fiscal_year', year)
 
-    //Calculate summation per account
+    /* Summataan tilivuoden tapahtumien summat (tot, a, b) tileittäin.
+       Ensin asetetaan tilin ensimmäiset arvot ja sitten summataan siihen loput. */
+
     eventsByYear.forEach( (event) => {
       if (summaryByAccount[event.account_id]) {
         summaryByAccount[event.account_id].tot += event.total
@@ -18,13 +20,17 @@ class M_Reports {
       }
     })
 
-    //Calculate summation per party
+    /* Lasketaan kunkin osapuolen kokonaisveloitukset kaikkien tilien osalta */
+
     const sums = {tot:0, a:0, b:0}
     for (const key in summaryByAccount) {
       sums.tot += summaryByAccount[key].tot
       sums.a += summaryByAccount[key].a
       sums.b += summaryByAccount[key].b
     }
+
+    /* Lisätään osapuolien veloitukset taulukkomuuttujaan viimeiseksi */
+
     summaryByAccount.Totals = sums
 
     return summaryByAccount

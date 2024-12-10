@@ -23,6 +23,20 @@ function getModel(Db) {
     return event
   }
 
+  public.getNewEventNumber = (year) => {
+
+    /* Hae valitun vuoden tapahtumat ja järjestä ne - suurin tositenumero ensin */
+
+    const eventsOfYear = getEventsByCalendarYear(year)
+    eventsOfYear.sort((a, b) => {return b.number - a.number})
+
+    /* Määritä seuraava tositenumero - alkaa juoksevasti aina uudestaan vuoden alusta */
+
+    if (eventsOfYear.length === 0) { return 1 }  // Vuoden ensimmäinen tapahtuma
+
+    return eventsOfYear[0].number + 1            // Seuraavat tapahtumat 
+  }
+
   // Kirjoita valitun vuoden tapahtumat ja tilikohtainen yhteenveto
   // Sheets-tauluun tulostamista varten.
   public.printYearResumeOnSheet = (year) => {

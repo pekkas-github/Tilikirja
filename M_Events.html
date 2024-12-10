@@ -4,36 +4,37 @@ class M_Events {
 
   async ackCharges (date) {
     
-    // Hae veloituksessa olevat tapahtumat
+    /* Hae veloituksessa olevat - ei vielä kuitatut - tapahtumat */
+    
     const events = Db.getRecords('events').where('cleared', '').where('charging', 'x')
-    // Määritä ja talleta uusi veloitusjakso (0 - 3)
+    
+    /* Määritä ja talleta uusi veloitusjakso (0 - 3) veloitusnäkymää varten */
+
     const periodIndex = Math.floor(new Date().getMonth() / 3)
     const period      = Db.getRecords('parameters').where('name', 'period')[0]
     period.value      = periodIndex
     Db.updateRecord('parameters', period)
 
+    /* Kuittaa veloituksessa olleet tapahtumat maksetuiksi */
+
     for (const event of events) {
       event.cleared = date
     }
-
     await Db.updateRecords('events', events)
-      conn.cmdRequest('updateChargingSheet')
   }
+
+  /* Uuden tapahtuman lisäys tietokantaan - tositenumeron generointi */
 
   async addEvent (newEvent) {
 
-    // Talletus ei mene tavallisella insertillä, koska myös toistenumero pitää päivittää palvelimella 
+    /* Hae tapahtumalle tositenumero ja lisää se tietueelle */
 
-    // Talleta heti paikalliseen tauluun (id=0, number=0)
-    Db.localDb.events.push(newEvent)
+    const year = newEvent.date.substr(0,4)
+    newEvent.number = await conn.cmdRequest('getNewEventNumber', year)
 
-    // Päivitä paikallinen taulu serveriltä tuleella tiedolla
-    const updatedEvent = await conn.cmdRequest('addEvent', newEvent)
-      const events = Db.getRecords('events')
-      const index = events.findIndex( event => {
-        return event.id === 0
-      })
-      Db.localDb.events[index] = updatedEvent
+    /* Lisää tietue tietokantaan id */
+
+    await Db.insertRecord('events', newEvent)
   }
 
   async exportYearlyEvents (year) {
@@ -70,7 +71,10 @@ class M_Events {
   getEvents () {
 
     const events = Db.getRecords('events')
-    for (const event of events) {         // Lisää tilien nimet
+
+    /* Lisää tilien nimet ennen palautusta */
+
+    for (const event of events) {
       event.account_name = Db.getRecord('accounts', event.account_id).name
     }
     return events
