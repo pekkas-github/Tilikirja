@@ -30,7 +30,7 @@ class M_Events {
     /* Hae tapahtumalle tositenumero ja lisää se tietueelle */
 
     const year = newEvent.date.substr(0,4)
-    newEvent.number = await conn.cmdRequest('getNewEventNumber', year)
+    newEvent.number = await conn.serverRequest('getNewEventNumber', year)
 
     /* Lisää tietue tietokantaan id */
 

@@ -12,7 +12,7 @@
       {
         "userSymbol": "ClientDBMS",
         "libraryId": "1eznaqLAguqobUHt20mggWpBxNSXEBh976aeRPK0O7Cne-BwJ3Fqnqga5",
-        "version": "13"
+        "version": "15"
       },
       {
         "userSymbol": "FramePages",
@@ -21,9 +21,8 @@
       },
       {
         "userSymbol": "ClientConnect",
-        "version": "2",
         "libraryId": "19TSey92fkfHhnbAi09d2AzL3hHT-oIyrdXu7qG5QYN6qPU6Va6LxZA1i",
-        "developmentMode": false
+        "version": "4"
       }
     ]
   },
