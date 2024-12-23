@@ -38,7 +38,7 @@ class M_Reports {
 
   async printChargingSheet () {
 
-    await conn.cmdRequest('updateChargingSheet')
+    await Conn.request('model', 'updateChargingSheet')
   }
 
 }

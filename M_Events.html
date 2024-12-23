@@ -30,7 +30,7 @@ class M_Events {
     /* Hae tapahtumalle tositenumero ja lisää se tietueelle */
 
     const year = newEvent.date.substr(0,4)
-    newEvent.number = await conn.serverRequest('getNewEventNumber', year)
+    newEvent.number = await Conn.request('model', 'getNewEventNumber', year)
 
     /* Lisää tietue tietokantaan id */
 
@@ -39,7 +39,7 @@ class M_Events {
 
   async exportYearlyEvents (year) {
 
-    await conn.cmdRequest('printYearResumeOnSheet', year)
+    await Conn.request('model', 'printYearResumeOnSheet', year)
   }
 
   getAccounts () {

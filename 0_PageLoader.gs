@@ -27,13 +27,17 @@ function doGet (e) {
 
 function logUser (profile) {
 
+  /* Lisää prefix, jos ollaan testimoodissa */
+
+  const prefix = (app.test) ? 'Test - ' : ''
+  
   /* Talleta käyttäjän profiili ja aikaleima lokiin*/
 
   const logDb   = ServerDBMS.openDatabase(app.logName)
 
   const logEvent   = logDb.newRecord('UserLog')
   logEvent.date    = new Date().toLocaleDateString()
-  logEvent.profile = profile
+  logEvent.profile = prefix + profile
 
   logDb.insertRecord('UserLog', logEvent)
 }
