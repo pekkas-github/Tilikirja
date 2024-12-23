@@ -1,6 +1,13 @@
 function doGet (e) {
   app.profile = e.parameter.profile  // admin-profiili näyttää kaikki kontrollit
 
+  /* Jos profiilia ei ole määritelty, kyse on vierailijasta */
+
+  if (app.profile === undefined) {
+    app.profile = "visitor"
+  }
+  logUser(app.profile)
+
   const args = {}
   args.myLibraries = include('app_Libraries')
   args.myScripts   = include('app_Scripts')
@@ -15,4 +22,22 @@ function doGet (e) {
     .setTitle('Tilikirja')
     .setFaviconUrl('https://cdn.icon-icons.com/icons2/1385/PNG/512/eur-crypto-cryptocurrency-cryptocurrencies-cash-money-bank-payment_95510.png')
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL)
+}
+
+
+function logUser (profile) {
+
+  /* Ei lokiteta, jos ollaan testimoodissa */
+
+  if (app.test) return
+  
+  /* Talleta käyttäjän profiili ja aikaleima lokiin*/
+
+  const logDb   = ServerDBMS.openDatabase(app.logName)
+
+  const logEvent   = logDb.newRecord('UserLog')
+  logEvent.date    = new Date().toLocaleDateString()
+  logEvent.profile = profile
+
+  logDb.insertRecord('UserLog', logEvent)
 }

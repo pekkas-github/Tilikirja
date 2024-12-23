@@ -1,7 +1,7 @@
 <script>
 
-const conn    = new ClientConnect()
-const Db      = new ClientDBMS(conn)
+const Db      = new ClientDBMS('db')      // yhteys palvelinpään tietokantaan 'db'
+
 const app     = {}
 app.periods   = ['tammi - maaliskuu', 'huhti - kesäkuu', 'heinä - syyskuu', 'loka - joulukuu']
 

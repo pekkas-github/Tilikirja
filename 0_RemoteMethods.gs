@@ -23,6 +23,21 @@ function getModel(Db) {
     return event
   }
 
+  public.getNewEventNumber = (year) => {
+
+    /* Hae valitun vuoden tapahtumat ja järjestä ne - suurin tositenumero ensin */
+
+    const eventsOfYear = public.getEventsByCalendarYear(year)
+
+    eventsOfYear.sort((a, b) => {return b.number - a.number})
+
+    /* Määritä seuraava tositenumero - alkaa juoksevasti aina uudestaan vuoden alusta */
+
+    if (eventsOfYear.length === 0) { return 1 }  // Vuoden ensimmäinen tapahtuma
+
+    return eventsOfYear[0].number + 1            // Seuraavat tapahtumat 
+  }
+
   // Kirjoita valitun vuoden tapahtumat ja tilikohtainen yhteenveto
   // Sheets-tauluun tulostamista varten.
   public.printYearResumeOnSheet = (year) => {
@@ -35,8 +50,8 @@ function getModel(Db) {
   // Sheets-tauluun tulostamista varten
   public.updateChargingSheet = () => {
 
-    const events   = db.getTable('events').getRecords().where('cleared', '').where('charging', 'x')
-    const accounts = db.getTable('accounts').getRecords()
+    const events   = db.getRecords('events').where('cleared', '').where('charging', 'x')
+    const accounts = db.getRecords('accounts')
     const sheet    = SpreadsheetApp.openById(app.printingSheet).getSheetByName('Summary')
     const values   = []
 
@@ -66,10 +81,10 @@ function getModel(Db) {
 
   // Palauta kalenterivuoden kaikki tapahtumatietueet.
   // Lisää tilien selväkieliset nimet.
-  const getEventsByCalendarYear = (year) => {
+  public.getEventsByCalendarYear = (year) => {
 
-    const events   = db.getTable('events').getRecords()
-    const accounts = db.getTable('accounts').getRecords()
+    const events   = db.getRecords('events')
+    const accounts = db.getRecords('accounts')
 
     const eventsOfYear = events.filter( event => {
       if (event.date.substr(0,4) === year) {
@@ -78,6 +93,7 @@ function getModel(Db) {
             event.account_name = account.name
           }
         }
+
       return event
       }
     })
@@ -87,10 +103,10 @@ function getModel(Db) {
 
   // Palauta tilivuodelle kohdistuvat kaikki tapahtumat.
   // Lisää tilien selväkieliset nimet.
-  const getEventsByFiscalYear =  (year) => {
+  public.getEventsByFiscalYear =  (year) => {
 
-    const events   = db.getTable('events').getRecords()
-    const accounts = db.getTable('accounts').getRecords()
+    const events   = db.getRecords('events')
+    const accounts = db.getRecords('accounts')
     const fiscalYear = parseInt(year)
 
     //Add account_name field with account name values
@@ -110,7 +126,7 @@ function getModel(Db) {
   // Kirjoita kalenterivuoden tapahtumat Sheet-taulukkoon
   const printEvents = (year) => {
 
-    const eventsOfCalendarYear = getEventsByCalendarYear(year)
+    const eventsOfCalendarYear = public.getEventsByCalendarYear(year)
     const listToPrint = []
     const sheet = SpreadsheetApp.openById(app.printEventsSheet).getSheetByName('EventsList')
 
@@ -138,7 +154,7 @@ function getModel(Db) {
   // Kirjoita tilivuoden yhteenveto Sheet-taulukkoon
   const printSummary = (year) => { 
 
-    const eventsOfFiscalYear = getEventsByFiscalYear(year)
+    const eventsOfFiscalYear = public.getEventsByFiscalYear(year)
     const summaryByAccount = {} 
     const sheet = SpreadsheetApp.openById(app.printEventsSheet).getSheetByName('EventsList')
 
