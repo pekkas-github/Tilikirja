@@ -27,9 +27,9 @@ function doGet (e) {
 
 function logUser (profile) {
 
-  /* Lisää prefix, jos ollaan testimoodissa */
+  /* Ei lokiteta, jos ollaan testimoodissa */
 
-  const prefix = (app.test) ? 'Test - ' : ''
+  if (app.test) return
   
   /* Talleta käyttäjän profiili ja aikaleima lokiin*/
 
@@ -37,7 +37,7 @@ function logUser (profile) {
 
   const logEvent   = logDb.newRecord('UserLog')
   logEvent.date    = new Date().toLocaleDateString()
-  logEvent.profile = prefix + profile
+  logEvent.profile = profile
 
   logDb.insertRecord('UserLog', logEvent)
 }
