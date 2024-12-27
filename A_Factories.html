@@ -1,0 +1,60 @@
+<script>
+
+class ControllerFactory {
+
+  static create (controllerName) {
+
+    switch (controllerName) {
+      case 'Settings':
+        return new C_Settings()
+        break
+
+      default:
+        throw new Error(`ControllerFactory.create\nEi löydy kontrolleria ${controllerName}`)
+    }
+  }
+}
+
+
+class ModelFactory {
+
+  static create (modelName) {
+
+    switch (modelName) {
+      case 'Events':
+        return new M_Events()
+        berak
+
+      case 'Readings':
+        return new M_Readings()
+        berak
+
+      case 'Reports':
+        return new M_Reports()
+        break
+
+      default:
+        throw new Error(`ModelFactory.create\nEi löydy modelia ${modelName}`)
+    }
+  }
+}
+
+class ViewFactory {
+
+  static create (viewName) {
+
+    switch (viewName) {
+      case 'Settings':
+        return new V_Settings()
+        break
+
+      case 'WaterPriceDetails':
+        return new V_WaterPriceDetails()
+        break
+
+      default:
+        throw new Error(`ViewFactory.create\nEi loydy näkymää ${viewName}`)
+    }
+  }
+}
+</script>

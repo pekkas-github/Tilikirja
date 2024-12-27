@@ -9,6 +9,11 @@ class M_Readings {
     return updatedReading
   }
 
+  async addNewWaterPrice (newPrice) {
+
+    await Db.insertRecord('waterprice', newPrice)
+  }
+
   #calculateConsumption (reading) {
 
     const readings = Db.getRecords('water')
@@ -18,9 +23,20 @@ class M_Readings {
     return (reading.master_reading - last.master_reading) - (reading.b_reading - last.b_reading)
   }
 
+  getAllWaterPrices () {
+
+    return Db.getRecords('waterprice').desc('date')
+  }
+
+
   getCurrentWaterPrice () {
 
     return Db.getRecords('waterprice').where('current_value', 'x')[0]
+  }
+
+  getNewWaterPrice () {
+
+    return Db.getNewRecord('waterprice')
   }
 
   getNewReading () {
@@ -33,8 +49,10 @@ class M_Readings {
     // Laske A:n kulutus ja määritä hinta
     const consumptionA  = this.#calculateConsumption(reading)
     const currentPrice  = this.getCurrentWaterPrice()
+    const waterPriceA   = currentPrice.water_price + currentPrice.waste_price
+    const basePriceA    = 3 * currentPrice.base_price / 2
 
-    const a_share = Math.floor(((consumptionA * currentPrice.waterA + currentPrice.baseA)*100+0.5))/100
+    const a_share = Math.floor(((consumptionA * waterPriceA + basePriceA)*100+0.5))/100
 
     // Muodosta tilitapahtuma
     const newEvent = Db.getNewRecord('events')
@@ -63,6 +81,18 @@ class M_Readings {
       rdng.bDelta   = rdng.b_reading - prev.b_reading
     }
     return readings
+  }
+
+
+  setCurrentWaterPrice (id) {
+
+    const oldPrice = Db.getRecords('waterprice').where('current_value', 'x')[0]
+    const newPrice = Db.getRecord('waterprice', id)
+    oldPrice.current_value = ''
+    newPrice.current_value = 'x'
+
+    Db.updateRecord('waterprice', oldPrice)
+    Db.updateRecord('waterprice', newPrice)
   }
 }
 </script>

@@ -1,0 +1,46 @@
+<script>
+class V_WaterPriceDetails {
+
+  render (controller, newPrice) {
+
+    frame.popup.clearButtons()
+
+    frame.popup.setHeader('Uusi veden hinta')
+
+    frame.popup.setContent(`
+      <table>
+        <tr>
+          <td>Alkaen</td>
+          <td><input type="date" id="txt-date">
+        </tr>
+        <tr>
+          <td>Perusmaksu</td>
+          <td><input type="text" id="txt-base-price">
+        </tr>
+        <tr>
+          <td>Käyttövesimaksu</td>
+          <td><input type="text" id="txt-water-price">
+        </tr>
+        <tr>
+          <td>Jätevesimaksu</td>
+          <td><input type="text" id="txt-waste-price">
+        </tr>
+      </table>
+    `)
+
+    frame.popup.addButton('Talleta', function() {
+      
+      newPrice.date = $('#txt-date').val()
+      newPrice.base_price = parseFloat($('#txt-base-price').val())
+      newPrice.water_price = parseFloat($('#txt-water-price').val())
+      newPrice.waste_price = parseFloat($('#txt-waste-price').val())
+
+      frame.popup.hide()
+      controller.onSaveNewWaterPrice(newPrice)
+    })
+
+    frame.popup.show()
+  }
+}
+
+</script>
