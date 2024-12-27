@@ -1,0 +1,105 @@
+<script>
+class V_Settings {
+
+  render (controller, yearList, currentYear, waterPrices, currentWaterPrice) {
+
+    /* Poista aikaisemmat kontrollit */
+
+    frame.clearControls()
+
+    /* Muodosta vuosista pudotusvalikko */
+
+    const yearDropDown = ['<select id="cbo-default-year">']
+    
+    for (const row of yearList) {
+
+      // Näytä nykyinen oletusvuosi
+      const selected = (row.current === 'x') ? 'selected' :  ''
+      yearDropDown.push(`
+        <option value="${row.id}" ${selected}>${row.year}</option>
+      `)
+    }
+    
+    yearDropDown.push('</select>')
+
+    /* Muodosta veden hinnoista pudotusvalikko */
+
+    const waterDropDown = ['<select id="cbo-current-water-price">']
+
+    for (const row of waterPrices) {
+
+      // Näytä tämän hetkinen hintapiste */
+      const selected = (row.current_value === 'x') ? 'selected' : ''
+      waterDropDown.push(`
+        <option value="${row.id}" ${selected}>${row.date}</option>
+      `)
+    }
+
+    waterDropDown.push('</select>')
+
+    /* Muodosta sivun sisältö */ 
+
+    const content = []
+    content.push(`
+      <table class="tbl-settings">
+        <tr>
+          <td colspan="2"><h3>Oletusvuosi</h3></td>
+        </tr>
+        <tr>
+          <td width="60%">Valitse oletusvuosi</td>
+          <td>${yearDropDown.join('')}</td>
+        </tr>
+      </table>
+      <table class="tbl-settings">
+        <tr>
+          <td colspan="2"><h3>Veden hinta</h3></td>
+        </tr>
+        <tr>
+          <td width="60%">Alkaen</td>
+          <td>${currentWaterPrice.date}</td>
+        </tr>
+        <tr>
+          <td>Perusmaksu</td>
+          <td>${currentWaterPrice.base_price}</td>
+        </tr>
+        <tr>
+          <td>Käyttövesi</td>
+          <td>${currentWaterPrice.water_price}</td>
+        </tr>
+        <tr>
+          <td>Jätevesi</td>
+          <td>${currentWaterPrice.waste_price}</td>
+        </tr>
+        <tr>
+          <td>Valitse veden hinta</td>
+          <td>${waterDropDown.join('')}</td>
+        </tr>
+        <tr>
+          <td>Uusi veden hinta</td>
+          <td><button id="btn-add-price">Lisää</button></td>
+        </tr>
+      </table>
+    `)
+
+    frame.setContent(content.join(''))
+
+    /* Lisää Event Listener */
+
+    
+    $('#cbo-default-year').on('change', function() {
+
+      controller.onChangeDefaultYear(parseInt($(this).val()))
+    })
+
+    $('#cbo-current-water-price').on('change', function() {
+
+      controller.onChangeCurrentWaterPrice(parseInt($(this).val()))
+    })
+
+    $('#btn-add-price').on('click', function() {
+      
+      controller.onAddNewWaterPrice()
+    })
+  }
+}
+</script>

@@ -1,0 +1,51 @@
+<script>
+class C_Settings {
+
+  constructor () {
+    
+    this.events         = ModelFactory.create('Events')
+    this.water          = ModelFactory.create('Readings')
+    this.settingsView   = ViewFactory.create('Settings')
+    this.waterPriceView = ViewFactory.create('WaterPriceDetails')
+  }
+
+  openPage () {
+
+    this.events.updateYearList(new Date().getFullYear())
+
+    const yearList          = this.events.getYears()
+    const currentYear       = this.events.getCurrentYear()
+    const waterPrices       = this.water.getAllWaterPrices()
+    const currentWaterPrice = this.water.getCurrentWaterPrice()
+
+    this.settingsView.render(this, yearList, currentYear, waterPrices, currentWaterPrice)
+  }
+
+  onAddNewWaterPrice () {
+
+    const newPrice = this.water.getNewWaterPrice()
+
+    this.waterPriceView.render(this, newPrice)
+  }
+
+  onChangeDefaultYear (id) {
+
+    this.events.setDefaultYear(id)
+  }
+
+  onChangeCurrentWaterPrice (id) {
+
+    this.water.setCurrentWaterPrice(id)
+    this.openPage()
+  }
+
+  async onSaveNewWaterPrice (newPrice) {
+
+    frame.spinner.on()
+    await this.water.addNewWaterPrice(newPrice)
+    this.openPage()
+    frame.spinner.off()
+  }
+}
+
+</script>

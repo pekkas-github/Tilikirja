@@ -23,7 +23,6 @@ class M_Events {
     await Db.updateRecords('events', events)
   }
 
-  /* Uuden tapahtuman lisäys tietokantaan - tositenumeron generointi */
 
   async addEvent (newEvent) {
 
@@ -37,20 +36,24 @@ class M_Events {
     await Db.insertRecord('events', newEvent)
   }
 
+
   async exportYearlyEvents (year) {
 
     await Conn.request('model', 'printYearResumeOnSheet', year)
   }
+
 
   getAccounts () {
 
     return Db.getRecords('accounts')
   }
 
+
   getChargeHistory () {
 
     return this.getEvents().desc('cleared')
   }
+
 
   getCurrentPeriod () {
     
@@ -58,9 +61,19 @@ class M_Events {
     return period.value
   }
 
+
   getCurrentYear () {
 
+    /* CurrentYear on selvelluksessa tällä hetkellä valittuna oleva vuosi */
+
     return app.currentYear
+  }
+
+  getDefaultYear () {
+
+    /* DefaultYear on vuosilistassa merkitty kuluva vuosi */
+
+    return Db.getRecords('years').where('current', 'x')[0].year
   }
 
   getEvent (id) {
@@ -114,15 +127,33 @@ class M_Events {
     return event
   }
 
+
   getYears () {
 
-    return Db.getRecords('years')
+    return Db.getRecords('years').desc('year')
   }
   
   setCurrentYear (year) {
 
+    /* CurrentYear on sovelluksessa valittuna oleva vuosi */
     app.currentYear = year
   }
+
+
+  setDefaultYear (id) {
+
+    /* Vaihda uusi oletusvuosi (id:n perusteella)*/
+
+    const oldDefault = Db.getRecords('years').where('current', 'x')[0]
+    const newDefault = Db.getRecord('years', id)
+
+    oldDefault.current = ''
+    newDefault.current = 'x'
+
+    Db.updateRecord('years', oldDefault)
+    Db.updateRecord('years', newDefault)
+  }
+
 
   async toggleEventStatus (id) {
 
@@ -137,6 +168,24 @@ class M_Events {
   async updateEvent (event) {
 
     await Db.updateRecord('events', event)
+  }
+
+
+  updateYearList (thisYear) {
+
+    /* Lisää vuosiluetteloon uusi vuosi, jos on tarpeen */
+
+    const lastListYear = Db.getRecords('years').moveEnd().previous().year
+
+    /* Tarkista lisäystarve */
+
+    if (thisYear >= lastListYear) {
+      const newYearRecord = Db.getNewRecord('years')
+      newYearRecord.year = lastListYear + 1
+
+      Db.insertRecord('years', newYearRecord)
+    }
+
   }
 }
 
