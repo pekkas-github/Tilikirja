@@ -3,25 +3,9 @@ function getModel(Db) {
   const public = {}
   const db = Db
 
-  // Generoi tapahtumatietueelle id sekä tositenumero ja talleta events-tauluun.
-  // Palauta täydennetty tietue clientille.
-  public.addEvent = (event) => {
 
-    const eventsOfYear = getEventsByCalendarYear(event.date.substring(0,4))
-
-    // Järjestä vuoden toistenumerot laskevaan järjestykseen
-    eventsOfYear.sort((a, b) => {return b.number - a.number})
-
-    // Vuoden tositenumero on 1 tai seuraava
-    if (eventsOfYear.length === 0) {
-      event.number = 1
-    }else{
-      event.number = eventsOfYear[0].number + 1
-    }
-
-    event.id = db.getTable('events').insertRecord(event).id
-    return event
-  }
+  /* Tositenumero poimitaan tietokannasta. Näin kahdelle tapatumalle ei voi
+     tulla samaa numeroa. */
 
   public.getEventNumber = (year) => {
 
@@ -38,16 +22,18 @@ function getModel(Db) {
     return nextEventNro
   }
 
-  // Kirjoita valitun vuoden tapahtumat ja tilikohtainen yhteenveto
-  // Sheets-tauluun tulostamista varten.
+  /* Kirjoita valitun vuoden tapahtumat ja tilikohtainen yhteenveto
+     Sheets-tauluun tulostamista varten. */
+
   public.printYearResumeOnSheet = (year) => {
 
     printEvents(year)
     printSummary(year)
   }
 
-  // Kirjoita veloitettavat tapahtumat ja veloitettava summa
-  // Sheets-tauluun tulostamista varten
+  /* Kirjoita veloitettavat tapahtumat ja veloitettava summa
+     Sheets-tauluun tulostamista varten */
+     
   public.updateChargingSheet = () => {
 
     const events   = db.getRecords('events').where('cleared', '').where('charging', 'x')

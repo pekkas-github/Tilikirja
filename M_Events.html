@@ -180,8 +180,9 @@ class M_Events {
     /* Tarkista lisäystarve */
 
     if (thisYear >= lastListYear) {
-      const newYearRecord = Db.getNewRecord('years')
-      newYearRecord.year = lastListYear + 1
+      const newYearRecord        = Db.getNewRecord('years')
+      newYearRecord.year         = lastListYear + 1
+      newYearRecord.nextEventNro = 1
 
       Db.insertRecord('years', newYearRecord)
     }
