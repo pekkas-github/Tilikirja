@@ -28,8 +28,8 @@ class M_Events {
 
     /* Hae tapahtumalle tositenumero ja lisää se tietueelle */
 
-    const year = newEvent.date.substr(0,4)
-    newEvent.number = await Conn.request('model', 'getNewEventNumber', year)
+    const year = parseInt(newEvent.date.substr(0,4))
+    newEvent.number = await Conn.request('model', 'getEventNumber', year)
 
     /* Lisää tietue tietokantaan id */
 

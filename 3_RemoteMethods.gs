@@ -23,19 +23,19 @@ function getModel(Db) {
     return event
   }
 
-  public.getNewEventNumber = (year) => {
+  public.getEventNumber = (year) => {
 
-    /* Hae valitun vuoden tapahtumat ja järjestä ne - suurin tositenumero ensin */
+    /* Hae annetun vuoden vuositietue */
+    const recYear = db.getRecords('years').where('year', year)[0]
 
-    const eventsOfYear = public.getEventsByCalendarYear(year)
+    /* Poimi kyseisen vuodan seuraava tositenumero ja kasvatetaan sitä yhdellä */ 
+    const nextEventNro = recYear.nextEventNro
+    recYear.nextEventNro ++
 
-    eventsOfYear.sort((a, b) => {return b.number - a.number})
+    /* Päivitä seuraava tositenumero tietokantaan */ 
+    db.updateRecord('years', recYear)
 
-    /* Määritä seuraava tositenumero - alkaa juoksevasti aina uudestaan vuoden alusta */
-
-    if (eventsOfYear.length === 0) { return 1 }  // Vuoden ensimmäinen tapahtuma
-
-    return eventsOfYear[0].number + 1            // Seuraavat tapahtumat 
+    return nextEventNro
   }
 
   // Kirjoita valitun vuoden tapahtumat ja tilikohtainen yhteenveto
