@@ -65,10 +65,11 @@ class C_Events {
 
     if (event.id === 0) {
       //insert
+      frame.spinner.on()
       this.#events.addEvent(event).then(() => {
+        frame.spinner.off()
         this.openPage()
       })
-      this.openPage()
     } 
     else {
       //update
