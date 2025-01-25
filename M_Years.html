@@ -1,0 +1,68 @@
+<script>
+class M_Years {
+
+  constructor (database) {
+
+    this.db = database
+    this.currentYear
+  }
+
+  getCurrentYear () {
+
+    /* CurrentYear on sovelluksessa tällä hetkellä valittuna oleva vuosi */
+
+    return app.currentYear
+  }
+
+  getDefaultYear () {
+
+    /* DefaultYear on vuosilistassa merkitty kuluva vuosi */
+
+    return this.db.getRecords('years').where('current', 'x')[0].year
+  }
+
+  getYears () {
+
+    return this.db.getRecords('years').desc('year')
+  }
+  
+  setCurrentYear (year) {
+
+    /* CurrentYear on sovelluksessa valittuna oleva vuosi */
+    app.currentYear = year
+  }
+
+
+  setDefaultYear (id) {
+
+    /* Vaihda uusi oletusvuosi (id:n perusteella)*/
+
+    const oldDefault = this.db.getRecords('years').where('current', 'x')[0]
+    const newDefault = this.db.getRecord('years', id)
+
+    oldDefault.current = ''
+    newDefault.current = 'x'
+
+    this.db.updateRecord('years', oldDefault)
+    this.db.updateRecord('years', newDefault)
+  }
+
+  updateYearList (thisYear) {
+
+    /* Lisää vuosiluetteloon uusi vuosi, jos on tarpeen */
+
+    const lastListYear = this.db.getRecords('years').moveEnd().previous().year
+
+    /* Tarkista lisäystarve */
+
+    if (thisYear >= lastListYear) {
+      const newYearRecord        = this.db.getNewRecord('years')
+      newYearRecord.year         = lastListYear + 1
+      newYearRecord.nextEventNro = 1
+
+      this.db.insertRecord('years', newYearRecord)
+    }
+  }
+}
+
+</script>

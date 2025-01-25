@@ -1,6 +1,6 @@
 // API name definitions
-app.db    = ServerDBMS.openDatabase(app.dbName)
-app.model = getModel(app.db)
+app.Tilikirja = ServerDBMS.openDatabase(app.dbName)
+app.model     = getModel(app.Tilikirja)
 
 
 // API handler

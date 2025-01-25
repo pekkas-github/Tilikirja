@@ -1,31 +1,19 @@
 <script>
-
-const Db      = new ClientDBMS('db')      // yhteys palvelinpään tietokantaan 'db'
-
-const app     = {}
-app.periods   = ['tammi - maaliskuu', 'huhti - kesäkuu', 'heinä - syyskuu', 'loka - joulukuu']
+const app = {}
 
 frame.setHeader('Tilikirja')
 frame.setRightFooter('<?= app.version ?>')
 frame.setLeftFooter(frame.params.profile)
-frame.addNavBarItem('Etusivu', () => {Controllers.Info().openPage()})
-frame.addNavBarItem('Tapahtumat', () => {Controllers.Events().openPage()})
-frame.addNavBarItem('Veden kulutus', () => {Controllers.Readings().openPage()})
-frame.addNavBarItem('Tuloslaskelmat', () => {Controllers.Reports().openPage()})
-frame.addNavBarItem('Neljännesveloitus', () => {Controllers.Charges().openPage()})
+frame.addNavBarItem('Etusivu', () => {ControllerFactory.create('Info').openPage()})
+frame.addNavBarItem('Tapahtumat', () => {ControllerFactory.create('Events').openPage()})
+frame.addNavBarItem('Veden kulutus', () => {ControllerFactory.create('WaterReadings').openPage()})
+frame.addNavBarItem('Tuloslaskelmat', () => {ControllerFactory.create('FiscalYearReports').openPage()})
+frame.addNavBarItem('Neljännesveloitus', () => {ControllerFactory.create('Charges').openPage()})
 <? if (app.profile === 'admin') { ?>
   frame.addNavBarItem('Asetukset', () => {ControllerFactory.create('Settings').openPage()}) 
 <? } ?>
-//frame.addNavBarItem('Tositteet', () => {window.open('https://drive.google.com/drive/folders/1NTGe56zEUrH4WHpDQdj6we4UYUfQHR30?usp=drive_link')})
 
 
-frame.spinner.on()
-Controllers.Info().openPage()
-
-
-Db.init().then(() => {
-  app.currentYear = ModelFactory.create('Events').getDefaultYear()
-  frame.spinner.off()
-})
+ControllerFactory.create('Info').startApplication()
 
 </script>

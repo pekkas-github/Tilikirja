@@ -2,63 +2,74 @@
 
 class C_Events {
 
-  #events
-  #listView
-  #detailsView
-  #commentView
+  constructor (eventsModel, yearsModel, exportsModel, listView, detailsView, commentView) {
 
-  constructor (deps) {
-    this.#events      = deps.events
-    this.#listView    = deps.listView
-    this.#detailsView = deps.detailsView
-    this.#commentView = deps.commentView
+    this.events      = eventsModel
+    this.years       = yearsModel
+    this.exports     = exportsModel
+    this.listView    = listView
+    this.detailsView = detailsView
+    this.commentView = commentView
   }
 
   openPage () {
 
-    const years        = this.#events.getYears()
-    const currentYear  = this.#events.getCurrentYear()
-    const eventsOfYear = this.#events.getEventsOfYear(currentYear)
+    const years        = this.years.getYears()
+    const currentYear  = this.years.getCurrentYear()
+    const eventsOfYear = this.events.getEventsOfYear(currentYear)
 
-    this.#listView.render(this, eventsOfYear, years, currentYear)
+    this.listView.render(this, eventsOfYear, years, currentYear)
+  }
+
+  updateContent () {
+
+    const currentYear  = this.years.getCurrentYear()
+    const eventsOfYear = this.events.getEventsOfYear(currentYear)
+
+    this.listView.setContent(eventsOfYear, this)
   }
 
   onAddNewEvent () {
 
-    const event      = this.#events.getNewEvent()
-    const accounts   = this.#events.getAccounts()
-    const years      = this.#events.getYears()
+    const event       = this.events.getNewEvent()
+    const accounts    = this.events.getAccounts()
+    const years       = this.years.getYears()
+    const currentYear = this.years.getCurrentYear()
 
-    this.#detailsView.render(this, event, accounts, years)
+    event.fiscal_year = this.years.getDefaultYear()
+    this.detailsView.render(this, event, accounts, years)
   }
      
   onChangeYear (year) {
     
-    this.#events.setCurrentYear(year)
-    this.openPage()
+    this.years.setCurrentYear(year)
+    
+    this.updateContent()
   }
     
   async onExportEventsOnSheet (year) {
 
-    await this.#events.exportYearlyEvents(year)
+    frame.spinner.on()
+    await this.exports.printYearlyEventsSheet(year)
+    frame.spinner.off()
     alert(`Vuoden ${year} tapahtumat talletettu taulukkoon.`)
   }
 
   onModifyEvent (id) {
 
-    const event      = this.#events.getEvent(id)
-    const accounts   = this.#events.getAccounts()
-    const years      = this.#events.getYears()
+    const event      = this.events.getEvent(id)
+    const accounts   = this.events.getAccounts()
+    const years      = this.years.getYears()
 
-    this.#detailsView.render(this, event, accounts, years)
+    this.detailsView.render(this, event, accounts, years)
   }
 
   onOpenComment (id) {
 
-    const event = this.#events.getEvent(id)
+    const event = this.events.getEvent(id)
     if (event.comment === '') { return }
 
-    this.#commentView.render(event)
+    this.commentView.render(event)
   }
 
   async onSaveEvent (event) {
@@ -66,22 +77,22 @@ class C_Events {
     if (event.id === 0) {
       //insert
       frame.spinner.on()
-      this.#events.addEvent(event).then(() => {
+      this.events.addEvent(event).then(() => {
+        this.updateContent()
         frame.spinner.off()
-        this.openPage()
       })
     } 
     else {
       //update
-      this.#events.updateEvent(event)
-      this.openPage()
+      this.events.updateEvent(event)
+      this.updateContent()
     }
   }
 
   onToggleEventStatus (id) {
 
-    this.#events.toggleEventStatus(id)
-    this.openPage()
+    this.events.toggleEventStatus(id)
+    this.updateContent()
   }
 }
 

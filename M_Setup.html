@@ -1,0 +1,15 @@
+<script>
+class M_Setup {
+
+  constructor (database) {
+
+    this.db = database
+  }
+
+  async initialize () {
+
+    await this.db.init()
+    app.currentYear = this.db.getRecords('years').where('current', 'x')[0].year 
+  }
+}
+</script>

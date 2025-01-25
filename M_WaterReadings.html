@@ -1,0 +1,52 @@
+<script>
+  
+class M_WaterReadings {
+
+  constructor (database) {
+
+    this.db = database
+  }
+
+  async addReading (reading) {
+
+    const updatedReading = await this.db.insertRecord('water', reading)
+
+    return updatedReading
+  }
+
+  getNewReading () {
+
+    return this.db.getNewRecord('water')
+  }
+  
+  getQuarterConsumptionA (reading) {
+
+    /* Hae uutta lukemaa edeltävä lukematietue */
+
+    const readings = this.db.getRecords('water')
+    const last     = readings[readings.length - 1]
+
+    /* A:n kulutus lasketaan vähentämällä talon kulutuksesta B:n kulutus */
+
+    return (reading.master_reading - last.master_reading) - (reading.b_reading - last.b_reading)
+  }
+
+  getReadings () {
+
+    /* Laske kunkin lukemajakson kulutus ja lisää osaksi palautettavaa listaa */
+    
+    const readings = this.db.getRecords('water').desc('id')
+
+    for (let i = 0; i < readings.length - 1; i++) {
+      const rdng = readings[i]
+      const prev = readings[i+1]
+      const dTot = rdng.master_reading - prev.master_reading
+
+      rdng.totDelta = (dTot < 0) ? rdng.master_reading : dTot
+      rdng.aDelta   = rdng.a_reading - prev.a_reading
+      rdng.bDelta   = rdng.b_reading - prev.b_reading
+    }
+    return readings
+  }
+}
+</script>

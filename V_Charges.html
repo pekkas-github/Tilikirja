@@ -2,37 +2,26 @@
 
 class V_Charges {
 
-  #controller
-  #eventsToBeCharged
-  #period
-
-  render (controller, eventsToBeCharged, period) {
-
-    this.#controller        = controller
-    this.#eventsToBeCharged = eventsToBeCharged
-    this.#period            = period
-
-    this.#setControls()
-    frame.setContent(this.#getHtml(eventsToBeCharged, app.periods[period]))
-  }
-
-  renderAll (chargeHistory) {
-    const content = [this.#getHtml(this.#eventsToBeCharged, app.periods[this.#period])]
-    content.push(this.#getPreviousChargesHtml(chargeHistory))
-
-    frame.setContent(content)
-  }
-
-  #setControls () {
-
-    const self = this
-    frame.clearControls()
+  constructor () {
     
-    <? // Admin-käyttäjälle näytettävät kontrollit
-    if (app.profile === 'admin') { ?>
-      frame.addControlInput(
-        'date',
-        function() {
+    this.periods = ['tammi - maaliskuu', 'huhti - kesäkuu', 'heinä - syyskuu', 'loka - joulukuu']
+  }
+
+  render (controller, eventsToBeCharged, period, chargeHistory) {
+
+    this.setFrameControls(controller)
+    this.setContent(eventsToBeCharged, period, chargeHistory)
+  }
+
+  setFrameControls (controller) {
+
+    frame.clearControls()
+
+    /* Kontrollit näytetään vain admin-käyttäjälle. if-lause suoritetaan serverillä */
+
+    <? if (app.profile === 'admin') { ?>
+    
+      frame.addControlInput('date', function() {
           frame.date = $(this).val()
         })
 
@@ -41,21 +30,28 @@ class V_Charges {
           alert('Tarkista päiväys')
           return
         }
-        self.#controller.onAckCharges(frame.date)
+        controller.onAckCharges(frame.date)
       })
 
       frame.addControlButton('Tulosta', function () {
-        self.#controller.onPrintChargingSheet()
+        controller.onPrintChargingSheet()
       })
     <? } ?>
-
-    // Kaikille näkyvät kontrollit
-    frame.addControlText('Aikaisemmat veloitukset', function() {
-      self.#controller.onShowPreviousCharges()
-    })
   }
 
-  #getPreviousChargesHtml (chargeHistory) {
+  setContent (eventsToBeCharged, period, chargeHistory) {
+
+    const content = []
+    
+    content.push('<h3 style="padding: 0.5em;">Nykyinen jakso</h3>')
+    content.push(this.createChargeTable(eventsToBeCharged, this.periods[period]))
+    content.push('<h3 style="padding: 0.5em;">Aikaisemmat veloitukset</h3>')
+    content.push(this.createPreviousChargeTables(chargeHistory))
+
+    frame.setContent(content.join(''))
+  }
+
+  createPreviousChargeTables (chargeHistory) {
 
     let clearingDate = chargeHistory[0].cleared
     let grouppedEvents = []
@@ -68,7 +64,7 @@ class V_Charges {
         grouppedEvents.push(event)
       }
       else {
-        htmlPreviousCharges.push(this.#getHtml(grouppedEvents, clearingDate))
+        htmlPreviousCharges.push(this.createChargeTable(grouppedEvents, clearingDate))
         clearingDate = event.cleared
         grouppedEvents = []
         grouppedEvents.push(event)
@@ -78,15 +74,16 @@ class V_Charges {
     return htmlPreviousCharges.join('')
   }
 
-  #getHtml (events, clearingDate) {
+  /* Muodosta tapahtumien ja otsikon perusteella yhteenvetotaulukko */
 
-    // Yksittäisen veloitustaulukon muodostaminen
+  createChargeTable (events, heading) {
+
     const html = [`
-      <h3> ${clearingDate} </h3>
+      <p style="padding: 0.5em;"> ${heading} </p>
       <table id="tbl-charges">
     `]
     
-    const header = `
+    const headerRow = `
       <tr>
         <th style="width:75px;">Tosite</th>
         <th style="width:150px;">Päiväys</th>
@@ -96,7 +93,7 @@ class V_Charges {
         <th style="width:150px;">Tili</th>
       </tr>
     `
-    html.push(header)
+    html.push(headerRow)
 
     // Summien ja osuuksien laskenta
     let a_Total = 0

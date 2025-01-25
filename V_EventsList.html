@@ -3,36 +3,30 @@ class V_EventList {
 
   render (controller, events, years, currentYear) {
 
-    this.#setFrameControls(controller, years, currentYear)
-    this.#setContent(events)
-    this.#setEventHandlers(controller)
+    this.setFrameControls(controller, years, currentYear)
+    this.setContent(events, controller)
   }
 
-  #yearOptions(years) {   // Options for select drop-down
+  setFrameControls (controller, years, defaultYear) {
 
+    frame.clearControls()
+    let selectedYear = defaultYear
+
+    /* Valmistele vuosioptioiden lista select-kontrollia varten */
     const options = {}
     for (const one of years) {
       options[one.year] = one.year
     }
 
-    return options
-  }
-
-  #setFrameControls (controller, years, defaultYear) {
-
-    frame.clearControls()
-    let selectedYear = defaultYear
-
-    frame.addControlSelect(
-      this.#yearOptions(years),
-      function() {
+    frame.addControlSelect(options, function() {
         selectedYear = event.target.value
         controller.onChangeYear(parseInt(selectedYear)) },
       `${defaultYear}`
     )
 
-    <? // Admin-käyttäjälle näytettävät kontrollit
-    if (app.profile === 'admin') { ?>
+    /* Kontrollit näytetään vain admin-käyttäjälle. if-lause suoritetaan serverillä */
+
+    <? if (app.profile === 'admin') { ?>
       frame.addControlButton('Lisää...', function() {
         controller.onAddNewEvent()}
       )
@@ -43,7 +37,8 @@ class V_EventList {
     <? } ?>
   }
 
-  #setContent (events) {
+
+  setContent (events, controller) {
 
     const content = ['<table id="tbl-events">']
 
@@ -92,9 +87,8 @@ class V_EventList {
     content.push('</table')
 
     frame.setContent(content.join(''))
-  }
 
-  #setEventHandlers (controller) {
+    /* Event Handlers */  
 
     if (frame.params.profile === 'admin') {
       $('.charge-status').show()

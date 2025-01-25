@@ -1,0 +1,29 @@
+<script>
+
+class C_FiscalYearReports {
+
+  constructor (eventsModel, yearsModel, listView) {
+
+    this.events   = eventsModel
+    this.years    = yearsModel
+    this.listView = listView
+  }
+
+  openPage () {
+
+    const accounts    = this.events.getAccounts()
+    const years       = this.years.getYears()
+    const summaries   = this.events.getFiscalYearSummary()
+    
+    this.listView.render(this, summaries, accounts, years)
+  }
+
+  updateContent() {
+
+    const accounts    = this.events.getAccounts()
+    const summaries   = this.events.getFiscalYearSummary()
+
+    this.listView.setContent(summaries, accounts)
+  }
+}
+</script>

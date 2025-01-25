@@ -1,0 +1,72 @@
+<script>
+
+class V_FiscalYearReports {
+
+  render (controller, yearlySummaries, accounts, years) {
+ 
+    this.setFrameControls()
+    this.setContent(yearlySummaries, accounts)
+  }
+
+  setFrameControls () {
+    
+    frame.clearControls()
+  }
+
+  setContent (yearlySummaries, accounts) {
+
+    const content = []
+
+    /* Käy läpi jokaisen vuoden tiliyhteenveto */
+
+    for (const summary of yearlySummaries) {
+
+      content.push(`<h3>Tilivuosi ${summary.year}</h3>`)
+      content.push('<table class="tbl-reports">')
+    
+      const headerLine = `
+        <tr>
+          <th>Tili</th>
+          <th>Summa</th>
+          <th>A-osuus</th>
+          <th>B-osuus</th>
+        </tr>
+      `
+      content.push(headerLine)
+
+      /* Lisää kunkin tilin summa-arvot */
+
+      for (const account of accounts) {
+        
+        const id = account.id
+        if (summary.accounts[id]) {
+          const summaryLine = `
+            <tr id="${id}">
+              <td>${account.name}</td>
+              <td class="number"> ${summary.accounts[id].tot.toFixed(2)}</td>
+              <td class="number"> ${summary.accounts[id].a.toFixed(2)}</td>
+              <td class="number"> ${summary.accounts[id].b.toFixed(2)}</td>
+            </tr>
+          `
+          content.push(summaryLine)
+        }
+      }
+
+      /* Lisää yhteensä-rivi */
+      
+      const totalLine = `
+        <tr>
+          <th class="total"> Yhteensä </th>
+          <th class="total"> ${summary.totals.tot.toFixed(2) } </th>
+          <th class="total"> ${ summary.totals.a.toFixed(2) } </th>
+          <th class="total"> ${ summary.totals.b.toFixed(2) } </th>
+        </tr>
+      `
+      content.push(totalLine)
+      content.push('</table>')
+    }
+
+    frame.setContent(content.join(''))
+  }
+}
+</script>

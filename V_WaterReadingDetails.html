@@ -1,51 +1,25 @@
 <script>
 
-class V_ReadingDetails {
+class V_WaterReadingDetails {
 
-  #controller
+  render (controller, newReading, years, fiscalYear) {
 
-  render (controller, newReading, years, currentYear) {
-
-    this.#controller = controller
     frame.popup.setHeader('Uudet mittarilukemat')
-    this.#setControls(newReading)
-    this.#setContent(years, currentYear)
-  }
 
-  #setControls (newReading) {
+    /* Popup control buttons */
 
     const self = this
 
     frame.popup.clearButtons()
     frame.popup.addButton('Talleta', function() {
-      if (self.#readValues(newReading)) {
-        self.#controller.onSaveReading(newReading)
+      if (self.readAndCheckValues(newReading)) {
+        controller.onSaveReading(newReading)
         frame.popup.hide()
       }
     })
-  }
 
-  #getYearsSelect (years, currentYear) {
+    /* Popup content */
 
-    const select = ['<select class="cbo" id="cbo-year">']
-
-    while (years.hasNext) {
-      const year       = years.next()
-      const isSelected = (year.year === currentYear) ? 'selected' : ''
-      const optionLine = `<option ${isSelected}> ${year.year} </option>`
-      select.push(optionLine)
-    }
-    select.push('</select>')
-    return select.join('')
-  }
-
-  #setContent (years, currentYear) {
-    let options = ''
-    for (const year of years) {
-      const selected = (year.year === currentYear) ? 'selected' : ''
-      options += `<option ${selected}> ${year.year} </option>`
-    }  
-    
     frame.popup.setContent(`
       <table class="empty">
         <tr>
@@ -67,7 +41,7 @@ class V_ReadingDetails {
         <tr>
           <td class="label">Tilivuosi:</td>
           <td class="empty">
-              ${this.#getYearsSelect(years, currentYear)}
+              ${this.getYearsSelectElement(years, fiscalYear)}
           </td>
         </tr>
         <tr>
@@ -80,7 +54,24 @@ class V_ReadingDetails {
     frame.popup.show()
   }
 
-  #readValues (reading) {
+  /* Build select element */
+
+  getYearsSelectElement (years, fiscalYear) {
+
+    const select = ['<select class="cbo" id="cbo-year">']
+
+    while (years.hasNext) {
+      const year       = years.next()
+      const isSelected = (year.year === fiscalYear) ? 'selected' : ''
+      const optionLine = `<option ${isSelected}> ${year.year} </option>`
+      select.push(optionLine)
+    }
+
+    select.push('</select>')
+    return select.join('')
+  }
+
+  readAndCheckValues (reading) {
 
     try {
       reading.date = $('#txt-date').val()

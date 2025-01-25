@@ -1,0 +1,22 @@
+<script>
+
+class M_Exports {
+
+  constructor (database) {
+
+    this.db = database
+  }
+
+  async printChargingSheet () {
+
+    await Conn.request('model', 'updateChargingSheet')
+  }
+
+  async printYearlyEventsSheet (year) {
+
+    await Conn.request('model', 'printYearResumeOnSheet', year)
+  }
+
+
+}
+</script>

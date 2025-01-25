@@ -1,0 +1,50 @@
+<script>
+class M_WaterPrices {
+
+  constructor (database) {
+
+    this.db = database
+  }
+
+  async addNewWaterPrice (newPrice) {
+
+    await this.db.insertRecord('waterprice', newPrice)
+  }
+
+  getAllWaterPrices () {
+
+    return this.db.getRecords('waterprice').desc('date')
+  }
+
+  getCurrentWaterPrice () {
+
+    return this.db.getRecords('waterprice').where('current_value', 'x')[0]
+  }
+
+  getNewWaterPrice () {
+
+    return this.db.getNewRecord('waterprice')
+  }
+
+  getQuarterPriceA (consumptionA) {
+
+    const currentPrice  = this.getCurrentWaterPrice()
+    const waterPriceA   = currentPrice.water_price + currentPrice.waste_price
+    const basePriceA    = 3 * currentPrice.base_price / 2   // Kolmen kuukauden perusmaksu jaetaan tasan
+    const totalPriceA   = Math.floor(((consumptionA * waterPriceA + basePriceA)*100+0.5))/100
+
+    return totalPriceA
+  }
+
+  setCurrentWaterPrice (id) {
+
+    const oldPrice = this.db.getRecords('waterprice').where('current_value', 'x')[0]
+    const newPrice = this.db.getRecord('waterprice', id)
+    oldPrice.current_value = ''
+    newPrice.current_value = 'x'
+
+    this.db.updateRecord('waterprice', oldPrice)
+    this.db.updateRecord('waterprice', newPrice)
+  }
+}
+</script>
