@@ -2,36 +2,41 @@
 
 class C_Charges {
 
-  #events
-  #reports
-  #listView
+  constructor (eventsModel, exportsModel, listView) {
 
-  constructor (deps) {
-
-    this.#events   = deps.events
-    this.#reports  = deps.reports
-    this.#listView = deps.listView
+    this.events   = eventsModel
+    this.exports  = exportsModel
+    this.listView = listView
   }
 
   openPage () {
-    const eventsToBeCharged = this.#events.getEventsToBeCharged()
-    const currentPeriod     = this.#events.getCurrentPeriod()
-    this.#listView.render(this, eventsToBeCharged, currentPeriod)
+
+    const eventsToBeCharged = this.events.getEventsToBeCharged()
+    const chargeHistory     = this.events.getChargeHistory()
+    const currentPeriod     = this.events.getCurrentChargingPeriod()
+    this.listView.render(this, eventsToBeCharged, currentPeriod, chargeHistory)
+  }
+
+  updateContent () {
+
+    const eventsToBeCharged = this.events.getEventsToBeCharged()
+    const chargeHistory     = this.events.getChargeHistory()
+    const currentPeriod     = this.events.getCurrentChargingPeriod()
+
+    this.listView.setContent(eventsToBeCharged, currentPeriod, chargeHistory)
   }
 
   onAckCharges (date) {
-    this.#events.ackCharges(date)
-    this.openPage()
-  }
 
-  onShowPreviousCharges () {
-
-    const chargeHistory     = this.#events.getChargeHistory()
-    this.#listView.renderAll(chargeHistory)
+    this.events.ackCharges(date)
+    this.updateContent()    
   }
 
   async onPrintChargingSheet () {
-    await this.#reports.printChargingSheet()
+
+    frame.spinner.on()
+    await this.exports.printChargingSheet()
+    frame.spinner.off()
     alert('Veloitustaulukko on päivitetty.')
   }
 }

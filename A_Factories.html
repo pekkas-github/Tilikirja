@@ -5,9 +5,67 @@ class ControllerFactory {
   static create (controllerName) {
 
     switch (controllerName) {
-      case 'Settings':
-        return new C_Settings()
+
+      case 'Charges': {
+        const events    = ModelFactory.create('Events')
+        const exports   = ModelFactory.create('Exports')
+        const listView  = new V_Charges()
+
+        return new C_Charges(events, exports, listView)
         break
+      }
+
+      case 'Events': {
+        const events      = ModelFactory.create('Events')
+        const years       = ModelFactory.create('Years')
+        const exports     = ModelFactory.create('Exports')
+        const listView    = new V_EventList()
+        const detailsView = new V_EventDetails()
+        const commentView = new V_EventComment()
+
+        return new C_Events(events, years, exports, listView, detailsView, commentView)
+        break
+      }
+      
+      case 'Info': {
+        const setup    = ModelFactory.create('Setup')
+        const infoView = new V_Info()
+
+        return new C_Info(setup, infoView)
+        break
+      }
+      
+      case 'FiscalYearReports': {
+        const events   = ModelFactory.create('Events')
+        const years    = ModelFactory.create('Years')
+        const listView = new V_FiscalYearReports()
+
+        return new C_FiscalYearReports(events, years, listView)
+        break
+      }
+      
+      case 'WaterReadings': {
+        const events         = ModelFactory.create('Events')
+        const years          = ModelFactory.create('Years')
+        const readings       = ModelFactory.create('WaterReadings')
+        const prices         = ModelFactory.create('WaterPrices')
+        const listView       = new V_WaterReadingsList()
+        const detailsView    = new V_WaterReadingDetails()
+        const waterPriceView = new V_WaterPrice()
+
+        return new C_WaterReadings(events, years, readings, prices, listView, detailsView, waterPriceView)
+        break
+      }
+      
+      case 'Settings': {
+        const years          = ModelFactory.create('Years')
+        const water          = ModelFactory.create('WaterPrices')
+        const settingsView   = new V_Settings()
+        const waterPriceView = new V_WaterPriceDetails()
+
+        return new C_Settings(years, water, settingsView, waterPriceView)
+        break
+      }
 
       default:
         throw new Error(`ControllerFactory.create\nEi löydy kontrolleria ${controllerName}`)
@@ -18,19 +76,33 @@ class ControllerFactory {
 
 class ModelFactory {
 
+  static db = new ClientDBMS('Tilikirja')  // Etätietokannan nimi on 'Tilikirja'
+
   static create (modelName) {
 
     switch (modelName) {
       case 'Events':
-        return new M_Events()
-        berak
+        return new M_Events(this.db)
+        break
 
-      case 'Readings':
-        return new M_Readings()
-        berak
+      case 'WaterPrices':
+        return new M_WaterPrices(this.db)
+        break
 
-      case 'Reports':
-        return new M_Reports()
+      case 'WaterReadings':
+        return new M_WaterReadings(this.db)
+        break
+
+      case 'Exports':
+        return new M_Exports(this.db)
+        break
+
+      case 'Setup':
+        return new M_Setup(this.db)
+        break
+
+      case 'Years':
+        return new M_Years(this.db)
         break
 
       default:
@@ -39,22 +111,4 @@ class ModelFactory {
   }
 }
 
-class ViewFactory {
-
-  static create (viewName) {
-
-    switch (viewName) {
-      case 'Settings':
-        return new V_Settings()
-        break
-
-      case 'WaterPriceDetails':
-        return new V_WaterPriceDetails()
-        break
-
-      default:
-        throw new Error(`ViewFactory.create\nEi loydy näkymää ${viewName}`)
-    }
-  }
-}
 </script>

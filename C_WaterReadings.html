@@ -1,0 +1,53 @@
+<script>
+
+class C_WaterReadings {
+
+  constructor (eventsModel, yearsModel, readingsModel, pricesModel, listView, detailsView, waterPriceView) {
+
+    this.events            = eventsModel
+    this.years             = yearsModel
+    this.readings          = readingsModel
+    this.prices            = pricesModel
+    this.listView          = listView
+    this.detailsView       = detailsView
+    this.waterPriceView    = waterPriceView
+  }
+
+  openPage () {
+
+    const readings = this.readings.getReadings()
+    this.listView.render(this, readings)
+  }
+
+  onAddReading () {
+    
+    const newReading  = this.readings.getNewReading()
+    const years       = this.years.getYears()
+    const defaultYear = this.years.getDefaultYear()
+    
+    this.detailsView.render(this, newReading, years, defaultYear)
+  }
+
+  onOpenWaterPriceForm () {
+
+    this.waterPriceView.render(this.prices.getCurrentWaterPrice())
+  }
+
+  async onSaveReading (reading) {
+
+    frame.spinner.on()
+
+    const consumptionA = this.readings.getQuarterConsumptionA(reading)
+    const priceA       = this.prices.getQuarterPriceA(consumptionA)
+    const waterEvent   = this.events.getWaterEvent(reading, consumptionA, priceA)
+
+    await this.readings.addReading(reading)
+    await this.events.addEvent(waterEvent)
+
+    const readings     = this.readings.getReadings()
+    this.listView.setContent(readings)
+    
+    frame.spinner.off()    
+  }
+}
+</script>

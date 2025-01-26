@@ -1,24 +1,24 @@
 <script>
 class C_Settings {
 
-  constructor () {
+  constructor (yearsModel, waterModel, settingsView, waterPriceView) {
     
-    this.events         = ModelFactory.create('Events')
-    this.water          = ModelFactory.create('Readings')
-    this.settingsView   = ViewFactory.create('Settings')
-    this.waterPriceView = ViewFactory.create('WaterPriceDetails')
+    this.years          = yearsModel
+    this.water          = waterModel
+    this.settingsView   = settingsView
+    this.waterPriceView = waterPriceView
   }
 
   openPage () {
 
-    this.events.updateYearList(new Date().getFullYear())
+    this.years.updateYearList(new Date().getFullYear())
 
-    const yearList          = this.events.getYears()
-    const currentYear       = this.events.getCurrentYear()
+    const yearList          = this.years.getYears()
+    const defaultYear       = this.years.getDefaultYear()
     const waterPrices       = this.water.getAllWaterPrices()
     const currentWaterPrice = this.water.getCurrentWaterPrice()
 
-    this.settingsView.render(this, yearList, currentYear, waterPrices, currentWaterPrice)
+    this.settingsView.render(this, yearList, defaultYear, waterPrices, currentWaterPrice)
   }
 
   onAddNewWaterPrice () {
@@ -30,7 +30,7 @@ class C_Settings {
 
   onChangeDefaultYear (id) {
 
-    this.events.setDefaultYear(id)
+    this.years.setDefaultYear(id)
   }
 
   onChangeCurrentWaterPrice (id) {

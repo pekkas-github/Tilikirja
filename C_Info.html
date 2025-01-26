@@ -1,14 +1,23 @@
 <script>
 class C_Info {
 
-  #infoView
+  constructor (setupModel, infoView) {
 
-  constructor (deps) {
-    this.#infoView = deps.infoView
+    this.setup    = setupModel
+    this.infoView = infoView
+  }
+
+  async startApplication () {
+
+    this.infoView.render()
+    frame.spinner.on()
+    await this.setup.initialize()
+    frame.spinner.off()
   }
 
   openPage () {
-    this.#infoView.render()
+
+    this.infoView.render()
   }
 }
 </script>

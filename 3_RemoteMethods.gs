@@ -3,51 +3,37 @@ function getModel(Db) {
   const public = {}
   const db = Db
 
-  // Generoi tapahtumatietueelle id sekä tositenumero ja talleta events-tauluun.
-  // Palauta täydennetty tietue clientille.
-  public.addEvent = (event) => {
 
-    const eventsOfYear = getEventsByCalendarYear(event.date.substring(0,4))
+  /* Tositenumero poimitaan tietokannasta. Näin kahdelle tapatumalle ei voi
+     tulla samaa numeroa. */
 
-    // Järjestä vuoden toistenumerot laskevaan järjestykseen
-    eventsOfYear.sort((a, b) => {return b.number - a.number})
+  public.getEventNumber = (year) => {
 
-    // Vuoden tositenumero on 1 tai seuraava
-    if (eventsOfYear.length === 0) {
-      event.number = 1
-    }else{
-      event.number = eventsOfYear[0].number + 1
-    }
+    /* Hae annetun vuoden vuositietue */
+    const recYear = db.getRecords('years').where('year', year)[0]
 
-    event.id = db.getTable('events').insertRecord(event).id
-    return event
+    /* Poimi kyseisen vuodan seuraava tositenumero ja kasvatetaan sitä yhdellä */ 
+    const nextEventNro = recYear.nextEventNro
+    recYear.nextEventNro ++
+
+    /* Päivitä seuraava tositenumero tietokantaan */ 
+    db.updateRecord('years', recYear)
+
+    return nextEventNro
   }
 
-  public.getNewEventNumber = (year) => {
+  /* Kirjoita valitun vuoden tapahtumat ja tilikohtainen yhteenveto
+     Sheets-tauluun tulostamista varten. */
 
-    /* Hae valitun vuoden tapahtumat ja järjestä ne - suurin tositenumero ensin */
-
-    const eventsOfYear = public.getEventsByCalendarYear(year)
-
-    eventsOfYear.sort((a, b) => {return b.number - a.number})
-
-    /* Määritä seuraava tositenumero - alkaa juoksevasti aina uudestaan vuoden alusta */
-
-    if (eventsOfYear.length === 0) { return 1 }  // Vuoden ensimmäinen tapahtuma
-
-    return eventsOfYear[0].number + 1            // Seuraavat tapahtumat 
-  }
-
-  // Kirjoita valitun vuoden tapahtumat ja tilikohtainen yhteenveto
-  // Sheets-tauluun tulostamista varten.
   public.printYearResumeOnSheet = (year) => {
 
     printEvents(year)
     printSummary(year)
   }
 
-  // Kirjoita veloitettavat tapahtumat ja veloitettava summa
-  // Sheets-tauluun tulostamista varten
+  /* Kirjoita veloitettavat tapahtumat ja veloitettava summa
+     Sheets-tauluun tulostamista varten */
+     
   public.updateChargingSheet = () => {
 
     const events   = db.getRecords('events').where('cleared', '').where('charging', 'x')

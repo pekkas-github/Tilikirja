@@ -2,25 +2,30 @@
 
 class M_Events {
 
+  constructor (database) {
+
+    this.db = database
+  }
+
   async ackCharges (date) {
     
     /* Hae veloituksessa olevat - ei vielä kuitatut - tapahtumat */
     
-    const events = Db.getRecords('events').where('cleared', '').where('charging', 'x')
+    const events = this.db.getRecords('events').where('cleared', '').where('charging', 'x')
     
     /* Määritä ja talleta uusi veloitusjakso (0 - 3) veloitusnäkymää varten */
 
     const periodIndex = Math.floor(new Date().getMonth() / 3)
-    const period      = Db.getRecords('parameters').where('name', 'period')[0]
+    const period      = this.db.getRecords('parameters').where('name', 'period')[0]
     period.value      = periodIndex
-    Db.updateRecord('parameters', period)
+    this.db.updateRecord('parameters', period)
 
     /* Kuittaa veloituksessa olleet tapahtumat maksetuiksi */
 
     for (const event of events) {
       event.cleared = date
     }
-    await Db.updateRecords('events', events)
+    await this.db.updateRecords('events', events)
   }
 
 
@@ -28,24 +33,19 @@ class M_Events {
 
     /* Hae tapahtumalle tositenumero ja lisää se tietueelle */
 
-    const year = newEvent.date.substr(0,4)
-    newEvent.number = await Conn.request('model', 'getNewEventNumber', year)
+    const year = parseInt(newEvent.date.substr(0,4))
+    newEvent.number = await Conn.request('model', 'getEventNumber', year)
 
     /* Lisää tietue tietokantaan id */
 
-    await Db.insertRecord('events', newEvent)
+    await this.db.insertRecord('events', newEvent)
   }
 
-
-  async exportYearlyEvents (year) {
-
-    await Conn.request('model', 'printYearResumeOnSheet', year)
-  }
 
 
   getAccounts () {
 
-    return Db.getRecords('accounts')
+    return this.db.getRecords('accounts').asc('name')
   }
 
 
@@ -55,40 +55,26 @@ class M_Events {
   }
 
 
-  getCurrentPeriod () {
+  getCurrentChargingPeriod () {
     
-    const period = Db.getRecords('parameters').where('name', 'period')[0]
+    const period = this.db.getRecords('parameters').where('name', 'period')[0]
     return period.value
   }
 
 
-  getCurrentYear () {
-
-    /* CurrentYear on selvelluksessa tällä hetkellä valittuna oleva vuosi */
-
-    return app.currentYear
-  }
-
-  getDefaultYear () {
-
-    /* DefaultYear on vuosilistassa merkitty kuluva vuosi */
-
-    return Db.getRecords('years').where('current', 'x')[0].year
-  }
-
   getEvent (id) {
 
-    return Db.getRecord('events', id)
+    return this.db.getRecord('events', id)
   }
 
   getEvents () {
 
-    const events = Db.getRecords('events')
+    const events = this.db.getRecords('events')
 
     /* Lisää tilien nimet ennen palautusta */
 
     for (const event of events) {
-      event.account_name = Db.getRecord('accounts', event.account_id).name
+      event.account_name = this.db.getRecord('accounts', event.account_id).name
     }
     return events
   }
@@ -115,77 +101,134 @@ class M_Events {
     return events
   }
 
+  getFiscalYearSummary () {
+
+    const summary = []    // palautettavat yhteenveto-objektit
+    const years   = this.db.getRecords('years').desc('year')
+    let accounts  = {}    // tilikohtaiset summatiedot
+
+    /* Muodosta yhteenveto-objekti */
+
+    for (const year of years) {
+
+      /* Hae tapahtumat tilivuosittain */
+
+      const events  = this.getEvents().where('fiscal_year', year.year)
+      
+      if (events.length != 0) {     // Suorita vain, jos vuodelle on tapahtumia
+      
+        /* Lisää (tai aseta) tapahtumien arvot tililaskureihin */
+
+        for (const event of events) {
+          const id = event.account_id
+
+          if (accounts[id]) {
+            accounts[id].tot += event.total
+            accounts[id].a   += event.a_share
+            accounts[id].b   += event.total - event.a_share
+          } 
+          else {
+            accounts[id] = {tot:event.total, a:event.a_share, b:(event.total - event.a_share)}
+          }
+        }
+
+        /* Laske kokonaissummat ja lisää yhteenveto-objektiin ja nollaa laskurit */ 
+
+        const totals = {tot:0, a:0, b:0}
+        for (const key in accounts) {
+          totals.tot += accounts[key].tot
+          totals.a   += accounts[key].a
+          totals.b   += accounts[key].b
+        }
+
+        summary.push({year:year.year, totals:totals, accounts})
+
+        accounts = {}
+      }
+    }
+
+    return summary
+  }
+
+  
+  getFiscalYearSummary_delete (year) {
+    
+    const summaryByAccount = {} 
+    const eventsByYear = this.db.getRecords('events').where('fiscal_year', year)
+
+    /* Summataan tilivuoden tapahtumien summat (tot, a, b) tileittäin.
+       Ensin asetetaan tilin ensimmäiset arvot ja sitten summataan siihen loput. */
+
+    eventsByYear.forEach( (event) => {
+      if (summaryByAccount[event.account_id]) {
+        summaryByAccount[event.account_id].tot += event.total
+        summaryByAccount[event.account_id].a += event.a_share
+        summaryByAccount[event.account_id].b += event.total - event.a_share
+      }else{
+        summaryByAccount[event.account_id] = {tot:event.total, a:event.a_share, b:(event.total - event.a_share)}
+      }
+    })
+
+    /* Lasketaan kunkin osapuolen kokonaisveloitukset kaikkien tilien osalta */
+
+    const sums = {tot:0, a:0, b:0}
+    for (const key in summaryByAccount) {
+      sums.tot += summaryByAccount[key].tot
+      sums.a += summaryByAccount[key].a
+      sums.b += summaryByAccount[key].b
+    }
+
+    /* Lisätään osapuolien veloitukset taulukkomuuttujaan viimeiseksi */
+
+    summaryByAccount.Totals = sums
+
+    return summaryByAccount
+  }
+
   getNewEvent () {
 
-    const event = Db.getNewRecord('events')
+    const event = this.db.getNewRecord('events')
     event.id          = 0
     event.total       = 0
     event.a_share     = 0
     event.account_id  = 1
-    event.fiscal_year = this.getCurrentYear()
+    event.fiscal_year = ''
 
     return event
   }
 
+  /* Muodosta ja palauta A-asunnon vesimaksutapahtuma */
 
-  getYears () {
+  getWaterEvent (reading, consumptionA, priceA) {
 
-    return Db.getRecords('years').desc('year')
+    const waterEvent = this.getNewEvent()
+
+    waterEvent.date        = reading.date
+    waterEvent.event       = `Vesimaksu (lukeman mukaan ${consumptionA} m3)`
+    waterEvent.total       = 0
+    waterEvent.a_share     = priceA
+    waterEvent.account_id  = 6
+    waterEvent.fiscal_year = reading.fiscal_year
+
+    return waterEvent
   }
-  
-  setCurrentYear (year) {
-
-    /* CurrentYear on sovelluksessa valittuna oleva vuosi */
-    app.currentYear = year
-  }
 
 
-  setDefaultYear (id) {
-
-    /* Vaihda uusi oletusvuosi (id:n perusteella)*/
-
-    const oldDefault = Db.getRecords('years').where('current', 'x')[0]
-    const newDefault = Db.getRecord('years', id)
-
-    oldDefault.current = ''
-    newDefault.current = 'x'
-
-    Db.updateRecord('years', oldDefault)
-    Db.updateRecord('years', newDefault)
-  }
 
 
   async toggleEventStatus (id) {
 
-    const event = Db.getRecord('events', id)
+    const event = this.db.getRecord('events', id)
 
     if (event.cleared === '') {
       event.charging = (event.charging === 'x') ? '' : 'x'
-      await Db.updateRecord('events', event)
+      await this.db.updateRecord('events', event)
     }
   }
   
   async updateEvent (event) {
 
-    await Db.updateRecord('events', event)
-  }
-
-
-  updateYearList (thisYear) {
-
-    /* Lisää vuosiluetteloon uusi vuosi, jos on tarpeen */
-
-    const lastListYear = Db.getRecords('years').moveEnd().previous().year
-
-    /* Tarkista lisäystarve */
-
-    if (thisYear >= lastListYear) {
-      const newYearRecord = Db.getNewRecord('years')
-      newYearRecord.year = lastListYear + 1
-
-      Db.insertRecord('years', newYearRecord)
-    }
-
+    await this.db.updateRecord('events', event)
   }
 }
 

@@ -2,32 +2,30 @@
 
 class V_EventDetails {
 
-  #controller
-
   render (controller, event, accounts, years) {
 
-    this.#controller = controller
+    this.controller = controller
 
     frame.popup.setHeader('Tapahtuman tiedot')
-    this.#setControlButtons(event)
-    this.#setContent(event, accounts, years)
-    this.#setEventListeners()
+    this.setControlButtons(event)
+    this.setContent(event, accounts, years)
+    this.setEventListeners()
   }
 
-  #setControlButtons (event) {
+  setControlButtons (event) {
 
     const self = this
     
     frame.popup.clearButtons()
     frame.popup.addButton('Talleta', function() {
-      if (self.#isValid(event)) {
-        self.#controller.onSaveEvent(event)
+      if (self.isValid(event)) {
+        self.controller.onSaveEvent(event)
         frame.popup.hide()
       }
     })
   }
 
-  #getAccountSelect (event, accounts) {
+  getAccountSelect (event, accounts) {
 
     const select = ['<select class="cbo" id="cbo-account">']
 
@@ -41,7 +39,7 @@ class V_EventDetails {
     return select.join('')
   }
 
-  #getFiscalYearSelect (event, years) {
+  getFiscalYearSelect (event, years) {
 
     const select = ['<select class="cbo" id="cbo-year">']
 
@@ -55,7 +53,7 @@ class V_EventDetails {
     return select.join('')
   }
 
-  #setContent (event, accounts, years) {
+  setContent (event, accounts, years) {
 
     const dateDisabled = (event.id === 0) ? '' : 'disabled'    // enable date only if new record
 
@@ -91,13 +89,13 @@ class V_EventDetails {
         <tr>
           <td class="label">Tili:</td>
           <td class="empty">
-            ${this.#getAccountSelect(event, accounts)}
+            ${this.getAccountSelect(event, accounts)}
           </td>
         </tr>
         <tr>
           <td class="label">Tilivuosi:</td>
           <td class="empty">
-            ${this.#getFiscalYearSelect(event, years)}
+            ${this.getFiscalYearSelect(event, years)}
           </td>
         </tr>
         <tr>
@@ -114,7 +112,7 @@ class V_EventDetails {
     frame.popup.show()
   }
 
-  #setEventListeners () {
+  setEventListeners () {
 
     $('#cbo-percent').on('change', function() {
       const total = $('#txt-total').val()
@@ -128,7 +126,7 @@ class V_EventDetails {
 
 
   
-  #isValid (event) {
+  isValid (event) {
 
     // Read input and update event object
     event.number = parseInt($('#txt-nbr').val())
