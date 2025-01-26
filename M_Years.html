@@ -18,7 +18,7 @@ class M_Years {
 
     /* DefaultYear on vuosilistassa merkitty kuluva vuosi */
 
-    return this.db.getRecords('years').where('current', 'x')[0].year
+    return this.db.getRecords('parameters').where('name', 'defaultYear')[0].value
   }
 
   getYears () {
@@ -33,18 +33,14 @@ class M_Years {
   }
 
 
-  setDefaultYear (id) {
+  setDefaultYear (year) {
 
-    /* Vaihda uusi oletusvuosi (id:n perusteella)*/
+    /* Vaihda uusi oletusvuosi */
 
-    const oldDefault = this.db.getRecords('years').where('current', 'x')[0]
-    const newDefault = this.db.getRecord('years', id)
+    const defaultYear = this.db.getRecords('parameters').where('name', 'defaultYear')[0]
 
-    oldDefault.current = ''
-    newDefault.current = 'x'
-
-    this.db.updateRecord('years', oldDefault)
-    this.db.updateRecord('years', newDefault)
+    defaultYear.value = year
+    this.db.updateRecord('parameters', defaultYear)
   }
 
   updateYearList (thisYear) {

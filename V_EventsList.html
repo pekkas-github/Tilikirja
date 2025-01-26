@@ -7,21 +7,23 @@ class V_EventList {
     this.setContent(events, controller)
   }
 
-  setFrameControls (controller, years, defaultYear) {
+  setFrameControls (controller, years, currentYear) {
 
     frame.clearControls()
-    let selectedYear = defaultYear
+    let selectedYear = currentYear
 
-    /* Valmistele vuosioptioiden lista select-kontrollia varten */
+    /* Muodosta vuosioptioiden lista select-kontrollia varten */
+    
     const options = {}
-    for (const one of years) {
-      options[one.year] = one.year
+    
+    for (const item of years) {
+      options[item.year] = item.year
     }
 
     frame.addControlSelect(options, function() {
         selectedYear = event.target.value
         controller.onChangeYear(parseInt(selectedYear)) },
-      `${defaultYear}`
+      `${currentYear}`
     )
 
     /* Kontrollit näytetään vain admin-käyttäjälle. if-lause suoritetaan serverillä */

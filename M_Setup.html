@@ -9,7 +9,7 @@ class M_Setup {
   async initialize () {
 
     await this.db.init()
-    app.currentYear = this.db.getRecords('years').where('current', 'x')[0].year 
+    app.currentYear = this.db.getRecords('parameters').where('name', 'defaultYear')[0].value 
   }
 }
 </script>

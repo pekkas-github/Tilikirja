@@ -14,11 +14,11 @@ class C_Settings {
     this.years.updateYearList(new Date().getFullYear())
 
     const yearList          = this.years.getYears()
-    const currentYear       = this.years.getCurrentYear()
+    const defaultYear       = this.years.getDefaultYear()
     const waterPrices       = this.water.getAllWaterPrices()
     const currentWaterPrice = this.water.getCurrentWaterPrice()
 
-    this.settingsView.render(this, yearList, currentYear, waterPrices, currentWaterPrice)
+    this.settingsView.render(this, yearList, defaultYear, waterPrices, currentWaterPrice)
   }
 
   onAddNewWaterPrice () {

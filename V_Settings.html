@@ -1,7 +1,7 @@
 <script>
 class V_Settings {
 
-  render (controller, yearList, currentYear, waterPrices, currentWaterPrice) {
+  render (controller, yearList, defaultYear, waterPrices, currentWaterPrice) {
 
     /* Poista aikaisemmat kontrollit */
 
@@ -14,9 +14,9 @@ class V_Settings {
     for (const row of yearList) {
 
       // Näytä nykyinen oletusvuosi
-      const selected = (row.current === 'x') ? 'selected' :  ''
+      const selected = (row.year === defaultYear) ? 'selected' :  ''
       yearDropDown.push(`
-        <option value="${row.id}" ${selected}>${row.year}</option>
+        <option value="${row.year}" ${selected}>${row.year}</option>
       `)
     }
     
