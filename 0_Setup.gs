@@ -9,7 +9,7 @@ app.test             = true // Test mode = true
 
 if (app.test) {
   app.dbSheetId      = '1gs-h1ZPX2VWCZ4za2r8IGHVNu9WBRjnKihBfIvqCxZE'
-  app.version        = `** DB = ${app.dbName} **`
+  app.version        = `** DB = Test **`
 }
 
 function include(filename) {
