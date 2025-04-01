@@ -1,15 +1,15 @@
 const app = {}
 
 app.version          = 'DB = Live'
-app.dbName           = 'Tilikirja'
-app.logName          = 'Tilikirja_log'
+app.dbSheetId        = '1QeewQlfAR6WmuuonRqYJwSLY6vgfUtaiQbQNfaj9r2U'
+app.logSheetId       = '1uFu_ta5Q9TT3k75tttBc5HcFl_vEBhCn_Xd0TCehcQw'
 app.printingSheet    = '1lVYY_7hIzs6LV3cliD9CzUudKmHgoLcKtGb_JD8sacA'
 app.printEventsSheet = '1ny7uTACEAderhT7oza956uhsHIsgd3nNoFH8FuhMIDk'
-app.test             = true
+app.test             = true // Test mode = true
 
 if (app.test) {
-  app.dbName         = 'Tilikirja_testing'
-  app.version        = `** DB = ${app.dbName} **`
+  app.dbSheetId      = '1gs-h1ZPX2VWCZ4za2r8IGHVNu9WBRjnKihBfIvqCxZE'
+  app.version        = `** DB = Test **`
 }
 
 function include(filename) {

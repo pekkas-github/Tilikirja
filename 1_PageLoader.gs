@@ -33,7 +33,7 @@ function logUser (profile) {
   
   /* Talleta käyttäjän profiili ja aikaleima lokiin*/
 
-  const logDb   = ServerDBMS.openDatabase(app.logName)
+  const logDb   = ServerDBMS.openDatabase(app.logSheetId)
 
   const logEvent   = logDb.newRecord('UserLog')
   logEvent.date    = new Date().toLocaleDateString()

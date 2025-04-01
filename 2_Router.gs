@@ -1,5 +1,5 @@
 // API name definitions
-app.Tilikirja = ServerDBMS.openDatabase(app.dbName)
+app.Tilikirja = ServerDBMS.openDatabase(app.dbSheetId)
 app.model     = getModel(app.Tilikirja)
 
 

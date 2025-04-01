@@ -14,16 +14,17 @@ class V_EventList {
 
     /* Muodosta vuosioptioiden lista select-kontrollia varten */
     
-    const options = {}
-    
+    const options = []
     for (const item of years) {
-      options[item.year] = item.year
+      options.push([item.year, item.year])
     }
 
-    frame.addControlSelect(options, function() {
+    frame.addControlSelect(
+      options, 
+      function() {
         selectedYear = event.target.value
         controller.onChangeYear(parseInt(selectedYear)) },
-      `${currentYear}`
+      currentYear
     )
 
     /* Kontrollit näytetään vain admin-käyttäjälle. if-lause suoritetaan serverillä */
