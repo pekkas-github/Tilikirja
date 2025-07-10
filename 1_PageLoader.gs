@@ -13,7 +13,7 @@ function doGet (e) {
   args.myScripts   = include('app_Scripts')
   args.myStyles    = include('app_Styles')
   args.callParams  = e.parameter
-  args.color       = (app.test) ? 'red' : 'blue'
+  args.color       = app.color
 
   const html = FramePages.getFrame(args)
 
