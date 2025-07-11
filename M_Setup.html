@@ -8,7 +8,7 @@ class M_Setup {
 
   async initialize () {
 
-    await this.db.init()
+    await this.db.initialLoad()
     app.currentYear = this.db.getRecords('parameters').where('name', 'defaultYear')[0].value 
   }
 }
