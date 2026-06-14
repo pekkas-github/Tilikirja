@@ -1,0 +1,50 @@
+<script>
+class V_RepairsList {
+
+  render (controller, repairs) {
+
+    frame.clearControls()
+
+    <? if (app.profile === 'admin') { ?>
+    frame.addControlButton('Lisää', function() {
+      controller.onAddItemClicked()
+    })
+    <? } ?>
+
+    const content = []
+
+    content.push(`
+    <table class="tbl-repairs">
+      <tr>
+        <th>Kohde</th>
+        <th>Tuleva</th>
+        <th>Edellinen</th>
+        <th>Lisätieto</th>
+      </tr>
+    `)
+
+    for (const item of repairs) {
+      content.push(`
+      <tr id="${item.id}">
+        <td>${item.target}</td>
+        <td>${item.next}</td>
+        <td>${item.previous}</td>
+        <td>${item.note}</td>
+      </tr>
+      `)
+    }
+
+    content.push('</table>')
+
+    frame.setContent(content.join(''))
+
+    <? if (app.profile === 'admin') { ?>
+    $('.tbl-repairs').on('dblclick', 'td', function() {
+      const id = +$(this).parent().attr('id')
+      controller.onEditItemClicked(id)
+    })
+    <? } ?>
+  }
+}
+
+</script>

@@ -1,0 +1,46 @@
+<script>
+class V_RepairDetails {
+
+  render (controller, item) {
+
+    frame.popup.clearButtons()
+
+    frame.popup.setHeader('Remontin tiedot')
+
+    frame.popup.setContent(`
+      <table>
+        <tr>
+          <td>Kohde</td>
+          <td><input type="text" id="txt-target" value="${item.target}">
+        </tr>
+        <tr>
+          <td>Seuraava</td>
+          <td><input type="text" id="txt-next" value="${item.next}">
+        </tr>
+        <tr>
+          <td>Edellinen</td>
+          <td><input type="text" id="txt-previous" value="${item.previous}">
+        </tr>
+        <tr>
+          <td>Lisätieto</td>
+          <td><input type="text" id="txt-note" value="${item.note}">
+        </tr>
+      </table>
+    `)
+
+    frame.popup.addButton('Talleta', function() {
+      
+      item.target   = $('#txt-target').val()
+      item.next     = $('#txt-next').val()
+      item.previous = $('#txt-previous').val()
+      item.note     = $('#txt-note').val()
+
+      frame.popup.hide()
+      controller.onSave(item)
+    })
+
+    frame.popup.show()
+  }
+}
+
+</script>

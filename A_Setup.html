@@ -9,6 +9,7 @@ frame.addNavBarItem('Tapahtumat', () => {ControllerFactory.create('Events').open
 frame.addNavBarItem('Veden kulutus', () => {ControllerFactory.create('WaterReadings').openPage()})
 frame.addNavBarItem('Vuosiyhteenvedot', () => {ControllerFactory.create('FiscalYearReports').openPage()})
 frame.addNavBarItem('Neljännesveloitus', () => {ControllerFactory.create('Charges').openPage()})
+frame.addNavBarItem('Remontit', () => {ControllerFactory.create('Repairs').openPage()})
 <? if (app.profile === 'admin') { ?>
   frame.addNavBarItem('Asetukset', () => {ControllerFactory.create('Settings').openPage()}) 
 <? } ?>

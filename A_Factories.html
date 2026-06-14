@@ -56,6 +56,14 @@ class ControllerFactory {
         return new C_WaterReadings(events, years, readings, prices, listView, detailsView, waterPriceView)
         break
       }
+
+      case 'Repairs': {
+        const repairs     = ModelFactory.create('Repairs')
+        const listView    = new V_RepairsList()
+        const detailsView = new V_RepairDetails()
+
+        return new C_Repairs(repairs, listView, detailsView)
+      }
       
       case 'Settings': {
         const years          = ModelFactory.create('Years')
@@ -95,6 +103,10 @@ class ModelFactory {
 
       case 'Exports':
         return new M_Exports(this.db)
+        break
+
+      case 'Repairs':
+        return new M_Repairs(this.db)
         break
 
       case 'Setup':
