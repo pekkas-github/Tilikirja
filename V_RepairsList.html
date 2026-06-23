@@ -3,10 +3,10 @@ class V_RepairsList {
 
   render (controller, repairs) {
 
-    frame.clearControls()
+    frame.controls.clear()
 
     <? if (app.profile === 'admin') { ?>
-    frame.addControlButton('Lisää', function() {
+    frame.controls.addButton('Lisää', function() {
       controller.onAddItemClicked()
     })
     <? } ?>
@@ -36,7 +36,7 @@ class V_RepairsList {
 
     content.push('</table>')
 
-    frame.setContent(content.join(''))
+    frame.content.setHtml(content.join(''))
 
     <? if (app.profile === 'admin') { ?>
     $('.tbl-repairs').on('dblclick', 'td', function() {

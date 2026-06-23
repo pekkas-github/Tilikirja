@@ -2,14 +2,11 @@
 
 class C_Events {
 
-  constructor (eventsModel, yearsModel, exportsModel, listView, detailsView, commentView) {
+  constructor (eventsModel, yearsModel, exportsModel) {
 
     this.events      = eventsModel
     this.years       = yearsModel
     this.exports     = exportsModel
-    this.listView    = listView
-    this.detailsView = detailsView
-    this.commentView = commentView
   }
 
   openPage () {
@@ -18,7 +15,7 @@ class C_Events {
     const currentYear  = this.years.getCurrentYear()
     const eventsOfYear = this.events.getEventsOfYear(currentYear)
 
-    this.listView.render(this, eventsOfYear, years, currentYear)
+    view.eventList().render(this, eventsOfYear, years, currentYear)
   }
 
   updateContent () {
@@ -26,7 +23,7 @@ class C_Events {
     const currentYear  = this.years.getCurrentYear()
     const eventsOfYear = this.events.getEventsOfYear(currentYear)
 
-    this.listView.setContent(eventsOfYear, this)
+    view.eventList().update(this, eventsOfYear)
   }
 
   onAddNewEvent () {
@@ -37,7 +34,7 @@ class C_Events {
     const currentYear = this.years.getCurrentYear()
 
     event.fiscal_year = this.years.getDefaultYear()
-    this.detailsView.render(this, event, accounts, years)
+    view.eventDetails().render(this, event, accounts, years)
   }
      
   onChangeYear (year) {
@@ -52,7 +49,7 @@ class C_Events {
     frame.spinner.on()
     await this.exports.printYearlyEventsSheet(year)
     frame.spinner.off()
-    alert(`Vuoden ${year} tapahtumat talletettu taulukkoon.`)
+    frame.alerts.inform(`Vuoden ${year} tapahtumat talletettu taulukkoon.`, () => {})
   }
 
   onModifyEvent (id) {
@@ -61,7 +58,7 @@ class C_Events {
     const accounts   = this.events.getAccounts()
     const years      = this.years.getYears()
 
-    this.detailsView.render(this, event, accounts, years)
+    view.eventDetails().render(this, event, accounts, years)
   }
 
   onOpenComment (id) {
@@ -69,7 +66,7 @@ class C_Events {
     const event = this.events.getEvent(id)
     if (event.comment === '') { return }
 
-    this.commentView.render(event)
+    view.eventComment().render(event)
   }
 
   async onSaveEvent (event) {

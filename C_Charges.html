@@ -2,11 +2,10 @@
 
 class C_Charges {
 
-  constructor (eventsModel, exportsModel, listView) {
+  constructor (eventsModel, exportsModel) {
 
     this.events   = eventsModel
     this.exports  = exportsModel
-    this.listView = listView
   }
 
   openPage () {
@@ -14,7 +13,8 @@ class C_Charges {
     const eventsToBeCharged = this.events.getEventsToBeCharged()
     const chargeHistory     = this.events.getChargeHistory()
     const currentPeriod     = this.events.getCurrentChargingPeriod()
-    this.listView.render(this, eventsToBeCharged, currentPeriod, chargeHistory)
+
+    view.charges().render(this, eventsToBeCharged, currentPeriod, chargeHistory)
   }
 
   updateContent () {
@@ -23,7 +23,7 @@ class C_Charges {
     const chargeHistory     = this.events.getChargeHistory()
     const currentPeriod     = this.events.getCurrentChargingPeriod()
 
-    this.listView.setContent(eventsToBeCharged, currentPeriod, chargeHistory)
+    view.charges().update(eventsToBeCharged, currentPeriod, chargeHistory)
   }
 
   onAckCharges (date) {
@@ -37,7 +37,7 @@ class C_Charges {
     frame.spinner.on()
     await this.exports.printChargingSheet()
     frame.spinner.off()
-    alert('Veloitustaulukko on päivitetty.')
+    frame.alerts.inform('Veloitustaulukko on päivitetty.', () => {})
   }
 }
 </script> 

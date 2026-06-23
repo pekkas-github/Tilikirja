@@ -13,20 +13,20 @@ class C_Repairs {
 
     const repairs = this.model.getRepairs()
 
-    this.listView.render(this, repairs)
+    view.repairsList().render(this, repairs)
   }
 
   onAddItemClicked () {
     
     const newItem = this.model.getRepairItem()
-    this.detailsView.render(this, newItem)
+    view.repairDetails().render(this, newItem)
   }
 
 
   onEditItemClicked (itemId) {
     
     const item = this.model.getRepairItem(itemId)
-    this.detailsView.render(this, item)
+    view.repairDetails().render(this, item)
   }
 
   async onSave (item) {

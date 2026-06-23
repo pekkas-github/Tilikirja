@@ -2,11 +2,6 @@
 
 class M_Exports {
 
-  constructor (database) {
-
-    this.db = database
-  }
-
   async printChargingSheet () {
 
     await Conn.request('model', 'updateChargingSheet')
@@ -16,7 +11,5 @@ class M_Exports {
 
     await Conn.request('model', 'printYearResumeOnSheet', year)
   }
-
-
 }
 </script>

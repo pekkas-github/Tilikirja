@@ -1,12 +1,6 @@
 <script>
 class M_Years {
 
-  constructor (database) {
-
-    this.db = database
-    this.currentYear
-  }
-
   getCurrentYear () {
 
     /* CurrentYear on sovelluksessa tällä hetkellä valittuna oleva vuosi */
@@ -18,12 +12,12 @@ class M_Years {
 
     /* DefaultYear on vuosilistassa merkitty kuluva vuosi */
 
-    return this.db.getRecords('parameters').where('name', 'defaultYear')[0].value
+    return db.getRecords('parameters').where('name', 'defaultYear')[0].value
   }
 
   getYears () {
 
-    return this.db.getRecords('years').desc('year')
+    return db.getRecords('years').desc('year')
   }
   
   setCurrentYear (year) {
@@ -37,26 +31,26 @@ class M_Years {
 
     /* Vaihda uusi oletusvuosi */
 
-    const defaultYear = this.db.getRecords('parameters').where('name', 'defaultYear')[0]
+    const defaultYear = db.getRecords('parameters').where('name', 'defaultYear')[0]
 
     defaultYear.value = year
-    this.db.updateRecord('parameters', defaultYear)
+    db.updateRecord('parameters', defaultYear)
   }
 
   updateYearList (thisYear) {
 
     /* Lisää vuosiluetteloon uusi vuosi, jos on tarpeen */
 
-    const lastListYear = this.db.getRecords('years').moveEnd().previous().year
+    const lastListYear = db.getRecords('years').moveEnd().previous().year
 
     /* Tarkista lisäystarve */
 
     if (thisYear >= lastListYear) {
-      const newYearRecord        = this.db.getNewRecord('years')
+      const newYearRecord        = db.getNewRecord('years')
       newYearRecord.year         = lastListYear + 1
       newYearRecord.nextEventNro = 1
 
-      this.db.insertRecord('years', newYearRecord)
+      db.insertRecord('years', newYearRecord)
     }
   }
 }

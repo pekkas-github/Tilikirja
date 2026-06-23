@@ -1,6 +1,6 @@
 const app = {}
 
-app.channel          = 'LIVE'
+app.channel          = 'DEV'
 
 app.logSheetId       = '1uFu_ta5Q9TT3k75tttBc5HcFl_vEBhCn_Xd0TCehcQw'
 app.printingSheet    = '1lVYY_7hIzs6LV3cliD9CzUudKmHgoLcKtGb_JD8sacA'

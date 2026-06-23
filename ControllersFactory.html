@@ -1,0 +1,49 @@
+<script>
+class Controllers {
+
+  charges () {
+
+    const events   = model.events()
+    const exports  = model.exports()
+    return new C_Charges(events, exports)
+  }
+
+  events () {
+
+    const events   = model.events()
+    const years    = model.years()
+    const exports  = model.exports()
+    return new C_Events(events, years, exports)
+  }
+
+  fiscalYearReports () {
+
+    const events  = model.events()
+    const years   = model.years()
+    return new C_FiscalYearReports(events, years)
+  }
+
+  waterReadings () {
+  
+    const events    = model.events()
+    const years     = model.years()
+    const readings  = model.waterReadings()
+    const prices    = model.waterPrices()
+    return new C_WaterReadings(events, years, readings, prices)
+  }
+
+  repairs () {
+
+    const repairs   = model.repairs()
+    return new C_Repairs(repairs)
+  }
+      
+  settings () {
+
+    const years     = model.years()
+    const water     = model.waterPrices()
+    return new C_Settings(years, water)
+  }
+}
+
+</script>

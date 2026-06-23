@@ -1,31 +1,26 @@
 <script>
 
-class M_Events {
-
-  constructor (database) {
-
-    this.db = database
-  }
+class M_Events {  
 
   async ackCharges (date) {
-    
+
     /* Hae veloituksessa olevat - ei vielä kuitatut - tapahtumat */
     
-    const events = this.db.getRecords('events').where('cleared', '').where('charging', 'x')
+    const events = db.getRecords('events').where('cleared', '').where('charging', 'x')
     
     /* Määritä ja talleta uusi veloitusjakso (0 - 3) veloitusnäkymää varten */
 
     const periodIndex = Math.floor(new Date().getMonth() / 3)
-    const period      = this.db.getRecords('parameters').where('name', 'period')[0]
+    const period      = db.getRecords('parameters').where('name', 'period')[0]
     period.value      = periodIndex
-    this.db.updateRecord('parameters', period)
+    db.updateRecord('parameters', period)
 
     /* Kuittaa veloituksessa olleet tapahtumat maksetuiksi */
 
     for (const event of events) {
       event.cleared = date
     }
-    await this.db.updateRecords('events', events)
+    await db.updateRecords('events', events)
   }
 
 
@@ -38,14 +33,14 @@ class M_Events {
 
     /* Lisää tietue tietokantaan id */
 
-    await this.db.insertRecord('events', newEvent)
+    await db.insertRecord('events', newEvent)
   }
 
 
 
   getAccounts () {
 
-    return this.db.getRecords('accounts').asc('name')
+    return db.getRecords('accounts').asc('name')
   }
 
 
@@ -57,24 +52,24 @@ class M_Events {
 
   getCurrentChargingPeriod () {
     
-    const period = this.db.getRecords('parameters').where('name', 'period')[0]
+    const period = db.getRecords('parameters').where('name', 'period')[0]
     return period.value
   }
 
 
   getEvent (id) {
 
-    return this.db.getRecord('events', id)
+    return db.getRecord('events', id)
   }
 
   getEvents () {
 
-    const events = this.db.getRecords('events')
+    const events = db.getRecords('events')
 
     /* Lisää tilien nimet ennen palautusta */
 
     for (const event of events) {
-      event.account_name = this.db.getRecord('accounts', event.account_id).name
+      event.account_name = db.getRecord('accounts', event.account_id).name
     }
     return events
   }
@@ -104,7 +99,7 @@ class M_Events {
   getFiscalYearSummary () {
 
     const summary = []    // palautettavat yhteenveto-objektit
-    const years   = this.db.getRecords('years').desc('year')
+    const years   = db.getRecords('years').desc('year')
     let accounts  = {}    // tilikohtaiset summatiedot
 
     /* Muodosta yhteenveto-objekti */
@@ -154,7 +149,7 @@ class M_Events {
   getFiscalYearSummary_delete (year) {
     
     const summaryByAccount = {} 
-    const eventsByYear = this.db.getRecords('events').where('fiscal_year', year)
+    const eventsByYear = db.getRecords('events').where('fiscal_year', year)
 
     /* Summataan tilivuoden tapahtumien summat (tot, a, b) tileittäin.
        Ensin asetetaan tilin ensimmäiset arvot ja sitten summataan siihen loput. */
@@ -187,7 +182,7 @@ class M_Events {
 
   getNewEvent () {
 
-    const event = this.db.getNewRecord('events')
+    const event = db.getNewRecord('events')
     event.id          = 0
     event.total       = 0
     event.a_share     = 0
@@ -218,17 +213,17 @@ class M_Events {
 
   async toggleEventStatus (id) {
 
-    const event = this.db.getRecord('events', id)
+    const event = db.getRecord('events', id)
 
     if (event.cleared === '') {
       event.charging = (event.charging === 'x') ? '' : 'x'
-      await this.db.updateRecord('events', event)
+      await db.updateRecord('events', event)
     }
   }
   
   async updateEvent (event) {
 
-    await this.db.updateRecord('events', event)
+    await db.updateRecord('events', event)
   }
 }
 

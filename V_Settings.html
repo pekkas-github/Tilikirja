@@ -5,7 +5,7 @@ class V_Settings {
 
     /* Poista aikaisemmat kontrollit */
 
-    frame.clearControls()
+    frame.controls.clear()
 
     /* Muodosta vuosista pudotusvalikko */
 
@@ -81,7 +81,7 @@ class V_Settings {
       </table>
     `)
 
-    frame.setContent(content.join(''))
+    frame.content.setHtml(content.join(''))
 
     /* Lisää Event Listener */
 
