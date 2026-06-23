@@ -1,0 +1,19 @@
+<script>
+class Models {
+
+  events () {return new M_Events()}
+
+  waterPrices () {return new M_WaterPrices(db)}
+
+  waterReadings () {return new M_WaterReadings(db)}
+
+  exports () {return new M_Exports(db)}
+
+  repairs () {return new M_Repairs(db)}
+
+  setup () {return new M_Setup(db)}
+
+  years () {return new M_Years(db)}
+}
+
+</script>

@@ -2,11 +2,10 @@
 
 class C_FiscalYearReports {
 
-  constructor (eventsModel, yearsModel, listView) {
+  constructor (eventsModel, yearsModel) {
 
     this.events   = eventsModel
     this.years    = yearsModel
-    this.listView = listView
   }
 
   openPage () {
@@ -15,7 +14,7 @@ class C_FiscalYearReports {
     const years       = this.years.getYears()
     const summaries   = this.events.getFiscalYearSummary()
     
-    this.listView.render(this, summaries, accounts, years)
+    view.fiscalYearReports().render(this, summaries, accounts, years)
   }
 
   updateContent() {
@@ -23,7 +22,7 @@ class C_FiscalYearReports {
     const accounts    = this.events.getAccounts()
     const summaries   = this.events.getFiscalYearSummary()
 
-    this.listView.setContent(summaries, accounts)
+    view.fiscalYearReports().update(summaries, accounts)
   }
 }
 </script>

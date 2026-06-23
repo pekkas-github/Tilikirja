@@ -1,12 +1,10 @@
 <script>
 class C_Settings {
 
-  constructor (yearsModel, waterModel, settingsView, waterPriceView) {
+  constructor (yearsModel, waterModel) {
     
     this.years          = yearsModel
     this.water          = waterModel
-    this.settingsView   = settingsView
-    this.waterPriceView = waterPriceView
   }
 
   openPage () {
@@ -18,14 +16,14 @@ class C_Settings {
     const waterPrices       = this.water.getAllWaterPrices()
     const currentWaterPrice = this.water.getCurrentWaterPrice()
 
-    this.settingsView.render(this, yearList, defaultYear, waterPrices, currentWaterPrice)
+    view.settings().render(this, yearList, defaultYear, waterPrices, currentWaterPrice)
   }
 
   onAddNewWaterPrice () {
 
     const newPrice = this.water.getNewWaterPrice()
 
-    this.waterPriceView.render(this, newPrice)
+    view.waterPriceDetails().render(this, newPrice)
   }
 
   onChangeDefaultYear (id) {

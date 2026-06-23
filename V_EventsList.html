@@ -3,13 +3,7 @@ class V_EventList {
 
   render (controller, events, years, currentYear) {
 
-    this.setFrameControls(controller, years, currentYear)
-    this.setContent(events, controller)
-  }
-
-  setFrameControls (controller, years, currentYear) {
-
-    frame.clearControls()
+    frame.controls.clear()
     let selectedYear = currentYear
 
     /* Muodosta vuosioptioiden lista select-kontrollia varten */
@@ -19,7 +13,7 @@ class V_EventList {
       options.push([item.year, item.year])
     }
 
-    frame.addControlSelect(
+    frame.controls.addSelect(
       options, 
       function() {
         selectedYear = event.target.value
@@ -30,18 +24,20 @@ class V_EventList {
     /* Kontrollit näytetään vain admin-käyttäjälle. if-lause suoritetaan serverillä */
 
     <? if (app.profile === 'admin') { ?>
-      frame.addControlButton('Lisää...', function() {
+      frame.controls.addButton('Lisää...', function() {
         controller.onAddNewEvent()}
       )
 
-      frame.addControlButton('Vie taulukkoon', function() {
+      frame.controls.addButton('Vie taulukkoon', function() {
         controller.onExportEventsOnSheet(`${selectedYear}`)
       })
     <? } ?>
+  
+    this.update(controller, events)
   }
 
 
-  setContent (events, controller) {
+  update (controller, events) {
 
     const content = ['<table id="tbl-events">']
 
@@ -89,7 +85,8 @@ class V_EventList {
     }
     content.push('</table')
 
-    frame.setContent(content.join(''))
+    frame.content.setHtml(content.join(''))
+
 
     /* Event Handlers */  
 
@@ -102,7 +99,7 @@ class V_EventList {
         const target = event.target
 
         if (target.getAttribute('class') === 'charge-status') {
-            controller.onToggleEventStatus(parseInt(target.parentElement.getAttribute('id')))
+            controller.onToggleEventStatus(+(target.parentElement.getAttribute('id')))
         }
       })
 
@@ -110,13 +107,13 @@ class V_EventList {
         const target = event.target
 
         if (target.nodeName === 'TD' && target.getAttribute('class') != 'charge-status') {
-          controller.onModifyEvent(parseInt(target.parentElement.getAttribute('id')))  
+          controller.onModifyEvent(+(target.parentElement.getAttribute('id')))  
         }
       })
     }
 
     $('.comment').on('click', function() {
-      controller.onOpenComment(parseInt($(this).parent().attr('id')))
+      controller.onOpenComment(+($(this).parent().attr('id')))
     })
   }
 }

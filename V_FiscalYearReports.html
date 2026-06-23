@@ -3,17 +3,13 @@
 class V_FiscalYearReports {
 
   render (controller, yearlySummaries, accounts, years) {
- 
-    this.setFrameControls()
-    this.setContent(yearlySummaries, accounts)
+     
+    frame.controls.clear()
+
+    this.update(yearlySummaries, accounts)
   }
 
-  setFrameControls () {
-    
-    frame.clearControls()
-  }
-
-  setContent (yearlySummaries, accounts) {
+  update (yearlySummaries, accounts) {
 
     const content = []
 
@@ -66,7 +62,7 @@ class V_FiscalYearReports {
       content.push('</table>')
     }
 
-    frame.setContent(content.join(''))
+    frame.content.setHtml(content.join(''))
   }
 }
 </script>

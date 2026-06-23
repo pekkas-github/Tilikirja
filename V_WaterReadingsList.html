@@ -4,30 +4,26 @@ class V_WaterReadingsList {
 
   render (controller, readings) {
 
-    this.setFrameControls(controller)
-    this.setContent(readings)
-  }
-
-  setFrameControls (controller) {
-
-    frame.clearControls()
+    frame.controls.clear()
 
     /* Kontrolli näytetään vain admin-käyttäjälle. if-lause suoritetaan serverillä */
 
     <? if (app.profile === 'admin') { ?>
-      frame.addControlButton('Lisää...', function() {
+      frame.controls.addButton('Lisää...', function() {
         controller.onAddReading()
       })
     <? } ?>
 
-    frame.addControlText('Veden hinta', function() {
+    frame.controls.addText('Veden hinta', function() {
       controller.onOpenWaterPriceForm()
     })
+
+    this.update(readings)
   }
     
   
 
-  setContent (readings) {
+  update (readings) {
 
     const content     = ['<table id="tbl-readings">']
     const headerLines = `
@@ -69,7 +65,7 @@ class V_WaterReadingsList {
     }
     content.push('</table>')
     
-    frame.setContent(content.join(''))
+    frame.content.setHtml(content.join(''))
   }
 }
 </script>

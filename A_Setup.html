@@ -1,19 +1,34 @@
 <script>
+
+/* GLOBAALIT MUUTTUJAT */
+const db         = new ClientDBMS('Tilikirja')
+const controller = new Controllers()
+const model      = new Models()
+const view       = new Views()
 const app = {}
 
+/* FRAME-SIVUN ALUSTUS */
 frame.setHeader('Tilikirja')
 frame.setRightFooter('<?= app.version ?>')
 frame.setLeftFooter(frame.params.profile)
-frame.addNavBarItem('Etusivu', () => {ControllerFactory.create('Info').openPage()})
-frame.addNavBarItem('Tapahtumat', () => {ControllerFactory.create('Events').openPage()})
-frame.addNavBarItem('Veden kulutus', () => {ControllerFactory.create('WaterReadings').openPage()})
-frame.addNavBarItem('Vuosiyhteenvedot', () => {ControllerFactory.create('FiscalYearReports').openPage()})
-frame.addNavBarItem('Neljännesveloitus', () => {ControllerFactory.create('Charges').openPage()})
+frame.addNavBarItem('Etusivu', () => {view.info().render()})
+frame.addNavBarItem('Tapahtumat', () => {controller.events().openPage()})
+frame.addNavBarItem('Veden kulutus', () => {controller.waterReadings().openPage()})
+frame.addNavBarItem('Vuosiyhteenvedot', () => {controller.fiscalYearReports().openPage()})
+frame.addNavBarItem('Neljännesveloitus', () => {controller.charges().openPage()})
+frame.addNavBarItem('Remontit', () => {controller.repairs().openPage()})
 <? if (app.profile === 'admin') { ?>
-  frame.addNavBarItem('Asetukset', () => {ControllerFactory.create('Settings').openPage()}) 
+  frame.addNavBarItem('Asetukset', () => {controller.settings().openPage()}) 
 <? } ?>
 
+view.info().render()
 
-ControllerFactory.create('Info').startApplication()
+/* TIETOKANNAN LATAUS */
+frame.spinner.on()
+
+db.initialLoad().then(function() {
+  app.currentYear = db.getRecords('parameters').where('name', 'defaultYear')[0].value 
+  frame.spinner.off()
+})
 
 </script>

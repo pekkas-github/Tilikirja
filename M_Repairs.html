@@ -1,0 +1,34 @@
+<script>
+
+class M_Repairs {
+
+  constructor (db) {
+    this.db = db
+  }
+
+  async addRepairItem (item) {
+
+    await this.db.insertRecord('repairs', item)
+  }
+
+  getRepairs () {
+
+    return this.db.getRecords('repairs').asc('next')
+  }
+
+  getRepairItem (id) {
+
+    if (id) {
+      return this.db.getRecord('repairs', id)
+    } else {
+      return this.db.getNewRecord('repairs')
+    }
+  }
+
+  updateRepairItem (item) {
+
+    this.db.updateRecord('repairs', item)
+  }
+}
+
+</script>

@@ -7,22 +7,22 @@
       {
         "userSymbol": "ServerDBMS",
         "libraryId": "1tLekUn3aO2KDlv8GLsoHK4gXLKnuUpqReCu98iRY_Fwntbgu-hZv6XIa",
-        "version": "34"
+        "version": "41"
       },
       {
         "userSymbol": "ClientDBMS",
         "libraryId": "1eznaqLAguqobUHt20mggWpBxNSXEBh976aeRPK0O7Cne-BwJ3Fqnqga5",
-        "version": "21"
+        "version": "32"
       },
       {
         "userSymbol": "FramePages",
         "libraryId": "1BNcO0k--8vg6oVha2xpBCe1negBh5qKZMekNh1O-b21y4k6C-gFndqqM",
-        "version": "24"
+        "version": "35"
       },
       {
         "userSymbol": "ClientConnect",
         "libraryId": "19TSey92fkfHhnbAi09d2AzL3hHT-oIyrdXu7qG5QYN6qPU6Va6LxZA1i",
-        "version": "7"
+        "version": "8"
       }
     ]
   },

@@ -9,49 +9,47 @@ class V_Charges {
 
   render (controller, eventsToBeCharged, period, chargeHistory) {
 
-    this.setFrameControls(controller)
-    this.setContent(eventsToBeCharged, period, chargeHistory)
-  }
-
-  setFrameControls (controller) {
-
-    frame.clearControls()
+    frame.controls.clear()
 
     /* Kontrollit näytetään vain admin-käyttäjälle. if-lause suoritetaan serverillä */
 
     <? if (app.profile === 'admin') { ?>
     
-      frame.addControlInput('date', function() {
+      frame.controls.addInput('date', function() {
           frame.date = $(this).val()
         })
 
-      frame.addControlButton('Kuittaa maksetuksi', function() {
+      frame.controls.addButton('Kuittaa maksetuksi', function() {
         if (!frame.date) {
-          alert('Tarkista päiväys')
+          frame.alerts.inform('Tarkista päiväys')
           return
         }
         controller.onAckCharges(frame.date)
       })
 
-      frame.addControlButton('Tulosta', function () {
+      frame.controls.addButton('Tulosta', function () {
         controller.onPrintChargingSheet()
       })
     <? } ?>
+
+    this.update(eventsToBeCharged, period, chargeHistory )
   }
 
-  setContent (eventsToBeCharged, period, chargeHistory) {
+
+  update (eventsToBeCharged, period, chargeHistory) {
 
     const content = []
     
     content.push('<h3 style="padding: 0.5em;">Nykyinen jakso</h3>')
-    content.push(this.createChargeTable(eventsToBeCharged, this.periods[period]))
+    content.push(this._createChargeTable(eventsToBeCharged, this.periods[period]))
     content.push('<h3 style="padding: 0.5em;">Aikaisemmat veloitukset</h3>')
-    content.push(this.createPreviousChargeTables(chargeHistory))
+    content.push(this._createPreviousChargeTables(chargeHistory))
 
-    frame.setContent(content.join(''))
+    frame.content.setHtml(content.join(''))
   }
 
-  createPreviousChargeTables (chargeHistory) {
+
+  _createPreviousChargeTables (chargeHistory) {
 
     let clearingDate = chargeHistory[0].cleared
     let grouppedEvents = []
@@ -64,7 +62,7 @@ class V_Charges {
         grouppedEvents.push(event)
       }
       else {
-        htmlPreviousCharges.push(this.createChargeTable(grouppedEvents, clearingDate))
+        htmlPreviousCharges.push(this._createChargeTable(grouppedEvents, clearingDate))
         clearingDate = event.cleared
         grouppedEvents = []
         grouppedEvents.push(event)
@@ -74,9 +72,10 @@ class V_Charges {
     return htmlPreviousCharges.join('')
   }
 
-  /* Muodosta tapahtumien ja otsikon perusteella yhteenvetotaulukko */
 
-  createChargeTable (events, heading) {
+  /* Muodosta tapahtumien ja otsikon perusteella yhteenvetotaulukko */
+  
+  _createChargeTable (events, heading) {
 
     const html = [`
       <p style="padding: 0.5em;"> ${heading} </p>

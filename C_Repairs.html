@@ -1,0 +1,46 @@
+<script>
+
+class C_Repairs {
+
+  constructor (repairsModel, listView, detailsView) {
+
+    this.model       = repairsModel
+    this.listView    = listView
+    this.detailsView = detailsView
+  }
+
+  openPage () {
+
+    const repairs = this.model.getRepairs()
+
+    view.repairsList().render(this, repairs)
+  }
+
+  onAddItemClicked () {
+    
+    const newItem = this.model.getRepairItem()
+    view.repairDetails().render(this, newItem)
+  }
+
+
+  onEditItemClicked (itemId) {
+    
+    const item = this.model.getRepairItem(itemId)
+    view.repairDetails().render(this, item)
+  }
+
+  async onSave (item) {
+
+    if (item.id === 0) {
+      frame.spinner.on()
+      await this.model.addRepairItem(item)
+      frame.spinner.off()
+      this.openPage()
+    } else {
+      this.model.updateRepairItem(item)
+      this.openPage()
+    }
+  }
+}
+
+</script>
