@@ -42,7 +42,7 @@ class C_WaterReadings {
     await this.events.addEvent(waterEvent)
 
     const readings     = this.readings.getReadings()
-    view.waterReadingsList.update(readings)
+    view.waterReadingsList().update(readings)
     
     frame.spinner.off()    
   }
