@@ -2,46 +2,38 @@
 
 class C_WaterReadings {
 
-  constructor (eventsModel, yearsModel, readingsModel, pricesModel) {
-
-    this.events            = eventsModel
-    this.years             = yearsModel
-    this.readings          = readingsModel
-    this.prices            = pricesModel
- }
-
   openPage () {
 
-    const readings = this.readings.getReadings()
+    const readings = model.waterReadings().getReadings()
     view.waterReadingsList().render(this, readings)
   }
 
   onAddReading () {
     
-    const newReading  = this.readings.getNewReading()
-    const years       = this.years.getYears()
-    const defaultYear = this.years.getDefaultYear()
+    const newReading  = model.waterReadings().getNewReading()
+    const years       = model.years().getYears()
+    const defaultYear = model.years().getDefaultYear()
     
     view.waterReadingDetails().render(this, newReading, years, defaultYear)
   }
 
   onOpenWaterPriceForm () {
 
-    view.waterPrice().render(this.prices.getCurrentWaterPrice())
+    view.waterPrice().render(model.waterPrices().getCurrentWaterPrice())
   }
 
   async onSaveReading (reading) {
 
     frame.spinner.on()
 
-    const consumptionA = this.readings.getQuarterConsumptionA(reading)
-    const priceA       = this.prices.getQuarterPriceA(consumptionA)
-    const waterEvent   = this.events.getWaterEvent(reading, consumptionA, priceA)
+    const consumptionA = model.waterReadings().getQuarterConsumptionA(reading)
+    const priceA       = model.waterPrices().getQuarterPriceA(consumptionA)
+    const waterEvent   = model.events().getWaterEvent(reading, consumptionA, priceA)
 
-    await this.readings.addReading(reading)
-    await this.events.addEvent(waterEvent)
+    await model.waterReadings().addReading(reading)
+    await model.events().addEvent(waterEvent)
 
-    const readings     = this.readings.getReadings()
+    const readings     = model.waterReadings().getReadings()
     view.waterReadingsList().update(readings)
     
     frame.spinner.off()    

@@ -2,30 +2,23 @@
 
 class C_Repairs {
 
-  constructor (repairsModel, listView, detailsView) {
-
-    this.model       = repairsModel
-    this.listView    = listView
-    this.detailsView = detailsView
-  }
-
   openPage () {
 
-    const repairs = this.model.getRepairs()
+    const repairs = model.repairs().getRepairs()
 
     view.repairsList().render(this, repairs)
   }
 
   onAddItemClicked () {
     
-    const newItem = this.model.getRepairItem()
+    const newItem = model.repairs().getRepairItem()
     view.repairDetails().render(this, newItem)
   }
 
 
   onEditItemClicked (itemId) {
     
-    const item = this.model.getRepairItem(itemId)
+    const item = model.repairs().getRepairItem(itemId)
     view.repairDetails().render(this, item)
   }
 
@@ -33,11 +26,11 @@ class C_Repairs {
 
     if (item.id === 0) {
       frame.spinner.on()
-      await this.model.addRepairItem(item)
+      await model.repairs().addRepairItem(item)
       frame.spinner.off()
       this.openPage()
     } else {
-      this.model.updateRepairItem(item)
+      model.repairs().updateRepairItem(item)
       this.openPage()
     }
   }

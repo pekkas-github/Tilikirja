@@ -2,25 +2,19 @@
 
 class C_FiscalYearReports {
 
-  constructor (eventsModel, yearsModel) {
-
-    this.events   = eventsModel
-    this.years    = yearsModel
-  }
-
   openPage () {
 
-    const accounts    = this.events.getAccounts()
-    const years       = this.years.getYears()
-    const summaries   = this.events.getFiscalYearSummary()
+    const accounts    = model.events().getAccounts()
+    const years       = model.years().getYears()
+    const summaries   = model.events().getFiscalYearSummary()
     
     view.fiscalYearReports().render(this, summaries, accounts, years)
   }
 
   updateContent() {
 
-    const accounts    = this.events.getAccounts()
-    const summaries   = this.events.getFiscalYearSummary()
+    const accounts    = model.events().getAccounts()
+    const summaries   = model.events().getFiscalYearSummary()
 
     view.fiscalYearReports().update(summaries, accounts)
   }

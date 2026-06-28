@@ -2,40 +2,34 @@
 
 class C_Charges {
 
-  constructor (eventsModel, exportsModel) {
-
-    this.events   = eventsModel
-    this.exports  = exportsModel
-  }
-
   openPage () {
 
-    const eventsToBeCharged = this.events.getEventsToBeCharged()
-    const chargeHistory     = this.events.getChargeHistory()
-    const currentPeriod     = this.events.getCurrentChargingPeriod()
+    const eventsToBeCharged = model.events().getEventsToBeCharged()
+    const chargeHistory     = model.events().getChargeHistory()
+    const currentPeriod     = model.events().getCurrentChargingPeriod()
 
     view.charges().render(this, eventsToBeCharged, currentPeriod, chargeHistory)
   }
 
   updateContent () {
 
-    const eventsToBeCharged = this.events.getEventsToBeCharged()
-    const chargeHistory     = this.events.getChargeHistory()
-    const currentPeriod     = this.events.getCurrentChargingPeriod()
+    const eventsToBeCharged = model.events().getEventsToBeCharged()
+    const chargeHistory     = model.events().getChargeHistory()
+    const currentPeriod     = model.events().getCurrentChargingPeriod()
 
     view.charges().update(eventsToBeCharged, currentPeriod, chargeHistory)
   }
 
   onAckCharges (date) {
 
-    this.events.ackCharges(date)
+    model.events().ackCharges(date)
     this.updateContent()    
   }
 
   async onPrintChargingSheet () {
 
     frame.spinner.on()
-    await this.exports.printChargingSheet()
+    await model.exports().printChargingSheet()
     frame.spinner.off()
     frame.alerts.inform('Veloitustaulukko on päivitetty.', () => {})
   }

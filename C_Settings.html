@@ -1,46 +1,40 @@
 <script>
 class C_Settings {
 
-  constructor (yearsModel, waterModel) {
-    
-    this.years          = yearsModel
-    this.water          = waterModel
-  }
-
   openPage () {
 
-    this.years.updateYearList(new Date().getFullYear())
+    model.years().updateYearList(new Date().getFullYear())
 
-    const yearList          = this.years.getYears()
-    const defaultYear       = this.years.getDefaultYear()
-    const waterPrices       = this.water.getAllWaterPrices()
-    const currentWaterPrice = this.water.getCurrentWaterPrice()
+    const yearList          = model.years().getYears()
+    const defaultYear       = model.years().getDefaultYear()
+    const waterPrices       = model.waterPrices().getAllWaterPrices()
+    const currentWaterPrice = model.waterPrices().getCurrentWaterPrice()
 
     view.settings().render(this, yearList, defaultYear, waterPrices, currentWaterPrice)
   }
 
   onAddNewWaterPrice () {
 
-    const newPrice = this.water.getNewWaterPrice()
+    const newPrice = model.waterPrices().getNewWaterPrice()
 
     view.waterPriceDetails().render(this, newPrice)
   }
 
   onChangeDefaultYear (id) {
 
-    this.years.setDefaultYear(id)
+    model.years().setDefaultYear(id)
   }
 
   onChangeCurrentWaterPrice (id) {
 
-    this.water.setCurrentWaterPrice(id)
+    model.waterPrices().setCurrentWaterPrice(id)
     this.openPage()
   }
 
   async onSaveNewWaterPrice (newPrice) {
 
     frame.spinner.on()
-    await this.water.addNewWaterPrice(newPrice)
+    await model.waterPrices().addNewWaterPrice(newPrice)
     this.openPage()
     frame.spinner.off()
   }

@@ -21,7 +21,7 @@ class V_Charges {
 
       frame.controls.addButton('Kuittaa maksetuksi', function() {
         if (!frame.date) {
-          frame.alerts.inform('Tarkista päiväys')
+          frame.alerts.inform('Tarkista päiväys', function() {})
           return
         }
         controller.onAckCharges(frame.date)

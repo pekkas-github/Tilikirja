@@ -2,44 +2,37 @@
 
 class C_Events {
 
-  constructor (eventsModel, yearsModel, exportsModel) {
-
-    this.events      = eventsModel
-    this.years       = yearsModel
-    this.exports     = exportsModel
-  }
-
   openPage () {
 
-    const years        = this.years.getYears()
-    const currentYear  = this.years.getCurrentYear()
-    const eventsOfYear = this.events.getEventsOfYear(currentYear)
+    const years        = model.years().getYears()  //this.years.getYears()
+    const currentYear  = model.years().getCurrentYear()  //this.years.getCurrentYear()
+    const eventsOfYear = model.events().getEventsOfYear(currentYear)  //this.events.getEventsOfYear(currentYear)
 
     view.eventList().render(this, eventsOfYear, years, currentYear)
   }
 
   updateContent () {
 
-    const currentYear  = this.years.getCurrentYear()
-    const eventsOfYear = this.events.getEventsOfYear(currentYear)
+    const currentYear  = model.years().getCurrentYear()
+    const eventsOfYear = model.events().getEventsOfYear(currentYear)
 
     view.eventList().update(this, eventsOfYear)
   }
 
   onAddNewEvent () {
 
-    const event       = this.events.getNewEvent()
-    const accounts    = this.events.getAccounts()
-    const years       = this.years.getYears()
-    const currentYear = this.years.getCurrentYear()
+    const event       = model.events().getNewEvent()
+    const accounts    = model.events().getAccounts()
+    const years       = model.years().getYears()
+    const currentYear = model.years().getCurrentYear()
 
-    event.fiscal_year = this.years.getDefaultYear()
+    event.fiscal_year = model.years().getDefaultYear()
     view.eventDetails().render(this, event, accounts, years)
   }
      
   onChangeYear (year) {
     
-    this.years.setCurrentYear(year)
+    model.years().setCurrentYear(year)
     
     this.updateContent()
   }
@@ -47,23 +40,23 @@ class C_Events {
   async onExportEventsOnSheet (year) {
 
     frame.spinner.on()
-    await this.exports.printYearlyEventsSheet(year)
+    await model.exports().printYearlyEventsSheet(year)
     frame.spinner.off()
     frame.alerts.inform(`Vuoden ${year} tapahtumat talletettu taulukkoon.`, () => {})
   }
 
   onModifyEvent (id) {
 
-    const event      = this.events.getEvent(id)
-    const accounts   = this.events.getAccounts()
-    const years      = this.years.getYears()
+    const event      = model.events().getEvent(id)
+    const accounts   = model.events().getAccounts()
+    const years      = model.years().getYears()
 
     view.eventDetails().render(this, event, accounts, years)
   }
 
   onOpenComment (id) {
 
-    const event = this.events.getEvent(id)
+    const event = model.events().getEvent(id)
     if (event.comment === '') { return }
 
     view.eventComment().render(event)
@@ -74,21 +67,21 @@ class C_Events {
     if (event.id === 0) {
       //insert
       frame.spinner.on()
-      this.events.addEvent(event).then(() => {
+      model.events().addEvent(event).then(() => {
         this.updateContent()
         frame.spinner.off()
       })
     } 
     else {
       //update
-      this.events.updateEvent(event)
+      model.events().updateEvent(event)
       this.updateContent()
     }
   }
 
   onToggleEventStatus (id) {
 
-    this.events.toggleEventStatus(id)
+    model.events().toggleEventStatus(id)
     this.updateContent()
   }
 }
