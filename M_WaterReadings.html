@@ -26,9 +26,12 @@ class M_WaterReadings {
     const readings = this.db.getRecords('water')
     const last     = readings[readings.length - 1]
 
-    /* A:n kulutus lasketaan vähentämällä talon kulutuksesta B:n kulutus */
+    /* 1.7.2026 alkaen: A:n kulutus suoraan mittarilukeman mukaan */
+    return reading.a_reading - last.a_reading
 
+    /* 30.6. 2026 asti: A:n kulutus lasketaan vähentämällä talon kulutuksesta B:n kulutus 
     return (reading.master_reading - last.master_reading) - (reading.b_reading - last.b_reading)
+    */
   }
 
   getReadings () {
