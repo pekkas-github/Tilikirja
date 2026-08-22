@@ -11,17 +11,17 @@ const app = {}
 frame.setHeader('Tilikirja')
 frame.setRightFooter('<?= app.version ?>')
 frame.setLeftFooter(frame.params.profile)
-frame.addNavBarItem('Etusivu', () => {view.info().render()})
-frame.addNavBarItem('Tapahtumat', () => {controller.events().openPage()})
-frame.addNavBarItem('Veden kulutus', () => {controller.waterReadings().openPage()})
-frame.addNavBarItem('Vuosiyhteenvedot', () => {controller.fiscalYearReports().openPage()})
-frame.addNavBarItem('Neljännesveloitus', () => {controller.charges().openPage()})
-frame.addNavBarItem('Remontit', () => {controller.repairs().openPage()})
+frame.addNavBarItem('Etusivu', () => {view.info.render()})
+frame.addNavBarItem('Tapahtumat', () => {controller.events.openPage()})
+frame.addNavBarItem('Veden kulutus', () => {controller.waterReadings.openPage()})
+frame.addNavBarItem('Vuosiyhteenvedot', () => {controller.fiscalYearReports.openPage()})
+frame.addNavBarItem('Neljännesveloitus', () => {controller.charges.openPage()})
+frame.addNavBarItem('Remontit', () => {controller.repairs.openPage()})
 <? if (app.profile === 'admin') { ?>
-  frame.addNavBarItem('Asetukset', () => {controller.settings().openPage()}) 
+  frame.addNavBarItem('Asetukset', () => {controller.settings.openPage()}) 
 <? } ?>
 
-view.info().render()
+view.info.render()
 
 /* TIETOKANNAN LATAUS */
 frame.spinner.on()

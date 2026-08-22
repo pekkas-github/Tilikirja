@@ -1,19 +1,19 @@
 <script>
 class Models {
 
-  events () {return new M_Events()}
+  get events () {return new M_Events()}
 
-  waterPrices () {return new M_WaterPrices(db)}
+  get waterPrices () {return new M_WaterPrices(db)}
 
-  waterReadings () {return new M_WaterReadings(db)}
+  get waterReadings () {return new M_WaterReadings(db)}
 
-  exports () {return new M_Exports(db)}
+  get exports () {return new M_Exports(db)}
 
-  repairs () {return new M_Repairs(db)}
+  get repairs () {return new M_Repairs(db)}
 
-  setup () {return new M_Setup(db)}
+  get setup () {return new M_Setup(db)}
 
-  years () {return new M_Years(db)}
+  get years () {return new M_Years(db)}
 }
 
 </script>

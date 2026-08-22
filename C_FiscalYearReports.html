@@ -4,19 +4,19 @@ class C_FiscalYearReports {
 
   openPage () {
 
-    const accounts    = model.events().getAccounts()
-    const years       = model.years().getYears()
-    const summaries   = model.events().getFiscalYearSummary()
+    const accounts    = model.events.getAccounts()
+    const years       = model.years.getYears()
+    const summaries   = model.events.getFiscalYearSummary()
     
-    view.fiscalYearReports().render(this, summaries, accounts, years)
+    view.fiscalYearReports.render(this, summaries, accounts, years)
   }
 
   updateContent() {
 
-    const accounts    = model.events().getAccounts()
-    const summaries   = model.events().getFiscalYearSummary()
+    const accounts    = model.events.getAccounts()
+    const summaries   = model.events.getFiscalYearSummary()
 
-    view.fiscalYearReports().update(summaries, accounts)
+    view.fiscalYearReports.update(summaries, accounts)
   }
 }
 </script>

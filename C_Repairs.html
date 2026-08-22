@@ -4,33 +4,33 @@ class C_Repairs {
 
   openPage () {
 
-    const repairs = model.repairs().getRepairs()
+    const repairs = model.repairs.getRepairs()
 
-    view.repairsList().render(this, repairs)
+    view.repairsList.render(this, repairs)
   }
 
   onAddItemClicked () {
     
-    const newItem = model.repairs().getRepairItem()
-    view.repairDetails().render(this, newItem)
+    const newItem = model.repairs.getRepairItem()
+    view.repairDetails.render(this, newItem)
   }
 
 
   onEditItemClicked (itemId) {
     
-    const item = model.repairs().getRepairItem(itemId)
-    view.repairDetails().render(this, item)
+    const item = model.repairs.getRepairItem(itemId)
+    view.repairDetails.render(this, item)
   }
 
   async onSave (item) {
 
     if (item.id === 0) {
       frame.spinner.on()
-      await model.repairs().addRepairItem(item)
+      await model.repairs.addRepairItem(item)
       frame.spinner.off()
       this.openPage()
     } else {
-      model.repairs().updateRepairItem(item)
+      model.repairs.updateRepairItem(item)
       this.openPage()
     }
   }

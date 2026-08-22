@@ -2,27 +2,27 @@ const app = {}
 
 app.channel          = 'LIVE'
 
-app.logSheetId       = '1uFu_ta5Q9TT3k75tttBc5HcFl_vEBhCn_Xd0TCehcQw'
-app.printingSheet    = '1lVYY_7hIzs6LV3cliD9CzUudKmHgoLcKtGb_JD8sacA'
-app.printEventsSheet = '1ny7uTACEAderhT7oza956uhsHIsgd3nNoFH8FuhMIDk'
+app.logSheetId       = '1D11HT6LGUoKZBQHdzY4cQajDZ73Zy5sFMqlEfFpEz-A'
+app.printingSheet    = '1EBJuVH5flkUhPfIxq1zujKCU4oJICGxBjHkdopJUnZM'
+app.printEventsSheet = '1iNPoGOOhp6RK8uJuRxh-IlKvqFQaVB8kAcA-XaU2B6U'
 
 switch (app.channel) {
 
   case 'LIVE':
     app.version   = 'Live DB'
-    app.dbSheetId = '1QeewQlfAR6WmuuonRqYJwSLY6vgfUtaiQbQNfaj9r2U'
+    app.dbSheetId = '1UvWqMLl4XWYQ8A78VDFV3tJWYNbGf_sqd6cROhB0R-8'
     app.color     = 'blue'
     break
-  
+  //1UvWqMLl4XWYQ8A78VDFV3tJWYNbGf_sqd6cROhB0R-8
   case 'BETA':
     app.version   = 'BETA, DB = Test'
-    app.dbSheetId = '1gs-h1ZPX2VWCZ4za2r8IGHVNu9WBRjnKihBfIvqCxZE'
+    app.dbSheetId = '1xTVfLyotp95O72KSlHqGTNPQ_okRVFB6HCsj7xLN-fQ'
     app.color     = 'grey'
     break
 
   default:
     app.version   = 'DEV, DB = Test'
-    app.dbSheetId = '1gs-h1ZPX2VWCZ4za2r8IGHVNu9WBRjnKihBfIvqCxZE'
+    app.dbSheetId = '1xTVfLyotp95O72KSlHqGTNPQ_okRVFB6HCsj7xLN-fQ'
     app.color     = 'red'
 }
 
