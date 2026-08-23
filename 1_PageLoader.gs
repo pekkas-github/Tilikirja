@@ -10,7 +10,7 @@ function doGet (e) {
       app.color     = 'blue'
       app.version   = 'LIVE'
       // Vain vierailijakäynnit lokitetaan
-      if (app.profile === undefined) {
+      if (app.profile === 'user') {
         app.profile = 'visitor'
         logUser('visitor')
       }
