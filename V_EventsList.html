@@ -90,27 +90,28 @@ class V_EventList {
 
     /* Event Handlers */  
 
-    if (frame.params.profile === 'admin') {
-      $('.charge-status').show()
+    <? if (app.profile === 'admin') { ?>
+    
+        $('.charge-status').show()
 
-      $('.is-payed').show()
+        $('.is-payed').show()
 
-      $('#tbl-events').on('click', function (event) {
-        const target = event.target
+        $('#tbl-events').on('click', function (event) {
+          const target = event.target
 
-        if (target.getAttribute('class') === 'charge-status') {
-            controller.onToggleEventStatus(+(target.parentElement.getAttribute('id')))
-        }
-      })
+          if (target.getAttribute('class') === 'charge-status') {
+              controller.onToggleEventStatus(+(target.parentElement.getAttribute('id')))
+          }
+        })
+    
+        $('#tbl-events').on('dblclick', function (event) {
+          const target = event.target
 
-      $('#tbl-events').on('dblclick', function (event) {
-        const target = event.target
-
-        if (target.nodeName === 'TD' && target.getAttribute('class') != 'charge-status') {
-          controller.onModifyEvent(+(target.parentElement.getAttribute('id')))  
-        }
-      })
-    }
+          if (target.nodeName === 'TD' && target.getAttribute('class') != 'charge-status') {
+            controller.onModifyEvent(+(target.parentElement.getAttribute('id')))  
+          }
+        })
+    <? } ?>
 
     $('.comment').on('click', function() {
       controller.onOpenComment(+($(this).parent().attr('id')))

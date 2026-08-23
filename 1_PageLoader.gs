@@ -1,12 +1,37 @@
 function doGet (e) {
-  app.profile = e.parameter.profile  // admin-profiili näyttää kaikki kontrollit
 
-  /* Jos profiilia ei ole määritelty, kyse on vierailijasta */
+  app.profile = e.parameter.profile 
 
-  if (app.profile === undefined) {
-    app.profile = "visitor"
+  /* Värien ja footerin kanavakohtainen määritys */
+
+  switch (ScriptApp.getService().getUrl().slice(-10)) {
+
+    case 'Wwq5S/exec':    // LIVE
+      app.color     = 'blue'
+      app.version   = 'LIVE'
+      // Vain vierailijakäynnit lokitetaan
+      if (app.profile === undefined) {
+        app.profile = 'visitor'
+        logUser('visitor')
+      }
+    break
+
+    case '_HVoQ/exec':    // TEST
+      app.color     = 'grey'
+      app.version   = 'TEST / TESTDB'
+      if (!app.profile) {app.profile = 'testing'}  // else admin
+    break
+
+    case 'e04iPQ/dev':    // DEV
+      app.color     = 'red'
+      app.version   = 'DEV / TESTDB'
+      app.profile   = 'admin'
+    break
+
+    default:
+      alert('Huom! LIVE-projektin DEV-koodiversiota ei pysty ajamaan. Siirry DEV-projektiin.')
   }
-  logUser(app.profile)
+
 
   const args = {}
   args.myLibraries = include('app_Libraries')
@@ -25,14 +50,10 @@ function doGet (e) {
 }
 
 
+/* Vierailijatiedon lokitus */
+
 function logUser (profile) {
-
-  /* Ei lokiteta, jos ollaan testimoodissa */
-
-  if (app.test) return
   
-  /* Talleta käyttäjän profiili ja aikaleima lokiin*/
-
   const logDb   = ServerDBMS.openDatabase(app.logSheetId)
 
   const logEvent   = logDb.newRecord('UserLog')

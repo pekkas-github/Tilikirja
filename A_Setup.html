@@ -10,7 +10,7 @@ const app = {}
 /* FRAME-SIVUN ALUSTUS */
 frame.setHeader('Tilikirja')
 frame.setRightFooter('<?= app.version ?>')
-frame.setLeftFooter(frame.params.profile)
+frame.setLeftFooter('<?= app.profile ?>')
 frame.addNavBarItem('Etusivu', () => {view.info.render()})
 frame.addNavBarItem('Tapahtumat', () => {controller.events.openPage()})
 frame.addNavBarItem('Veden kulutus', () => {controller.waterReadings.openPage()})
