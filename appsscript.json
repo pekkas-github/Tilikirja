@@ -1,16 +1,18 @@
 {
   "timeZone": "Europe/Helsinki",
+  "exceptionLogging": "STACKDRIVER",
+  "runtimeVersion": "V8",
   "dependencies": {
     "libraries": [
       {
         "userSymbol": "ServerDBMS",
         "libraryId": "1tLekUn3aO2KDlv8GLsoHK4gXLKnuUpqReCu98iRY_Fwntbgu-hZv6XIa",
-        "version": "42"
+        "version": "43"
       },
       {
         "userSymbol": "ClientDBMS",
         "libraryId": "1eznaqLAguqobUHt20mggWpBxNSXEBh976aeRPK0O7Cne-BwJ3Fqnqga5",
-        "version": "32"
+        "version": "35"
       },
       {
         "userSymbol": "FramePages",
@@ -27,7 +29,5 @@
   "webapp": {
     "executeAs": "USER_DEPLOYING",
     "access": "MYSELF"
-  },
-  "exceptionLogging": "STACKDRIVER",
-  "runtimeVersion": "V8"
+  }
 }

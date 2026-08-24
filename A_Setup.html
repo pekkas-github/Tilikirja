@@ -26,7 +26,7 @@ view.info.render()
 /* TIETOKANNAN LATAUS */
 frame.spinner.on()
 
-db.initialLoad().then(function() {
+db.initialLoadByNames('events', 'accounts', 'years', 'water', 'waterprice', 'repairs', 'parameters').then(function() {
   app.currentYear = db.getRecords('parameters').where('name', 'defaultYear')[0].value 
   frame.spinner.off()
 })
